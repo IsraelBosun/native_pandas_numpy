@@ -1,0 +1,76 @@
+-- Run this once in the Supabase dashboard -> SQL Editor -> New query.
+--
+-- Progress-sync tables: cloud mirrors of the app's local SQLite progress
+-- layer (see lib/db.js). Content (lessons/cards) stays bundled in the app
+-- and never lands here. Every table is keyed by user_id so one project
+-- serves many users; auth.uid() fills it in automatically on insert.
+
+create table public.card_state (
+  user_id uuid not null default auth.uid() references auth.users (id) on delete cascade,
+  card_id text not null,
+  ef real not null default 2.5,
+  interval integer not null default 0,
+  reps integer not null default 0,
+  due_date text not null,
+  last_grade integer,
+  reviewed_at text,
+  favorite integer not null default 0,
+  note text,
+  updated_at timestamptz not null default now(),
+  primary key (user_id, card_id)
+);
+
+create table public.review_log (
+  user_id uuid not null default auth.uid() references auth.users (id) on delete cascade,
+  -- The row's autoincrement id in the device's SQLite. Using it as part of
+  -- the primary key makes pushes idempotent: re-sending the same rows after
+  -- a flaky connection can never create duplicates.
+  client_id bigint not null,
+  card_id text not null,
+  grade integer not null,
+  reviewed_at text not null,
+  interval integer not null,
+  primary key (user_id, client_id)
+);
+
+create table public.app_meta (
+  user_id uuid not null default auth.uid() references auth.users (id) on delete cascade,
+  key text not null,
+  value text,
+  updated_at timestamptz not null default now(),
+  primary key (user_id, key)
+);
+
+alter table public.card_state enable row level security;
+alter table public.review_log enable row level security;
+alter table public.app_meta enable row level security;
+
+-- Each signed-in (anonymous) user can only read/write their own rows.
+create policy "own rows" on public.card_state
+  for all to authenticated
+  using ((select auth.uid()) = user_id)
+  with check ((select auth.uid()) = user_id);
+
+create policy "own rows" on public.review_log
+  for all to authenticated
+  using ((select auth.uid()) = user_id)
+  with check ((select auth.uid()) = user_id);
+
+create policy "own rows" on public.app_meta
+  for all to authenticated
+  using ((select auth.uid()) = user_id)
+  with check ((select auth.uid()) = user_id);
+
+-- Keep updated_at honest on upserts.
+create or replace function public.set_updated_at()
+returns trigger language plpgsql as $$
+begin
+  new.updated_at = now();
+  return new;
+end $$;
+
+create trigger card_state_updated_at before update on public.card_state
+  for each row execute function public.set_updated_at();
+
+create trigger app_meta_updated_at before update on public.app_meta
+  for each row execute function public.set_updated_at();

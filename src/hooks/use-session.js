@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useState } from 'react';
 
 import { getDueCards, recordReview } from '@/lib/cards';
+import { syncNow } from '@/lib/sync';
 
 // How many cards later an Again card resurfaces within the current session.
 const AGAIN_REQUEUE_OFFSET = 3;
@@ -31,6 +32,12 @@ export function useSession({ topic } = {}) {
       setComplete(true);
     }
   }, [index, queue.length, loading, complete]);
+
+  // Push this session's progress to Supabase once the queue is done —
+  // fire-and-forget, so an offline session ends exactly like before.
+  useEffect(() => {
+    if (complete && !loading) syncNow();
+  }, [complete, loading]);
 
   const currentCard = queue[index];
 
