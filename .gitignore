@@ -40,3 +40,6 @@ example
 # generated native folders
 /ios
 /android
+
+# local debug logs
+crash*.txt
