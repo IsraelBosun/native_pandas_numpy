@@ -1,0 +1,30 @@
+{
+  "topic": "datetime",
+  "version": "1.0.0",
+  "steps": [
+    {
+      "type": "concept",
+      "heading": "Real dates, not text",
+      "body": "to_datetime() converts strings into actual datetime64 values. Only then does the .dt accessor (year, month, day_name...) and chronological comparison work correctly — text that merely looks like a date doesn't behave like one."
+    },
+    {
+      "type": "example",
+      "heading": "Pulling out components",
+      "code": "ts['date'].dt.year\nts['date'].dt.day_name()",
+      "output": "# year: 2024, 2024, ...\n# day_name: 'Monday', 'Tuesday', ...",
+      "caption": "The .dt accessor mirrors .str for text — it's the gateway to every date component."
+    },
+    {
+      "type": "concept",
+      "heading": "Dates as the index",
+      "body": "set_index() on a date column produces a DatetimeIndex, which unlocks partial-string slicing (loc['2024-01-05':'2024-01-07']) and is required by resample() for bucketing into weeks, months, etc."
+    },
+    {
+      "type": "example",
+      "heading": "Weekly totals",
+      "code": "ts.set_index('date')['revenue'].resample('W').sum()",
+      "output": "# one total per calendar week",
+      "caption": "You'll practice dt components, date_range, Timedelta, between(), and resample() in the cards that follow."
+    }
+  ]
+}

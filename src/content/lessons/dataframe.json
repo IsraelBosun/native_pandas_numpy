@@ -1,0 +1,30 @@
+{
+  "topic": "dataframe",
+  "version": "1.0.0",
+  "steps": [
+    {
+      "type": "concept",
+      "heading": "Selecting columns",
+      "body": "df['col'] returns one column as a Series. df[['col1', 'col2']] — a list inside the brackets — returns a DataFrame, even for a single column. The brackets vs. double-brackets distinction decides your result's shape."
+    },
+    {
+      "type": "example",
+      "heading": "Series vs. DataFrame",
+      "code": "df['revenue']       # Series\ndf[['revenue']]     # DataFrame, one column",
+      "output": "# Series: 0    120 ...\n# DataFrame:    revenue\n#            0      120",
+      "caption": "Reach for the list form whenever downstream code expects a DataFrame, not a Series."
+    },
+    {
+      "type": "concept",
+      "heading": "Adding and inspecting columns",
+      "body": "Assigning to a new bracketed name creates a column: df['new'] = .... Attributes like ndim, size, and axes describe the DataFrame's shape without changing it."
+    },
+    {
+      "type": "example",
+      "heading": "A derived column",
+      "code": "df['revenue_per_unit'] = df['revenue'] / df['units']",
+      "output": "# adds a new column, computed row by row",
+      "caption": "You'll practice adding columns, copying, converting to dict/array, and transposing in the cards that follow."
+    }
+  ]
+}

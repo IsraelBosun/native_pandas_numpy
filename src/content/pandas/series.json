@@ -1,0 +1,426 @@
+{
+  "version": "1.0.0",
+  "cards": [
+    {
+      "id": "series_create_with_index",
+      "topic": "series",
+      "subtopic": "creating",
+      "tags": [
+        "series",
+        "creating",
+        "index"
+      ],
+      "difficulty": "easy",
+      "prerequisites": [
+        "intro_create_series"
+      ],
+      "type": "flashcard",
+      "prompt": "Create a Series of 3 prices with custom labels 'a', 'b', 'c' instead of the default integer index.",
+      "answer": "pd.Series([10, 20, 30], index=['a', 'b', 'c'])",
+      "why": "The index argument lets you label each value with anything meaningful \u2014 not just 0, 1, 2 \u2014 right from creation.",
+      "whenToUse": "The values naturally have a label (a date, an id, a name) rather than a plain position.",
+      "commonMistake": "Passing an index list of the wrong length \u2014 pandas raises a ValueError instead of padding or truncating.",
+      "relatedMethods": [
+        "Series",
+        "index"
+      ],
+      "example": "# a    10\n# b    20\n# c    30\n# dtype: int64",
+      "starterCode": "",
+      "expectedOutput": "",
+      "tokens": [],
+      "distractors": []
+    },
+    {
+      "id": "series_name",
+      "topic": "series",
+      "subtopic": "attributes",
+      "tags": [
+        "name"
+      ],
+      "difficulty": "easy",
+      "prerequisites": [],
+      "dataset": "df",
+      "type": "flashcard",
+      "prompt": "Get the name of the revenue column, treated as a Series.",
+      "answer": "df['revenue'].name",
+      "why": "Every Series carries a name, which is exactly the column name when it came from a DataFrame \u2014 it travels with the values.",
+      "whenToUse": "Building generic code that needs to know a Series' label without hardcoding it.",
+      "commonMistake": "Forgetting a standalone Series (not pulled from a DataFrame) has name=None until you set one.",
+      "relatedMethods": [
+        "name",
+        "rename"
+      ],
+      "example": "# 'revenue'",
+      "starterCode": "",
+      "expectedOutput": "",
+      "tokens": [],
+      "distractors": []
+    },
+    {
+      "id": "series_rename",
+      "topic": "series",
+      "subtopic": "attributes",
+      "tags": [
+        "rename",
+        "name"
+      ],
+      "difficulty": "easy",
+      "prerequisites": [
+        "series_name"
+      ],
+      "dataset": "df",
+      "type": "flashcard",
+      "prompt": "Rename the revenue Series to 'sales' without touching the original df.",
+      "answer": "df['revenue'].rename('sales')",
+      "why": "rename() on a Series returns a new Series with a different name \u2014 it doesn't rename the column in the source DataFrame.",
+      "whenToUse": "Giving a Series a clearer label before combining it with others, e.g. before pd.concat.",
+      "commonMistake": "Expecting df's column to be renamed too \u2014 for that you'd use df.rename(columns=...) on the DataFrame itself.",
+      "relatedMethods": [
+        "rename",
+        "name"
+      ],
+      "example": "# 0    120\n# 1     95\n# Name: sales, dtype: int64",
+      "starterCode": "",
+      "expectedOutput": "",
+      "tokens": [],
+      "distractors": []
+    },
+    {
+      "id": "series_tolist",
+      "topic": "series",
+      "subtopic": "converting",
+      "tags": [
+        "tolist"
+      ],
+      "difficulty": "easy",
+      "prerequisites": [],
+      "dataset": "df",
+      "type": "flashcard",
+      "prompt": "Convert the revenue Series into a plain Python list.",
+      "answer": "df['revenue'].tolist()",
+      "why": "tolist() strips away the index and dtype, leaving a plain list of native Python values.",
+      "whenToUse": "Passing values to code that expects a plain list, not a pandas object.",
+      "commonMistake": "Using list(df['revenue']) instead \u2014 it works too, but tolist() also converts numpy scalar types (like numpy.int64) to native Python types, which list() alone doesn't.",
+      "relatedMethods": [
+        "tolist",
+        "to_numpy"
+      ],
+      "example": "# [120, 95, 80, 60, 45, 70, 50, 65]",
+      "starterCode": "",
+      "expectedOutput": "",
+      "tokens": [],
+      "distractors": []
+    },
+    {
+      "id": "series_unique",
+      "topic": "series",
+      "subtopic": "aggregating",
+      "tags": [
+        "unique"
+      ],
+      "difficulty": "easy",
+      "prerequisites": [],
+      "dataset": "df",
+      "type": "flashcard",
+      "prompt": "Get the distinct values in the region column, in order of first appearance.",
+      "answer": "df['region'].unique()",
+      "why": "unique() returns a NumPy array of distinct values, preserving first-seen order rather than sorting them.",
+      "whenToUse": "Checking what categories actually appear in a column before grouping or filtering by them.",
+      "commonMistake": "Expecting sorted output \u2014 unique() does not sort; use sorted(df['region'].unique()) if you need that.",
+      "relatedMethods": [
+        "unique",
+        "nunique",
+        "value_counts"
+      ],
+      "example": "# array(['West', 'East', 'North'], dtype=object)",
+      "starterCode": "",
+      "expectedOutput": "",
+      "tokens": [],
+      "distractors": []
+    },
+    {
+      "id": "series_nunique",
+      "topic": "series",
+      "subtopic": "aggregating",
+      "tags": [
+        "nunique"
+      ],
+      "difficulty": "easy",
+      "prerequisites": [
+        "series_unique"
+      ],
+      "dataset": "df",
+      "type": "flashcard",
+      "prompt": "Count how many distinct regions appear in df.",
+      "answer": "df['region'].nunique()",
+      "why": "nunique() is shorthand for len(df['region'].unique()) \u2014 a direct count instead of building the array first.",
+      "whenToUse": "You need the count of distinct values, not the values themselves.",
+      "commonMistake": "Calling len() on the Series itself \u2014 that counts all rows, not distinct values.",
+      "relatedMethods": [
+        "nunique",
+        "unique"
+      ],
+      "example": "# 3",
+      "starterCode": "",
+      "expectedOutput": "",
+      "tokens": [],
+      "distractors": []
+    },
+    {
+      "id": "series_value_counts",
+      "topic": "series",
+      "subtopic": "aggregating",
+      "tags": [
+        "value_counts"
+      ],
+      "difficulty": "easy",
+      "prerequisites": [
+        "series_unique"
+      ],
+      "dataset": "df",
+      "type": "flashcard",
+      "prompt": "Count how many rows fall into each region.",
+      "answer": "df['region'].value_counts()",
+      "why": "value_counts() returns a Series of counts per distinct value, sorted from most to least common by default.",
+      "whenToUse": "Getting a frequency breakdown of a categorical column at a glance.",
+      "commonMistake": "Expecting the result in the order values first appear \u2014 it's sorted by count (descending), not by appearance.",
+      "relatedMethods": [
+        "value_counts",
+        "unique",
+        "groupby"
+      ],
+      "example": "# West     3\n# East     3\n# North    2\n# Name: count, dtype: int64",
+      "starterCode": "",
+      "expectedOutput": "",
+      "tokens": [],
+      "distractors": []
+    },
+    {
+      "id": "series_astype",
+      "topic": "series",
+      "subtopic": "converting",
+      "tags": [
+        "astype"
+      ],
+      "difficulty": "medium",
+      "prerequisites": [],
+      "dataset": "df",
+      "type": "flashcard",
+      "prompt": "Convert the revenue Series (currently int64) to float.",
+      "answer": "df['revenue'].astype(float)",
+      "why": "astype() changes a Series' dtype explicitly, returning a new Series rather than modifying in place.",
+      "whenToUse": "A column loaded with the wrong type (e.g. numbers stored as text) needs converting before arithmetic works correctly.",
+      "commonMistake": "Forgetting astype() doesn't modify df in place \u2014 you need to reassign, e.g. df['revenue'] = df['revenue'].astype(float).",
+      "relatedMethods": [
+        "astype",
+        "dtype",
+        "dtypes"
+      ],
+      "example": "# 0    120.0\n# 1     95.0\n# dtype: float64",
+      "starterCode": "",
+      "expectedOutput": "",
+      "tokens": [],
+      "distractors": []
+    },
+    {
+      "id": "series_map",
+      "topic": "series",
+      "subtopic": "transforming",
+      "tags": [
+        "map"
+      ],
+      "difficulty": "medium",
+      "prerequisites": [],
+      "dataset": "df",
+      "type": "flashcard",
+      "prompt": "Replace each category value using a lookup dict: Shoes -> Footwear, Bags -> Accessories.",
+      "answer": "df['category'].map({'Shoes': 'Footwear', 'Bags': 'Accessories'})",
+      "why": "map() applies a dict (or function) element-wise to a Series \u2014 values not found in the dict become NaN.",
+      "whenToUse": "Recoding a categorical column using a known, fixed lookup table.",
+      "commonMistake": "Assuming unmapped values are left unchanged \u2014 map() replaces anything missing from the dict with NaN, not the original value.",
+      "relatedMethods": [
+        "map",
+        "apply",
+        "replace"
+      ],
+      "example": "# 0    Footwear\n# 1    Footwear\n# 2    Accessories\n# dtype: object",
+      "starterCode": "",
+      "expectedOutput": "",
+      "tokens": [],
+      "distractors": []
+    },
+    {
+      "id": "series_apply",
+      "topic": "series",
+      "subtopic": "transforming",
+      "tags": [
+        "apply"
+      ],
+      "difficulty": "medium",
+      "prerequisites": [],
+      "dataset": "df",
+      "type": "flashcard",
+      "prompt": "Apply a 10% markup to every value in the revenue Series using a lambda.",
+      "answer": "df['revenue'].apply(lambda x: x * 1.1)",
+      "why": "apply() runs a function against every element \u2014 useful for logic too custom for a built-in vectorized method.",
+      "whenToUse": "The transformation isn't a simple arithmetic op or a fixed lookup (that's what map()/vectorized ops are for).",
+      "commonMistake": "Reaching for apply() when plain vectorized arithmetic (df['revenue'] * 1.1) would do the same thing faster.",
+      "relatedMethods": [
+        "apply",
+        "map"
+      ],
+      "example": "# 0    132.0\n# 1    104.5\n# dtype: float64",
+      "starterCode": "",
+      "expectedOutput": "",
+      "tokens": [],
+      "distractors": []
+    },
+    {
+      "id": "series_arithmetic",
+      "topic": "series",
+      "subtopic": "arithmetic",
+      "tags": [
+        "arithmetic",
+        "alignment"
+      ],
+      "difficulty": "medium",
+      "prerequisites": [],
+      "dataset": "df",
+      "type": "flashcard",
+      "prompt": "Subtract the units Series from the revenue Series, element by element.",
+      "answer": "df['revenue'] - df['units']",
+      "why": "Arithmetic between two Series aligns by index first, then operates element-wise \u2014 not just by position.",
+      "whenToUse": "Computing a new value from two existing columns, e.g. a difference or a ratio.",
+      "commonMistake": "Assuming this works purely by position \u2014 if the two Series have different indexes, pandas aligns by label and introduces NaN for anything that doesn't match.",
+      "relatedMethods": [
+        "add",
+        "sub"
+      ],
+      "example": "# 0    108\n# 1     86\n# dtype: int64",
+      "starterCode": "",
+      "expectedOutput": "",
+      "tokens": [],
+      "distractors": []
+    },
+    {
+      "id": "series_sum",
+      "topic": "series",
+      "subtopic": "aggregating",
+      "tags": [
+        "sum"
+      ],
+      "difficulty": "easy",
+      "prerequisites": [],
+      "dataset": "df",
+      "type": "flashcard",
+      "prompt": "Add up every value in the revenue Series into a single total.",
+      "answer": "df['revenue'].sum()",
+      "why": "sum() reduces a Series to one scalar \u2014 the total across every row.",
+      "whenToUse": "A single overall total is needed, rather than a per-group breakdown (that's groupby's job).",
+      "commonMistake": "Calling sum() on the whole DataFrame (df.sum()) when you only meant one column \u2014 that sums every numeric column separately.",
+      "relatedMethods": [
+        "sum",
+        "mean"
+      ],
+      "example": "# 585",
+      "starterCode": "",
+      "expectedOutput": "",
+      "tokens": [],
+      "distractors": []
+    },
+    {
+      "id": "series_idxmax",
+      "topic": "series",
+      "subtopic": "aggregating",
+      "tags": [
+        "idxmax"
+      ],
+      "difficulty": "medium",
+      "prerequisites": [
+        "series_sum"
+      ],
+      "dataset": "df",
+      "type": "flashcard",
+      "prompt": "Get the index label of the row with the highest revenue.",
+      "answer": "df['revenue'].idxmax()",
+      "why": "idxmax() returns the label where the maximum occurs, not the maximum value itself \u2014 max() would give you the value.",
+      "whenToUse": "You need to know which row is the maximum, e.g. to look up its other columns afterward.",
+      "commonMistake": "Confusing idxmax() (returns a label) with argmax() (returns an integer position) \u2014 they usually agree with a default RangeIndex, but diverge once the index isn't 0..n.",
+      "relatedMethods": [
+        "idxmax",
+        "idxmin",
+        "max"
+      ],
+      "example": "# 0",
+      "starterCode": "",
+      "expectedOutput": "",
+      "tokens": [],
+      "distractors": []
+    },
+    {
+      "id": "series_iloc_position",
+      "topic": "series",
+      "subtopic": "selecting",
+      "tags": [
+        "iloc"
+      ],
+      "difficulty": "medium",
+      "prerequisites": [
+        "series_idxmax"
+      ],
+      "dataset": "df",
+      "type": "fill-blank",
+      "prompt": "Get the first value of the revenue Series by position, regardless of what its index label happens to be. Fill in the blank.",
+      "answer": "df['revenue'].iloc[0]",
+      "why": "iloc works on a Series the same way it does on a DataFrame \u2014 strictly by integer position, ignoring labels.",
+      "whenToUse": "The Series might have a non-default index (e.g. after a filter or sort), but you still want 'the first row' by position.",
+      "commonMistake": "Using df['revenue'][0] instead \u2014 that looks up label 0, which raises a KeyError if row 0 was previously dropped or sorted away.",
+      "relatedMethods": [
+        "iloc",
+        "loc"
+      ],
+      "example": "# 120",
+      "starterCode": "df['revenue'].___[0]",
+      "expectedOutput": "",
+      "tokens": [
+        "iloc"
+      ],
+      "distractors": [
+        "loc",
+        "at",
+        "index"
+      ]
+    },
+    {
+      "id": "series_above_mean_choice",
+      "topic": "series",
+      "subtopic": "arithmetic",
+      "tags": [
+        "boolean",
+        "mean"
+      ],
+      "difficulty": "medium",
+      "prerequisites": [
+        "series_sum"
+      ],
+      "dataset": "df",
+      "type": "multiple-choice",
+      "prompt": "Which correctly marks each row True where revenue is above the average revenue?",
+      "answer": "df['revenue'] > df['revenue'].mean()",
+      "why": "Comparing a Series to a scalar (here, its own mean) broadcasts the comparison across every element, producing a boolean Series.",
+      "whenToUse": "Flagging above/below-average rows before filtering or counting them.",
+      "commonMistake": "Reversing the comparison direction (mean() > df['revenue']) \u2014 that flags below-average rows instead, the opposite of what was asked.",
+      "relatedMethods": [
+        "mean"
+      ],
+      "example": "# 0     True\n# 1     True\n# 2     True\n# 3    False\n# dtype: bool",
+      "starterCode": "",
+      "expectedOutput": "",
+      "tokens": [],
+      "distractors": [
+        "df['revenue'] == df['revenue'].mean()",
+        "df['revenue'].mean() > df['revenue']"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,421 @@
+{
+  "version": "1.0.0",
+  "cards": [
+    {
+      "id": "intro_import",
+      "topic": "introduction",
+      "subtopic": "import",
+      "tags": [
+        "import",
+        "setup"
+      ],
+      "difficulty": "easy",
+      "prerequisites": [],
+      "type": "flashcard",
+      "prompt": "Import pandas using its standard alias.",
+      "answer": "import pandas as pd",
+      "why": "Every pandas tutorial, doc page, and codebase uses the pd alias \u2014 it's a universal convention, not just a shortcut.",
+      "whenToUse": "The first line of any script or notebook that touches pandas.",
+      "commonMistake": "Importing as a different alias \u2014 it works, but makes your code harder for others (and Stack Overflow answers) to follow.",
+      "relatedMethods": [
+        "import"
+      ],
+      "example": "# no output \u2014 makes pd.DataFrame, pd.Series, etc. available",
+      "starterCode": "",
+      "expectedOutput": "",
+      "tokens": [],
+      "distractors": []
+    },
+    {
+      "id": "intro_create_series",
+      "topic": "introduction",
+      "subtopic": "series",
+      "tags": [
+        "series",
+        "creating"
+      ],
+      "difficulty": "easy",
+      "prerequisites": [
+        "intro_import"
+      ],
+      "type": "flashcard",
+      "prompt": "Create a Series \u2014 a single labeled column of data \u2014 from a list of numbers.",
+      "answer": "pd.Series([10, 20, 30])",
+      "why": "A Series is pandas' 1D building block: values plus an index. A DataFrame is just a collection of Series sharing one index.",
+      "whenToUse": "Representing a single sequence of values that needs labels, not just a plain Python list.",
+      "commonMistake": "Expecting a Series to print like a list \u2014 it always shows its index alongside each value.",
+      "relatedMethods": [
+        "Series",
+        "DataFrame"
+      ],
+      "example": "# 0    10\n# 1    20\n# 2    30\n# dtype: int64",
+      "starterCode": "",
+      "expectedOutput": "",
+      "tokens": [],
+      "distractors": []
+    },
+    {
+      "id": "intro_create_dataframe",
+      "topic": "introduction",
+      "subtopic": "dataframe",
+      "tags": [
+        "dataframe",
+        "creating"
+      ],
+      "difficulty": "easy",
+      "prerequisites": [
+        "intro_import"
+      ],
+      "type": "flashcard",
+      "prompt": "Create a DataFrame from a dict of equal-length lists, one list per column.",
+      "answer": "pd.DataFrame({'region': ['West', 'East'], 'revenue': [120, 95]})",
+      "why": "Each dict key becomes a column name, and each list becomes that column's values \u2014 the most common way to build a small DataFrame by hand.",
+      "whenToUse": "Constructing sample data, or assembling results you've computed in plain Python into a table.",
+      "commonMistake": "Passing lists of different lengths \u2014 pandas raises a ValueError instead of padding the shorter one.",
+      "relatedMethods": [
+        "DataFrame",
+        "Series"
+      ],
+      "example": "#   region  revenue\n# 0   West      120\n# 1   East       95",
+      "starterCode": "",
+      "expectedOutput": "",
+      "tokens": [],
+      "distractors": []
+    },
+    {
+      "id": "intro_shape",
+      "topic": "introduction",
+      "subtopic": "inspecting",
+      "tags": [
+        "shape",
+        "inspecting"
+      ],
+      "difficulty": "easy",
+      "prerequisites": [
+        "intro_create_dataframe"
+      ],
+      "dataset": "df",
+      "type": "flashcard",
+      "prompt": "Check how many rows and columns df has.",
+      "answer": "df.shape",
+      "why": "shape returns a (rows, columns) tuple in one call \u2014 the fastest way to sanity-check a DataFrame's size.",
+      "whenToUse": "Right after loading or filtering data, to confirm you got what you expected.",
+      "commonMistake": "Calling it like a method (df.shape()) \u2014 shape is an attribute, not a method, so it has no parentheses.",
+      "relatedMethods": [
+        "shape",
+        "len",
+        "size"
+      ],
+      "example": "# (8, 4)",
+      "starterCode": "",
+      "expectedOutput": "",
+      "tokens": [],
+      "distractors": []
+    },
+    {
+      "id": "intro_head",
+      "topic": "introduction",
+      "subtopic": "inspecting",
+      "tags": [
+        "head",
+        "inspecting"
+      ],
+      "difficulty": "easy",
+      "prerequisites": [
+        "intro_create_dataframe"
+      ],
+      "dataset": "df",
+      "type": "flashcard",
+      "prompt": "Preview the first 3 rows of df.",
+      "answer": "df.head(3)",
+      "why": "head() is the fastest way to eyeball a DataFrame's shape and column contents without printing the whole thing.",
+      "whenToUse": "Right after loading data, or after any transformation, to spot-check the result.",
+      "commonMistake": "Forgetting head() defaults to 5 rows when called with no argument, not 10.",
+      "relatedMethods": [
+        "head",
+        "tail",
+        "sample"
+      ],
+      "example": "#   region category  revenue  units\n# 0   West    Shoes      120     12\n# 1   East    Shoes       95      9\n# 2   West     Bags       80      8",
+      "starterCode": "",
+      "expectedOutput": "",
+      "tokens": [],
+      "distractors": []
+    },
+    {
+      "id": "intro_tail",
+      "topic": "introduction",
+      "subtopic": "inspecting",
+      "tags": [
+        "tail",
+        "inspecting"
+      ],
+      "difficulty": "easy",
+      "prerequisites": [
+        "intro_head"
+      ],
+      "dataset": "df",
+      "type": "flashcard",
+      "prompt": "Preview the last 2 rows of df.",
+      "answer": "df.tail(2)",
+      "why": "tail() mirrors head() for the end of the DataFrame \u2014 useful for checking that a sort or append landed correctly.",
+      "whenToUse": "Confirming the end of a DataFrame after sorting, appending, or a time-ordered load.",
+      "commonMistake": "Assuming tail() reverses row order \u2014 it doesn't, it just shows the last n rows in their existing order.",
+      "relatedMethods": [
+        "tail",
+        "head"
+      ],
+      "example": "#   region category  revenue  units\n# 6  North    Shoes       50      5\n# 7  North     Bags       65      6",
+      "starterCode": "",
+      "expectedOutput": "",
+      "tokens": [],
+      "distractors": []
+    },
+    {
+      "id": "intro_info",
+      "topic": "introduction",
+      "subtopic": "inspecting",
+      "tags": [
+        "info",
+        "inspecting"
+      ],
+      "difficulty": "easy",
+      "prerequisites": [
+        "intro_create_dataframe"
+      ],
+      "dataset": "df",
+      "type": "flashcard",
+      "prompt": "Print a summary of df's columns, dtypes, and non-null counts.",
+      "answer": "df.info()",
+      "why": "info() is the single fastest way to spot missing values and wrong dtypes (like numbers stored as text) in one glance.",
+      "whenToUse": "Right after loading unfamiliar data, before you trust any column's contents.",
+      "commonMistake": "Confusing info() with describe() \u2014 info() is about structure (dtypes, nulls), describe() is about numeric statistics.",
+      "relatedMethods": [
+        "info",
+        "dtypes",
+        "describe"
+      ],
+      "example": "# RangeIndex: 8 entries, 0 to 7\n# region, category, revenue, units \u2014 8 non-null each",
+      "starterCode": "",
+      "expectedOutput": "",
+      "tokens": [],
+      "distractors": []
+    },
+    {
+      "id": "intro_describe",
+      "topic": "introduction",
+      "subtopic": "inspecting",
+      "tags": [
+        "describe",
+        "inspecting"
+      ],
+      "difficulty": "easy",
+      "prerequisites": [
+        "intro_create_dataframe"
+      ],
+      "dataset": "df",
+      "type": "flashcard",
+      "prompt": "Get summary statistics (count, mean, std, min, quartiles, max) for df's numeric columns.",
+      "answer": "df.describe()",
+      "why": "describe() gives you a quick statistical fingerprint of every numeric column \u2014 a fast way to spot outliers or skew.",
+      "whenToUse": "Getting an at-a-glance feel for a numeric column's distribution.",
+      "commonMistake": "Forgetting describe() silently skips non-numeric columns by default (unless you pass include='all').",
+      "relatedMethods": [
+        "describe",
+        "info"
+      ],
+      "example": "#        revenue    units\n# count      8.0      8.0\n# mean    73.125    7.250\n# ...        ...      ...",
+      "starterCode": "",
+      "expectedOutput": "",
+      "tokens": [],
+      "distractors": []
+    },
+    {
+      "id": "intro_dtypes",
+      "topic": "introduction",
+      "subtopic": "inspecting",
+      "tags": [
+        "dtypes",
+        "inspecting"
+      ],
+      "difficulty": "easy",
+      "prerequisites": [
+        "intro_create_dataframe"
+      ],
+      "dataset": "df",
+      "type": "flashcard",
+      "prompt": "Check the data type of every column in df.",
+      "answer": "df.dtypes",
+      "why": "dtypes reveals when numbers were loaded as text (object) \u2014 a frequent cause of silently-wrong math and comparisons.",
+      "whenToUse": "Right after loading data, especially from CSV, before doing any arithmetic on a column.",
+      "commonMistake": "Assuming a column that looks numeric is actually numeric \u2014 CSV loads default text-looking numbers to object if anything in the column doesn't parse cleanly.",
+      "relatedMethods": [
+        "dtypes",
+        "astype",
+        "info"
+      ],
+      "example": "# region       object\n# category     object\n# revenue       int64\n# units         int64\n# dtype: object",
+      "starterCode": "",
+      "expectedOutput": "",
+      "tokens": [],
+      "distractors": []
+    },
+    {
+      "id": "intro_columns",
+      "topic": "introduction",
+      "subtopic": "inspecting",
+      "tags": [
+        "columns",
+        "inspecting"
+      ],
+      "difficulty": "easy",
+      "prerequisites": [
+        "intro_create_dataframe"
+      ],
+      "dataset": "df",
+      "type": "flashcard",
+      "prompt": "Get the column names of df.",
+      "answer": "df.columns",
+      "why": "columns returns an Index of labels \u2014 useful for checking exact spelling/casing before referencing a column elsewhere.",
+      "whenToUse": "Confirming what a column is actually called before selecting or renaming it.",
+      "commonMistake": "Treating df.columns like a plain list \u2014 it's an Index object, though most list operations (list(df.columns)) still work on it.",
+      "relatedMethods": [
+        "columns",
+        "index",
+        "rename"
+      ],
+      "example": "# Index(['region', 'category', 'revenue', 'units'], dtype='object')",
+      "starterCode": "",
+      "expectedOutput": "",
+      "tokens": [],
+      "distractors": []
+    },
+    {
+      "id": "intro_index",
+      "topic": "introduction",
+      "subtopic": "inspecting",
+      "tags": [
+        "index",
+        "inspecting"
+      ],
+      "difficulty": "easy",
+      "prerequisites": [
+        "intro_create_dataframe"
+      ],
+      "dataset": "df",
+      "type": "flashcard",
+      "prompt": "Get df's row index (its row labels).",
+      "answer": "df.index",
+      "why": "Every DataFrame has a row index, even if you never set one \u2014 by default it's a simple 0..n RangeIndex.",
+      "whenToUse": "Checking whether a DataFrame has a meaningful custom index (like dates) or just the default integer one.",
+      "commonMistake": "Confusing the index with a regular column \u2014 it's a separate axis, not one of df.columns.",
+      "relatedMethods": [
+        "index",
+        "set_index",
+        "reset_index"
+      ],
+      "example": "# RangeIndex(start=0, stop=8, step=1)",
+      "starterCode": "",
+      "expectedOutput": "",
+      "tokens": [],
+      "distractors": []
+    },
+    {
+      "id": "intro_len",
+      "topic": "introduction",
+      "subtopic": "inspecting",
+      "tags": [
+        "len",
+        "inspecting"
+      ],
+      "difficulty": "easy",
+      "prerequisites": [
+        "intro_shape"
+      ],
+      "dataset": "df",
+      "type": "fill-blank",
+      "prompt": "Count how many rows df has using a plain Python built-in, not a pandas-specific method. Fill in the blank.",
+      "answer": "len(df)",
+      "why": "len() on a DataFrame counts its rows, same as it would count items in a list \u2014 one of the few plain-Python builtins that works directly on pandas objects.",
+      "whenToUse": "A quick row count when you don't need the column count too (unlike shape).",
+      "commonMistake": "Expecting len(df) to count columns \u2014 it always counts rows, matching len() on the row index.",
+      "relatedMethods": [
+        "shape",
+        "size"
+      ],
+      "example": "# 8",
+      "starterCode": "___(df)",
+      "expectedOutput": "",
+      "tokens": [
+        "len"
+      ],
+      "distractors": [
+        "shape",
+        "count",
+        "size"
+      ]
+    },
+    {
+      "id": "intro_empty",
+      "topic": "introduction",
+      "subtopic": "inspecting",
+      "tags": [
+        "empty",
+        "inspecting"
+      ],
+      "difficulty": "easy",
+      "prerequisites": [
+        "intro_shape"
+      ],
+      "dataset": "df",
+      "type": "flashcard",
+      "prompt": "Check whether df has zero rows.",
+      "answer": "df.empty",
+      "why": "empty is a quick boolean check \u2014 useful after a filter that might return nothing, before you try to use the result.",
+      "whenToUse": "Guarding code that would error or behave oddly on a zero-row DataFrame, e.g. after a filter with no matches.",
+      "commonMistake": "Calling it as a method (df.empty()) \u2014 like shape, it's an attribute, not a method.",
+      "relatedMethods": [
+        "empty",
+        "shape",
+        "len"
+      ],
+      "example": "# False",
+      "starterCode": "",
+      "expectedOutput": "",
+      "tokens": [],
+      "distractors": []
+    },
+    {
+      "id": "intro_series_vs_dataframe_choice",
+      "topic": "introduction",
+      "subtopic": "series",
+      "tags": [
+        "series",
+        "dataframe"
+      ],
+      "difficulty": "easy",
+      "prerequisites": [
+        "intro_create_series",
+        "intro_create_dataframe"
+      ],
+      "type": "multiple-choice",
+      "prompt": "Which of these creates a pandas Series, not a DataFrame?",
+      "answer": "pd.Series([1, 2, 3])",
+      "why": "Series is the 1D constructor; DataFrame is 2D even when built from a single-key dict or a single-column list of lists.",
+      "whenToUse": "Deciding which constructor to reach for based on whether you need one labeled column or a full table.",
+      "commonMistake": "Assuming pd.DataFrame({'a': [1, 2, 3]}) returns a Series because it only has one column \u2014 it's still a DataFrame.",
+      "relatedMethods": [
+        "Series",
+        "DataFrame"
+      ],
+      "example": "# 0    1\n# 1    2\n# 2    3\n# dtype: int64",
+      "starterCode": "",
+      "expectedOutput": "",
+      "tokens": [],
+      "distractors": [
+        "pd.DataFrame([1, 2, 3])",
+        "pd.DataFrame({'a': [1, 2, 3]})"
+      ]
+    }
+  ]
+}

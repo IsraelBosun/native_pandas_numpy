@@ -1,0 +1,425 @@
+{
+  "version": "1.0.0",
+  "cards": [
+    {
+      "id": "df_select_single_column",
+      "topic": "dataframe",
+      "subtopic": "selecting",
+      "tags": [
+        "selecting",
+        "column"
+      ],
+      "difficulty": "easy",
+      "prerequisites": [],
+      "dataset": "df",
+      "type": "flashcard",
+      "prompt": "Select the revenue column from df as a Series.",
+      "answer": "df['revenue']",
+      "why": "Bracket access with a single column name always returns a 1D Series, sharing df's index.",
+      "whenToUse": "You need the values of one column, e.g. to compute a sum or feed into a chart.",
+      "commonMistake": "Using df.revenue (dot access) \u2014 it works until the column name collides with a DataFrame method or has a space, then it silently breaks.",
+      "relatedMethods": [
+        "loc",
+        "iloc"
+      ],
+      "example": "# 0    120\n# 1     95\n# 2     80\n# Name: revenue, dtype: int64",
+      "starterCode": "",
+      "expectedOutput": "",
+      "tokens": [],
+      "distractors": []
+    },
+    {
+      "id": "df_select_multiple_columns",
+      "topic": "dataframe",
+      "subtopic": "selecting",
+      "tags": [
+        "selecting",
+        "column"
+      ],
+      "difficulty": "easy",
+      "prerequisites": [
+        "df_select_single_column"
+      ],
+      "dataset": "df",
+      "type": "flashcard",
+      "prompt": "Select the region and revenue columns together, keeping the result a DataFrame.",
+      "answer": "df[['region', 'revenue']]",
+      "why": "A list of column names inside the brackets returns a DataFrame, even if the list has only one name.",
+      "whenToUse": "You need more than one column, or want to guarantee a DataFrame (not a Series) even for a single column.",
+      "commonMistake": "Forgetting the inner brackets \u2014 df['region', 'revenue'] (no inner list) raises a KeyError.",
+      "relatedMethods": [
+        "loc"
+      ],
+      "example": "#   region  revenue\n# 0   West      120\n# 1   East       95",
+      "starterCode": "",
+      "expectedOutput": "",
+      "tokens": [],
+      "distractors": []
+    },
+    {
+      "id": "df_add_column",
+      "topic": "dataframe",
+      "subtopic": "modifying",
+      "tags": [
+        "adding-column"
+      ],
+      "difficulty": "easy",
+      "prerequisites": [
+        "df_select_single_column"
+      ],
+      "dataset": "df",
+      "type": "flashcard",
+      "prompt": "Add a new column revenue_per_unit computed from revenue divided by units.",
+      "answer": "df['revenue_per_unit'] = df['revenue'] / df['units']",
+      "why": "Assigning to a bracketed column name that doesn't exist yet creates it \u2014 pandas does the division element-wise across every row.",
+      "whenToUse": "Deriving a new column from one or more existing columns.",
+      "commonMistake": "Doing this on a DataFrame that's actually a filtered view/copy of another \u2014 pandas may raise a SettingWithCopyWarning.",
+      "relatedMethods": [
+        "assign"
+      ],
+      "example": "# adds a revenue_per_unit column, e.g. 10.0 for row 0",
+      "starterCode": "",
+      "expectedOutput": "",
+      "tokens": [],
+      "distractors": []
+    },
+    {
+      "id": "df_column_dtype_single",
+      "topic": "dataframe",
+      "subtopic": "inspecting",
+      "tags": [
+        "dtype"
+      ],
+      "difficulty": "easy",
+      "prerequisites": [
+        "df_select_single_column"
+      ],
+      "dataset": "df",
+      "type": "flashcard",
+      "prompt": "Check the data type of just the revenue column.",
+      "answer": "df['revenue'].dtype",
+      "why": "dtype (singular) is a Series attribute; dtypes (plural) is the DataFrame-level version covering every column at once.",
+      "whenToUse": "Confirming one specific column's type before doing arithmetic or comparisons on it.",
+      "commonMistake": "Writing df['revenue'].dtypes (plural) \u2014 it still works on a Series but is the wrong attribute name conceptually.",
+      "relatedMethods": [
+        "dtype",
+        "dtypes",
+        "astype"
+      ],
+      "example": "# dtype('int64')",
+      "starterCode": "",
+      "expectedOutput": "",
+      "tokens": [],
+      "distractors": []
+    },
+    {
+      "id": "df_ndim",
+      "topic": "dataframe",
+      "subtopic": "inspecting",
+      "tags": [
+        "ndim"
+      ],
+      "difficulty": "easy",
+      "prerequisites": [],
+      "dataset": "df",
+      "type": "flashcard",
+      "prompt": "Check how many dimensions df has.",
+      "answer": "df.ndim",
+      "why": "A DataFrame is always 2D (rows and columns); a Series is always 1D \u2014 ndim confirms which you're holding.",
+      "whenToUse": "Debugging when you're not sure whether a variable ended up as a Series or a DataFrame.",
+      "commonMistake": "Confusing ndim (dimension count) with shape (size along each dimension) \u2014 they answer different questions.",
+      "relatedMethods": [
+        "shape",
+        "size"
+      ],
+      "example": "# 2",
+      "starterCode": "",
+      "expectedOutput": "",
+      "tokens": [],
+      "distractors": []
+    },
+    {
+      "id": "df_size",
+      "topic": "dataframe",
+      "subtopic": "inspecting",
+      "tags": [
+        "size"
+      ],
+      "difficulty": "easy",
+      "prerequisites": [
+        "df_ndim"
+      ],
+      "dataset": "df",
+      "type": "flashcard",
+      "prompt": "Get the total number of elements in df (rows times columns).",
+      "answer": "df.size",
+      "why": "size multiplies rows by columns into a single number \u2014 shape gives you the two numbers separately.",
+      "whenToUse": "A rough sense of how much data you're holding, e.g. before an expensive operation.",
+      "commonMistake": "Expecting size to equal the row count (like len()) \u2014 it's rows * columns, not just rows.",
+      "relatedMethods": [
+        "shape",
+        "ndim",
+        "len"
+      ],
+      "example": "# 32",
+      "starterCode": "",
+      "expectedOutput": "",
+      "tokens": [],
+      "distractors": []
+    },
+    {
+      "id": "df_copy",
+      "topic": "dataframe",
+      "subtopic": "modifying",
+      "tags": [
+        "copy"
+      ],
+      "difficulty": "medium",
+      "prerequisites": [],
+      "dataset": "df",
+      "type": "flashcard",
+      "prompt": "Make a full independent copy of df, so edits to the copy don't affect the original.",
+      "answer": "df.copy()",
+      "why": "Plain assignment (df2 = df) just creates a second name pointing at the same data \u2014 copy() actually duplicates it.",
+      "whenToUse": "Before making edits to a DataFrame you still need the original, unmodified version of.",
+      "commonMistake": "Assuming df2 = df is enough to protect df from later mutations to df2 \u2014 it isn't.",
+      "relatedMethods": [
+        "copy"
+      ],
+      "example": "# an identical DataFrame that no longer shares memory with df",
+      "starterCode": "",
+      "expectedOutput": "",
+      "tokens": [],
+      "distractors": []
+    },
+    {
+      "id": "df_to_dict",
+      "topic": "dataframe",
+      "subtopic": "converting",
+      "tags": [
+        "to_dict"
+      ],
+      "difficulty": "medium",
+      "prerequisites": [],
+      "dataset": "df",
+      "type": "flashcard",
+      "prompt": "Convert df to a plain dict of lists, one list per column.",
+      "answer": "df.to_dict('list')",
+      "why": "to_dict() accepts an orient argument controlling the output shape \u2014 'list' gives {column: [values...]}, the most common shape for exporting to plain Python.",
+      "whenToUse": "Handing DataFrame data off to code (or a JSON API) that only understands plain dicts/lists.",
+      "commonMistake": "Forgetting the default orient is 'dict' (nested {column: {row_label: value}}), not the flatter 'list' shape.",
+      "relatedMethods": [
+        "to_dict",
+        "to_numpy"
+      ],
+      "example": "# {'region': ['West', 'East', ...], 'revenue': [120, 95, ...], ...}",
+      "starterCode": "",
+      "expectedOutput": "",
+      "tokens": [],
+      "distractors": []
+    },
+    {
+      "id": "df_values",
+      "topic": "dataframe",
+      "subtopic": "converting",
+      "tags": [
+        "to_numpy"
+      ],
+      "difficulty": "medium",
+      "prerequisites": [],
+      "dataset": "df",
+      "type": "fill-blank",
+      "prompt": "Convert df into a raw NumPy array, dropping the column labels and index. Fill in the blank.",
+      "answer": "df.to_numpy()",
+      "why": "to_numpy() is the modern, explicit way to drop down to a plain array \u2014 the older .values attribute does the same thing but is less explicit about types with mixed columns.",
+      "whenToUse": "Feeding a DataFrame into a library (like NumPy or scikit-learn) that expects a plain array, not pandas objects.",
+      "commonMistake": "Forgetting that mixed dtypes (e.g. text and numbers together) force the whole array to a common dtype like object.",
+      "relatedMethods": [
+        "to_numpy",
+        "values",
+        "to_dict"
+      ],
+      "example": "# array([['West', 'Shoes', 120, 12], ...], dtype=object)",
+      "starterCode": "df.___()",
+      "expectedOutput": "",
+      "tokens": [
+        "to_numpy"
+      ],
+      "distractors": [
+        "values",
+        "array",
+        "tolist"
+      ]
+    },
+    {
+      "id": "df_column_in",
+      "topic": "dataframe",
+      "subtopic": "inspecting",
+      "tags": [
+        "columns"
+      ],
+      "difficulty": "easy",
+      "prerequisites": [
+        "intro_columns"
+      ],
+      "dataset": "df",
+      "type": "flashcard",
+      "prompt": "Check whether 'revenue' is one of df's column names.",
+      "answer": "'revenue' in df.columns",
+      "why": "in checks membership against the column Index directly \u2014 a quick guard before referencing a column that might not exist.",
+      "whenToUse": "Defensive checks before code that assumes a specific column is present, e.g. after a join or an external data load.",
+      "commonMistake": "Writing 'revenue' in df (without .columns) \u2014 that checks index labels for a Series, but for a DataFrame it happens to also check columns, which is easy to misremember and best avoided.",
+      "relatedMethods": [
+        "columns"
+      ],
+      "example": "# True",
+      "starterCode": "",
+      "expectedOutput": "",
+      "tokens": [],
+      "distractors": []
+    },
+    {
+      "id": "df_add_column_conditional",
+      "topic": "dataframe",
+      "subtopic": "modifying",
+      "tags": [
+        "adding-column",
+        "boolean"
+      ],
+      "difficulty": "medium",
+      "prerequisites": [
+        "df_add_column"
+      ],
+      "dataset": "df",
+      "type": "flashcard",
+      "prompt": "Add a boolean column high_value that's True wherever revenue is over 100.",
+      "answer": "df['high_value'] = df['revenue'] > 100",
+      "why": "A comparison against a column produces a boolean Series, which assigns cleanly as a new column, one True/False per row.",
+      "whenToUse": "Tagging rows with a derived flag you'll filter or group by later.",
+      "commonMistake": "Wrapping the comparison in df[...] first \u2014 that filters rows instead of producing a column to assign.",
+      "relatedMethods": [
+        "assign"
+      ],
+      "example": "# adds high_value: True for row 0 (120 > 100), False for row 1 (95 > 100)",
+      "starterCode": "",
+      "expectedOutput": "",
+      "tokens": [],
+      "distractors": []
+    },
+    {
+      "id": "df_T",
+      "topic": "dataframe",
+      "subtopic": "reshaping",
+      "tags": [
+        "transpose"
+      ],
+      "difficulty": "medium",
+      "prerequisites": [],
+      "dataset": "df",
+      "type": "flashcard",
+      "prompt": "Transpose df, swapping rows and columns.",
+      "answer": "df.T",
+      "why": "T flips the DataFrame so former columns become the index and former rows become columns \u2014 mostly useful for small, wide summaries.",
+      "whenToUse": "A DataFrame with few rows and many columns (or vice versa) that would display or read better flipped.",
+      "commonMistake": "Transposing a large DataFrame with mixed dtypes \u2014 every value gets coerced to a common dtype (usually object), which can be surprising.",
+      "relatedMethods": [
+        "transpose"
+      ],
+      "example": "# columns become row labels, row labels become column headers",
+      "starterCode": "",
+      "expectedOutput": "",
+      "tokens": [],
+      "distractors": []
+    },
+    {
+      "id": "df_axes",
+      "topic": "dataframe",
+      "subtopic": "inspecting",
+      "tags": [
+        "axes"
+      ],
+      "difficulty": "medium",
+      "prerequisites": [
+        "intro_index",
+        "intro_columns"
+      ],
+      "dataset": "df",
+      "type": "flashcard",
+      "prompt": "Get both of df's axes (its row index and its columns) in one call.",
+      "answer": "df.axes",
+      "why": "axes returns a two-item list \u2014 [index, columns] \u2014 the same information index and columns give separately, bundled together.",
+      "whenToUse": "Code that needs to iterate over 'both axes' generically, without hardcoding which is which.",
+      "commonMistake": "Expecting axes[0] to be columns \u2014 it's [index, columns] in that order, index first.",
+      "relatedMethods": [
+        "index",
+        "columns"
+      ],
+      "example": "# [RangeIndex(start=0, stop=8, step=1), Index(['region', 'category', 'revenue', 'units'], dtype='object')]",
+      "starterCode": "",
+      "expectedOutput": "",
+      "tokens": [],
+      "distractors": []
+    },
+    {
+      "id": "df_sample",
+      "topic": "dataframe",
+      "subtopic": "inspecting",
+      "tags": [
+        "sample"
+      ],
+      "difficulty": "easy",
+      "prerequisites": [
+        "intro_head"
+      ],
+      "dataset": "df",
+      "type": "flashcard",
+      "prompt": "Randomly sample 2 rows from df, using a fixed random_state so the result is reproducible.",
+      "answer": "df.sample(2, random_state=0)",
+      "why": "sample() picks random rows rather than the first/last n like head()/tail() \u2014 random_state makes the 'random' choice reproducible across runs.",
+      "whenToUse": "Eyeballing a representative slice of a large DataFrame instead of just its beginning.",
+      "commonMistake": "Omitting random_state, so the sampled rows change every run \u2014 fine for exploration, unhelpful when trying to reproduce a bug.",
+      "relatedMethods": [
+        "sample",
+        "head",
+        "tail"
+      ],
+      "example": "# 2 randomly chosen rows, exact ones fixed by random_state=0",
+      "starterCode": "",
+      "expectedOutput": "",
+      "tokens": [],
+      "distractors": []
+    },
+    {
+      "id": "df_column_selection_choice",
+      "topic": "dataframe",
+      "subtopic": "selecting",
+      "tags": [
+        "selecting",
+        "column"
+      ],
+      "difficulty": "medium",
+      "prerequisites": [
+        "df_select_single_column",
+        "df_select_multiple_columns"
+      ],
+      "dataset": "df",
+      "type": "multiple-choice",
+      "prompt": "Which of these selects revenue and keeps the result a DataFrame, not a Series?",
+      "answer": "df[['revenue']]",
+      "why": "A single name in single brackets (df['revenue']) or as an attribute (df.revenue) both return a Series; wrapping the name in a list forces a DataFrame.",
+      "whenToUse": "Any time downstream code (like a merge or a plot) requires a DataFrame, even for one column.",
+      "commonMistake": "Assuming df.revenue and df['revenue'] behave differently \u2014 they're equivalent, and both return a Series.",
+      "relatedMethods": [
+        "loc"
+      ],
+      "example": "#    revenue\n# 0      120\n# 1       95",
+      "starterCode": "",
+      "expectedOutput": "",
+      "tokens": [],
+      "distractors": [
+        "df['revenue']",
+        "df.revenue"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,402 @@
+{
+  "version": "1.0.0",
+  "cards": [
+    {
+      "id": "dt_to_datetime",
+      "topic": "datetime",
+      "subtopic": "to_datetime",
+      "tags": [
+        "to_datetime"
+      ],
+      "difficulty": "easy",
+      "prerequisites": [],
+      "type": "flashcard",
+      "prompt": "Convert a list of date strings into real datetime values.",
+      "answer": "pd.to_datetime(['2024-01-05', '2024-01-06'])",
+      "why": "to_datetime() parses strings (or numbers, or mixed formats) into pandas Timestamps \u2014 the type that unlocks date arithmetic and the .dt accessor.",
+      "whenToUse": "A date column loaded as plain text (very common straight out of read_csv) needs converting before any date-aware logic works.",
+      "commonMistake": "Comparing date strings directly ('2024-01-06' > '2024-01-05') \u2014 it happens to work for ISO-formatted strings, but breaks silently for other formats.",
+      "relatedMethods": [
+        "to_datetime",
+        "read_csv"
+      ],
+      "example": "# DatetimeIndex(['2024-01-05', '2024-01-06'], dtype='datetime64[ns]', freq=None)",
+      "starterCode": "",
+      "expectedOutput": "",
+      "tokens": [],
+      "distractors": []
+    },
+    {
+      "id": "dt_dtype_check",
+      "topic": "datetime",
+      "subtopic": "to_datetime",
+      "tags": [
+        "dtype"
+      ],
+      "difficulty": "easy",
+      "prerequisites": [
+        "dt_to_datetime"
+      ],
+      "dataset": "ts",
+      "type": "flashcard",
+      "prompt": "Confirm ts's date column actually loaded as a real datetime type, not text.",
+      "answer": "ts['date'].dtype",
+      "why": "A column that looks like dates but loaded from CSV without parse_dates will show dtype('O') (object/text), not datetime64 \u2014 checking dtype catches this immediately.",
+      "whenToUse": "Right after loading any file with a date column, before trusting .dt access or date comparisons on it.",
+      "commonMistake": "Assuming a column 'looks like dates' means it behaves like dates \u2014 only an actual datetime64 dtype gives you .dt and correct chronological comparisons.",
+      "relatedMethods": [
+        "dtype",
+        "to_datetime"
+      ],
+      "example": "# dtype('<M8[ns]')",
+      "starterCode": "",
+      "expectedOutput": "",
+      "tokens": [],
+      "distractors": []
+    },
+    {
+      "id": "dt_year",
+      "topic": "datetime",
+      "subtopic": "dt-accessor",
+      "tags": [
+        "dt",
+        "year"
+      ],
+      "difficulty": "easy",
+      "prerequisites": [
+        "dt_dtype_check"
+      ],
+      "dataset": "ts",
+      "type": "flashcard",
+      "prompt": "Extract just the year from every value in ts's date column.",
+      "answer": "ts['date'].dt.year",
+      "why": "The .dt accessor exposes date components (year, month, day...) on a datetime64 Series, mirroring .str for text columns.",
+      "whenToUse": "Grouping or filtering by a date component rather than the full timestamp.",
+      "commonMistake": "Trying date_column.year directly \u2014 the .dt accessor is required; without it pandas doesn't know to treat the Series as dates.",
+      "relatedMethods": [
+        "dt",
+        "to_datetime"
+      ],
+      "example": "# 0    2024\n# 1    2024\n# dtype: int32",
+      "starterCode": "",
+      "expectedOutput": "",
+      "tokens": [],
+      "distractors": []
+    },
+    {
+      "id": "dt_month",
+      "topic": "datetime",
+      "subtopic": "dt-accessor",
+      "tags": [
+        "dt",
+        "month"
+      ],
+      "difficulty": "easy",
+      "prerequisites": [
+        "dt_year"
+      ],
+      "dataset": "ts",
+      "type": "flashcard",
+      "prompt": "Extract just the month number from ts's date column.",
+      "answer": "ts['date'].dt.month",
+      "why": "dt.month gives the numeric month (1-12) \u2014 combine it with dt.year when grouping across multiple years to avoid mixing e.g. two different Januaries together.",
+      "whenToUse": "Monthly aggregation or filtering, e.g. grouping revenue by month.",
+      "commonMistake": "Grouping by dt.month alone across multi-year data \u2014 every January (regardless of year) gets merged into one bucket.",
+      "relatedMethods": [
+        "dt",
+        "year"
+      ],
+      "example": "# 0    1\n# 1    1\n# dtype: int32",
+      "starterCode": "",
+      "expectedOutput": "",
+      "tokens": [],
+      "distractors": []
+    },
+    {
+      "id": "dt_day_name",
+      "topic": "datetime",
+      "subtopic": "dt-accessor",
+      "tags": [
+        "dt",
+        "day_name"
+      ],
+      "difficulty": "medium",
+      "prerequisites": [
+        "dt_year"
+      ],
+      "dataset": "ts",
+      "type": "flashcard",
+      "prompt": "Get the weekday name (e.g. 'Monday') for every date in ts.",
+      "answer": "ts['date'].dt.day_name()",
+      "why": "day_name() spells out the weekday directly \u2014 more readable than working with dayofweek's 0-6 integers.",
+      "whenToUse": "Reporting or filtering by weekday in a human-readable form.",
+      "commonMistake": "Confusing day_name() (a method, needs parentheses) with dayofweek (an attribute, no parentheses, returns an integer).",
+      "relatedMethods": [
+        "dt",
+        "dayofweek"
+      ],
+      "example": "# 0       Monday\n# 1      Tuesday\n# dtype: object",
+      "starterCode": "",
+      "expectedOutput": "",
+      "tokens": [],
+      "distractors": []
+    },
+    {
+      "id": "dt_dayofweek",
+      "topic": "datetime",
+      "subtopic": "dt-accessor",
+      "tags": [
+        "dt",
+        "dayofweek"
+      ],
+      "difficulty": "medium",
+      "prerequisites": [
+        "dt_day_name"
+      ],
+      "dataset": "ts",
+      "type": "flashcard",
+      "prompt": "Get the weekday as a number (Monday=0 ... Sunday=6) for every date in ts.",
+      "answer": "ts['date'].dt.dayofweek",
+      "why": "dayofweek gives an integer, convenient for numeric comparisons like filtering weekends (dayofweek >= 5).",
+      "whenToUse": "Numeric weekday logic, e.g. flagging weekend rows.",
+      "commonMistake": "Assuming Sunday=0 like some other languages/libraries \u2014 pandas uses Monday=0.",
+      "relatedMethods": [
+        "dt",
+        "day_name"
+      ],
+      "example": "# 0    0\n# 1    1\n# dtype: int32",
+      "starterCode": "",
+      "expectedOutput": "",
+      "tokens": [],
+      "distractors": []
+    },
+    {
+      "id": "dt_set_index",
+      "topic": "datetime",
+      "subtopic": "datetime-index",
+      "tags": [
+        "set_index"
+      ],
+      "difficulty": "medium",
+      "prerequisites": [
+        "dt_dtype_check"
+      ],
+      "dataset": "ts",
+      "type": "flashcard",
+      "prompt": "Make ts's date column the row index, producing a DatetimeIndex.",
+      "answer": "ts.set_index('date')",
+      "why": "A DatetimeIndex unlocks date-based slicing (like partial-string ranges) and is required by resample().",
+      "whenToUse": "Any time-series-style analysis \u2014 rolling windows, resampling, or date-range slicing all expect dates as the index, not a column.",
+      "commonMistake": "Forgetting set_index() returns a new DataFrame \u2014 the original ts is unchanged unless you reassign or pass inplace=True.",
+      "relatedMethods": [
+        "set_index",
+        "resample"
+      ],
+      "example": "#             revenue\n# date\n# 2024-01-01      120\n# 2024-01-02       95",
+      "starterCode": "",
+      "expectedOutput": "",
+      "tokens": [],
+      "distractors": []
+    },
+    {
+      "id": "dt_partial_string_slice",
+      "topic": "datetime",
+      "subtopic": "datetime-index",
+      "tags": [
+        "loc",
+        "slicing"
+      ],
+      "difficulty": "hard",
+      "prerequisites": [
+        "dt_set_index"
+      ],
+      "dataset": "ts",
+      "type": "flashcard",
+      "prompt": "After indexing ts by date, select every row from 2024-01-05 through 2024-01-07, inclusive.",
+      "answer": "ts.set_index('date').loc['2024-01-05':'2024-01-07']",
+      "why": "A DatetimeIndex supports partial-string label slicing directly in loc \u2014 no need to parse the strings yourself first.",
+      "whenToUse": "Pulling a specific date range out of time-series data.",
+      "commonMistake": "Trying this on a column that's still text (not a DatetimeIndex) \u2014 string slicing works completely differently there (alphabetical, not chronological).",
+      "relatedMethods": [
+        "loc",
+        "set_index"
+      ],
+      "example": "#             revenue\n# date\n# 2024-01-05       45\n# 2024-01-06       70\n# 2024-01-07       50",
+      "starterCode": "",
+      "expectedOutput": "",
+      "tokens": [],
+      "distractors": []
+    },
+    {
+      "id": "dt_date_range",
+      "topic": "datetime",
+      "subtopic": "date_range",
+      "tags": [
+        "date_range"
+      ],
+      "difficulty": "medium",
+      "prerequisites": [],
+      "type": "flashcard",
+      "prompt": "Generate 5 consecutive daily dates starting 2024-01-01.",
+      "answer": "pd.date_range('2024-01-01', periods=5, freq='D')",
+      "why": "date_range() builds a DatetimeIndex from a start point plus either an end date or a periods count, at a given frequency.",
+      "whenToUse": "Creating a complete date axis to reindex sparse time-series data against, or generating test/sample dates.",
+      "commonMistake": "Forgetting freq='D' is the default anyway \u2014 but being explicit avoids surprises if you later need weekly ('W') or monthly ('M') spacing.",
+      "relatedMethods": [
+        "date_range",
+        "to_datetime"
+      ],
+      "example": "# DatetimeIndex(['2024-01-01', ..., '2024-01-05'], dtype='datetime64[ns]', freq='D')",
+      "starterCode": "",
+      "expectedOutput": "",
+      "tokens": [],
+      "distractors": []
+    },
+    {
+      "id": "dt_timedelta",
+      "topic": "datetime",
+      "subtopic": "timedelta",
+      "tags": [
+        "timedelta"
+      ],
+      "difficulty": "medium",
+      "prerequisites": [],
+      "type": "flashcard",
+      "prompt": "Create a duration representing 3 days.",
+      "answer": "pd.Timedelta(days=3)",
+      "why": "Timedelta represents a span of time, the difference-of-dates counterpart to Timestamp \u2014 adding one to a date shifts it by that duration.",
+      "whenToUse": "Shifting dates by a fixed amount, or representing the result of subtracting two Timestamps.",
+      "commonMistake": "Trying to add a plain integer to a Timestamp expecting days \u2014 you need a Timedelta (or DateOffset), not a bare number.",
+      "relatedMethods": [
+        "Timedelta",
+        "to_datetime"
+      ],
+      "example": "# Timedelta('3 days 00:00:00')",
+      "starterCode": "",
+      "expectedOutput": "",
+      "tokens": [],
+      "distractors": []
+    },
+    {
+      "id": "dt_add_timedelta",
+      "topic": "datetime",
+      "subtopic": "timedelta",
+      "tags": [
+        "timedelta"
+      ],
+      "difficulty": "medium",
+      "prerequisites": [
+        "dt_timedelta"
+      ],
+      "dataset": "ts",
+      "type": "flashcard",
+      "prompt": "Shift every date in ts forward by one day.",
+      "answer": "ts['date'] + pd.Timedelta(days=1)",
+      "why": "Adding a Timedelta to a datetime64 Series shifts every value by that same span, element-wise.",
+      "whenToUse": "Computing a due date, an offset reporting period, or correcting a timezone/off-by-one issue.",
+      "commonMistake": "Adding a plain int (ts['date'] + 1) expecting 'one day' \u2014 that raises a TypeError; it must be a Timedelta or DateOffset.",
+      "relatedMethods": [
+        "Timedelta"
+      ],
+      "example": "# every date shifted one day later, e.g. 2024-01-02, 2024-01-03, ...",
+      "starterCode": "",
+      "expectedOutput": "",
+      "tokens": [],
+      "distractors": []
+    },
+    {
+      "id": "dt_strftime",
+      "topic": "datetime",
+      "subtopic": "dt-accessor",
+      "tags": [
+        "strftime"
+      ],
+      "difficulty": "medium",
+      "prerequisites": [
+        "dt_year"
+      ],
+      "dataset": "ts",
+      "type": "flashcard",
+      "prompt": "Format ts's date column as 'YYYY-MM' strings, e.g. '2024-01'.",
+      "answer": "ts['date'].dt.strftime('%Y-%m')",
+      "why": "strftime() renders dates as custom-formatted text \u2014 useful for display or for creating a month-level grouping key.",
+      "whenToUse": "Producing a human-facing label, or a coarser text key to group by (like year-month).",
+      "commonMistake": "Confusing strftime (date -> string) with to_datetime/strptime (string -> date) \u2014 they go in opposite directions.",
+      "relatedMethods": [
+        "dt",
+        "to_datetime"
+      ],
+      "example": "# 0    2024-01\n# 1    2024-01\n# dtype: object",
+      "starterCode": "",
+      "expectedOutput": "",
+      "tokens": [],
+      "distractors": []
+    },
+    {
+      "id": "dt_between_dates",
+      "topic": "datetime",
+      "subtopic": "filtering",
+      "tags": [
+        "between"
+      ],
+      "difficulty": "medium",
+      "prerequisites": [
+        "dt_dtype_check"
+      ],
+      "dataset": "ts",
+      "type": "fill-blank",
+      "prompt": "Filter ts to rows with a date between 2024-01-03 and 2024-01-06, inclusive, using a Series method. Fill in the blank.",
+      "answer": "ts[ts['date'].between('2024-01-03', '2024-01-06')]",
+      "why": "between() works on datetime64 Series just like numeric ones \u2014 pandas parses the string bounds for the comparison.",
+      "whenToUse": "A date range filter that reads more directly than two chained >= / <= comparisons.",
+      "commonMistake": "Forgetting between() is inclusive of both endpoints by default, same as for numeric columns.",
+      "relatedMethods": [
+        "between",
+        "loc"
+      ],
+      "example": "#         date  revenue\n# 2  2024-01-03       80\n# 3  2024-01-04       60\n# 4  2024-01-05       45\n# 5  2024-01-06       70",
+      "starterCode": "ts[ts['date'].___('2024-01-03', '2024-01-06')]",
+      "expectedOutput": "",
+      "tokens": [
+        "between"
+      ],
+      "distractors": [
+        "isin",
+        "clip",
+        "where"
+      ]
+    },
+    {
+      "id": "dt_resample_choice",
+      "topic": "datetime",
+      "subtopic": "resample",
+      "tags": [
+        "resample"
+      ],
+      "difficulty": "hard",
+      "prerequisites": [
+        "dt_set_index"
+      ],
+      "dataset": "ts",
+      "type": "multiple-choice",
+      "prompt": "Which correctly resamples ts to weekly total revenue?",
+      "answer": "ts.set_index('date')['revenue'].resample('W').sum()",
+      "why": "resample() buckets a DatetimeIndex into fixed calendar periods (like weeks) before aggregating \u2014 it needs a DatetimeIndex, which set_index provides here.",
+      "whenToUse": "Downsampling daily (or finer) time series into coarser periods like weekly or monthly totals.",
+      "commonMistake": "Reaching for rolling() when you actually want resample() \u2014 rolling computes a moving window over existing rows, it doesn't bucket into new calendar periods.",
+      "relatedMethods": [
+        "resample",
+        "set_index",
+        "rolling"
+      ],
+      "example": "# date\n# 2024-01-07    520\n# 2024-01-14    580\n# Freq: W-SUN, Name: revenue, dtype: int64",
+      "starterCode": "",
+      "expectedOutput": "",
+      "tokens": [],
+      "distractors": [
+        "ts.set_index('date')['revenue'].rolling(7).sum()",
+        "ts.groupby('date')['revenue'].sum()"
+      ]
+    }
+  ]
+}

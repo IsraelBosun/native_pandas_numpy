@@ -1,0 +1,30 @@
+{
+  "topic": "sorting",
+  "version": "1.0.0",
+  "steps": [
+    {
+      "type": "concept",
+      "heading": "sort_values vs. sort_index",
+      "body": "sort_values() orders rows by the data in one or more columns. sort_index() orders rows by their index labels instead — useful for restoring the original order after a filter or a previous sort."
+    },
+    {
+      "type": "example",
+      "heading": "Highest revenue first",
+      "code": "df.sort_values('revenue', ascending=False)",
+      "output": "# West    Shoes      120\n# East    Shoes       95\n# ...",
+      "caption": "ascending=False reverses the default low-to-high order."
+    },
+    {
+      "type": "concept",
+      "heading": "Multiple keys, multiple directions",
+      "body": "Passing a list of columns sorts by the first, using the rest only to break ties. Passing a matching list to ascending= lets each key have its own direction."
+    },
+    {
+      "type": "example",
+      "heading": "Top N without a full sort",
+      "code": "df.nlargest(3, 'revenue')",
+      "output": "# West    Shoes      120\n# East    Shoes       95\n# West     Bags       80",
+      "caption": "You'll practice multi-key sorts, nlargest/nsmallest, rank(), and sorting after a groupby in the cards that follow."
+    }
+  ]
+}

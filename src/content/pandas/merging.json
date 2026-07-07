@@ -1,0 +1,441 @@
+{
+  "version": "1.0.0",
+  "cards": [
+    {
+      "id": "merge_inner",
+      "topic": "merging",
+      "subtopic": "merge",
+      "tags": [
+        "merge",
+        "inner-join"
+      ],
+      "difficulty": "medium",
+      "prerequisites": [],
+      "dataset": [
+        "df",
+        "region_managers"
+      ],
+      "type": "flashcard",
+      "prompt": "You have a second DataFrame region_managers with region and manager columns. Join it onto df, keeping only regions present in both.",
+      "answer": "df.merge(region_managers, on='region', how='inner')",
+      "why": "An inner merge keeps only rows whose join key exists on both sides.",
+      "whenToUse": "You only want rows that have a match in both DataFrames.",
+      "commonMistake": "Forgetting on='region' when both DataFrames share that column name, causing pandas to try merging on every shared column.",
+      "relatedMethods": [
+        "merge",
+        "join",
+        "concat"
+      ],
+      "example": "#   region  ...  manager\n# 0   West  ...    Priya\n# 1   East  ...     Omar",
+      "starterCode": "",
+      "expectedOutput": "",
+      "tokens": [],
+      "distractors": []
+    },
+    {
+      "id": "merge_left",
+      "topic": "merging",
+      "subtopic": "merge",
+      "tags": [
+        "merge",
+        "left-join"
+      ],
+      "difficulty": "medium",
+      "prerequisites": [
+        "merge_inner"
+      ],
+      "dataset": [
+        "df",
+        "region_managers"
+      ],
+      "type": "flashcard",
+      "prompt": "Same join, but keep every row from df even if a region has no listed manager.",
+      "answer": "df.merge(region_managers, on='region', how='left')",
+      "why": "how='left' keeps all rows from the left DataFrame, filling unmatched columns with NaN.",
+      "whenToUse": "The left DataFrame is the one you don't want to lose rows from.",
+      "commonMistake": "Using the default how='inner' and silently losing rows that don't have a match.",
+      "relatedMethods": [
+        "merge",
+        "fillna"
+      ],
+      "example": "#    region  ...  manager\n# 6   North  ...      NaN\n# 7   North  ...      NaN",
+      "starterCode": "",
+      "expectedOutput": "",
+      "tokens": [],
+      "distractors": []
+    },
+    {
+      "id": "merge_indicator",
+      "topic": "merging",
+      "subtopic": "merge",
+      "tags": [
+        "merge",
+        "outer-join",
+        "indicator"
+      ],
+      "difficulty": "hard",
+      "prerequisites": [
+        "merge_left"
+      ],
+      "dataset": [
+        "df",
+        "region_managers"
+      ],
+      "type": "flashcard",
+      "prompt": "Merge df and region_managers keeping every row from both sides, and add a column showing which side each row came from.",
+      "answer": "df.merge(region_managers, on='region', how='outer', indicator=True)",
+      "why": "indicator=True adds a _merge column labeled 'left_only', 'right_only', or 'both'.",
+      "whenToUse": "Debugging a merge \u2014 seeing exactly which rows failed to match.",
+      "commonMistake": "Forgetting how='outer' \u2014 indicator=True alone won't surface unmatched rows under an inner join.",
+      "relatedMethods": [
+        "merge",
+        "concat"
+      ],
+      "example": "#   region  ...  manager      _merge\n# 4  North  ...      NaN   left_only\n# 5  South  ...     Lena  right_only",
+      "starterCode": "",
+      "expectedOutput": "",
+      "tokens": [],
+      "distractors": []
+    },
+    {
+      "id": "concat_rows",
+      "topic": "merging",
+      "subtopic": "concat",
+      "tags": [
+        "concat"
+      ],
+      "difficulty": "easy",
+      "prerequisites": [],
+      "dataset": "df",
+      "type": "flashcard",
+      "prompt": "Stack two DataFrames with the same columns on top of each other.",
+      "answer": "pd.concat([df.iloc[:2], df.iloc[2:]])",
+      "why": "concat() stacks DataFrames along an axis (rows by default) rather than joining on a key.",
+      "whenToUse": "Combining chunks of data with identical columns, e.g. multiple CSVs.",
+      "commonMistake": "Reaching for merge() when there's no join key at all \u2014 concat() is the right tool for simple stacking.",
+      "relatedMethods": [
+        "concat",
+        "merge"
+      ],
+      "example": "# all 8 original rows back in their original order",
+      "starterCode": "",
+      "expectedOutput": "",
+      "tokens": [],
+      "distractors": []
+    },
+    {
+      "id": "merge_right",
+      "topic": "merging",
+      "subtopic": "merge",
+      "tags": [
+        "merge",
+        "right-join"
+      ],
+      "difficulty": "medium",
+      "prerequisites": [
+        "merge_left"
+      ],
+      "dataset": [
+        "df",
+        "region_managers"
+      ],
+      "type": "flashcard",
+      "prompt": "Same join, but keep every row from region_managers even if a region has no matching sales.",
+      "answer": "df.merge(region_managers, on='region', how='right')",
+      "why": "how='right' mirrors how='left' but preserves all rows from the right DataFrame instead.",
+      "whenToUse": "The right DataFrame is the one you don't want to lose rows from.",
+      "commonMistake": "Swapping DataFrame order and using how='left' instead of just using how='right', making the call harder to read.",
+      "relatedMethods": [
+        "merge"
+      ],
+      "example": "# South appears once with NaN sales columns; West/East rows repeat per matching sales row",
+      "starterCode": "",
+      "expectedOutput": "",
+      "tokens": [],
+      "distractors": []
+    },
+    {
+      "id": "merge_suffixes",
+      "topic": "merging",
+      "subtopic": "merge",
+      "tags": [
+        "merge",
+        "suffixes"
+      ],
+      "difficulty": "hard",
+      "prerequisites": [
+        "merge_inner"
+      ],
+      "dataset": "df",
+      "type": "flashcard",
+      "prompt": "Merge df with itself on region (a self-join), with custom suffixes '_a' and '_b' instead of the default _x/_y.",
+      "answer": "df.merge(df, on='region', suffixes=('_a', '_b'))",
+      "why": "suffixes controls the labels appended to overlapping non-key column names instead of pandas' default _x/_y.",
+      "whenToUse": "Self-joins or merges between DataFrames that share column names besides the join key.",
+      "commonMistake": "Forgetting overlapping columns get an automatic _x/_y suffix if you don't set suffixes explicitly.",
+      "relatedMethods": [
+        "merge",
+        "rename"
+      ],
+      "example": "# category_a, revenue_a, units_a, category_b, revenue_b, units_b",
+      "starterCode": "",
+      "expectedOutput": "",
+      "tokens": [],
+      "distractors": []
+    },
+    {
+      "id": "merge_validate",
+      "topic": "merging",
+      "subtopic": "merge",
+      "tags": [
+        "merge",
+        "validate"
+      ],
+      "difficulty": "hard",
+      "prerequisites": [
+        "merge_inner"
+      ],
+      "dataset": [
+        "df",
+        "region_managers"
+      ],
+      "type": "flashcard",
+      "prompt": "Merge df onto region_managers, asserting that each df row matches at most one region_managers row (a many-to-one relationship).",
+      "answer": "df.merge(region_managers, on='region', validate='m:1')",
+      "why": "validate raises a MergeError if the actual key cardinality doesn't match what you asserted, catching join-key bugs early.",
+      "whenToUse": "Guarding against accidental row duplication from an unexpected one-to-many or many-to-many match.",
+      "commonMistake": "Skipping validate and silently getting a row-multiplying merge when you expected one match per row.",
+      "relatedMethods": [
+        "merge"
+      ],
+      "example": "# succeeds silently \u2014 raises MergeError instead if the assumption is violated",
+      "starterCode": "",
+      "expectedOutput": "",
+      "tokens": [],
+      "distractors": []
+    },
+    {
+      "id": "concat_ignore_index",
+      "topic": "merging",
+      "subtopic": "concat",
+      "tags": [
+        "concat"
+      ],
+      "difficulty": "easy",
+      "prerequisites": [
+        "concat_rows"
+      ],
+      "dataset": "df",
+      "type": "flashcard",
+      "prompt": "Stack two chunks of df back together with a fresh, continuous index instead of reusing their original row labels.",
+      "answer": "pd.concat([df.iloc[:2], df.iloc[2:]], ignore_index=True)",
+      "why": "ignore_index=True discards the original indices and assigns a new 0..n-1 range.",
+      "whenToUse": "Concatenating chunks whose original index values would otherwise overlap or be meaningless once combined.",
+      "commonMistake": "Omitting ignore_index=True and ending up with duplicate index labels across the combined DataFrame.",
+      "relatedMethods": [
+        "concat",
+        "reset_index"
+      ],
+      "example": "# index runs 0..7 with no duplicates or gaps",
+      "starterCode": "",
+      "expectedOutput": "",
+      "tokens": [],
+      "distractors": []
+    },
+    {
+      "id": "concat_columns",
+      "topic": "merging",
+      "subtopic": "concat",
+      "tags": [
+        "concat"
+      ],
+      "difficulty": "medium",
+      "prerequisites": [
+        "concat_rows"
+      ],
+      "dataset": "df",
+      "type": "flashcard",
+      "prompt": "Add a derived tax column (10% of revenue) onto df by concatenating along columns instead of assigning directly.",
+      "answer": "pd.concat([df, (df['revenue'] * 0.1).rename('tax')], axis=1)",
+      "why": "axis=1 concatenates side-by-side by aligning on the index, rather than stacking rows.",
+      "whenToUse": "Combining a DataFrame with one or more Series/DataFrames that share the same row index.",
+      "commonMistake": "Forgetting axis=1 (the default is axis=0), which would try to stack rows instead of adding a column.",
+      "relatedMethods": [
+        "concat",
+        "assign"
+      ],
+      "example": "#   region category  revenue  units   tax\n# 0   West    Shoes      120     12  12.0",
+      "starterCode": "",
+      "expectedOutput": "",
+      "tokens": [],
+      "distractors": []
+    },
+    {
+      "id": "merge_indicator_filter",
+      "topic": "merging",
+      "subtopic": "merge",
+      "tags": [
+        "merge",
+        "indicator"
+      ],
+      "difficulty": "hard",
+      "prerequisites": [
+        "merge_indicator"
+      ],
+      "dataset": [
+        "df",
+        "region_managers"
+      ],
+      "type": "flashcard",
+      "prompt": "After a left indicator merge, keep only the df rows that had no matching manager.",
+      "answer": "df.merge(region_managers, on='region', how='left', indicator=True).query(\"_merge == 'left_only'\")",
+      "why": "Filtering on the _merge column isolates exactly the rows that failed to match, useful for debugging data gaps.",
+      "whenToUse": "Investigating which rows a merge silently dropped or left unmatched.",
+      "commonMistake": "Filtering with a plain NaN check instead, which breaks if the matched column can legitimately be NaN too.",
+      "relatedMethods": [
+        "merge",
+        "query"
+      ],
+      "example": "# both North rows \u2014 no manager listed for North",
+      "starterCode": "",
+      "expectedOutput": "",
+      "tokens": [],
+      "distractors": []
+    },
+    {
+      "id": "merge_join_method",
+      "topic": "merging",
+      "subtopic": "join",
+      "tags": [
+        "join"
+      ],
+      "difficulty": "medium",
+      "prerequisites": [
+        "merge_inner"
+      ],
+      "dataset": [
+        "df",
+        "region_managers"
+      ],
+      "type": "flashcard",
+      "prompt": "Use join() (instead of merge()) to attach manager names onto df by region.",
+      "answer": "df.join(region_managers.set_index('region'), on='region')",
+      "why": "join() combines DataFrames by index by default; passing on='region' tells it which df column to match against the other DataFrame's index.",
+      "whenToUse": "You already have (or can easily set) the right-hand DataFrame indexed by the join key.",
+      "commonMistake": "Calling join() without first indexing the other DataFrame by the key column \u2014 join() matches on index, not arbitrary columns, on both sides.",
+      "relatedMethods": [
+        "join",
+        "merge",
+        "set_index"
+      ],
+      "example": "#   region category  revenue  units manager\n# 0   West    Shoes      120     12  Priya",
+      "starterCode": "",
+      "expectedOutput": "",
+      "tokens": [],
+      "distractors": []
+    },
+    {
+      "id": "merge_how_blank",
+      "topic": "merging",
+      "subtopic": "merge",
+      "tags": [
+        "merge",
+        "outer-join"
+      ],
+      "difficulty": "medium",
+      "prerequisites": [
+        "merge_left"
+      ],
+      "dataset": [
+        "df",
+        "region_managers"
+      ],
+      "type": "fill-blank",
+      "prompt": "Merge df and region_managers keeping every row from both sides. Fill in the blank.",
+      "answer": "df.merge(region_managers, on='region', how='outer')",
+      "why": "how='outer' keeps all rows from both DataFrames, filling non-matches with NaN on whichever side is missing.",
+      "whenToUse": "You need the full union of both DataFrames' keys, not just matches or one side's rows.",
+      "commonMistake": "Confusing 'outer' with 'full' \u2014 pandas uses 'outer', not SQL's 'full outer join' spelling.",
+      "relatedMethods": [
+        "merge"
+      ],
+      "example": "# every region from both df and region_managers appears at least once",
+      "starterCode": "df.merge(region_managers, on='region', how='___')",
+      "expectedOutput": "",
+      "tokens": [
+        "outer"
+      ],
+      "distractors": [
+        "full",
+        "both",
+        "cross"
+      ]
+    },
+    {
+      "id": "merge_vs_concat_choice",
+      "topic": "merging",
+      "subtopic": "concat",
+      "tags": [
+        "concat",
+        "merge"
+      ],
+      "difficulty": "medium",
+      "prerequisites": [
+        "concat_rows",
+        "merge_inner"
+      ],
+      "dataset": "df",
+      "type": "multiple-choice",
+      "prompt": "You have two DataFrames with identical columns and want to stack all their rows together. Which call is correct?",
+      "answer": "pd.concat([df, df])",
+      "why": "concat() stacks DataFrames by simply appending rows; merge() always tries to join on key columns, which isn't what 'stack rows together' means.",
+      "whenToUse": "Combining chunks of data with identical columns, e.g. multiple CSVs.",
+      "commonMistake": "Reaching for merge() out of habit when there's no join key at all \u2014 concat() is the right tool for pure stacking.",
+      "relatedMethods": [
+        "concat",
+        "merge"
+      ],
+      "example": "# all rows from both DataFrames, one after another",
+      "starterCode": "",
+      "expectedOutput": "",
+      "tokens": [],
+      "distractors": [
+        "df.merge(df)",
+        "df.merge(df, on='region')"
+      ]
+    },
+    {
+      "id": "merge_left_on_right_on",
+      "topic": "merging",
+      "subtopic": "merge",
+      "tags": [
+        "merge",
+        "left_on",
+        "right_on"
+      ],
+      "difficulty": "hard",
+      "prerequisites": [
+        "merge_inner"
+      ],
+      "dataset": [
+        "df",
+        "region_targets"
+      ],
+      "type": "flashcard",
+      "prompt": "region_targets has the same regions under a column named area instead of region. Merge it onto df using that mismatched key.",
+      "answer": "df.merge(region_targets, left_on='region', right_on='area')",
+      "why": "left_on/right_on let you join two DataFrames whose key columns have different names.",
+      "whenToUse": "The two DataFrames' join keys don't share a common column name.",
+      "commonMistake": "Trying on='region' when the right DataFrame doesn't have a column by that exact name \u2014 pandas raises a KeyError.",
+      "relatedMethods": [
+        "merge",
+        "rename"
+      ],
+      "example": "#   region category  revenue  units   area  target\n# 0   West    Shoes      120     12  West     200",
+      "starterCode": "",
+      "expectedOutput": "",
+      "tokens": [],
+      "distractors": []
+    }
+  ]
+}

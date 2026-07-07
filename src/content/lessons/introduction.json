@@ -1,0 +1,30 @@
+{
+  "topic": "introduction",
+  "version": "1.0.0",
+  "steps": [
+    {
+      "type": "concept",
+      "heading": "What pandas is",
+      "body": "pandas is a Python library for working with tabular data — rows and columns, like a spreadsheet. Everything starts with `import pandas as pd`, a convention used everywhere so code stays instantly recognizable."
+    },
+    {
+      "type": "example",
+      "heading": "The two core shapes",
+      "code": "pd.Series([10, 20, 30])\npd.DataFrame({'region': ['West', 'East'], 'revenue': [120, 95]})",
+      "output": "# Series: one labeled column\n# DataFrame: many columns sharing one index",
+      "caption": "A DataFrame is really a collection of Series that all share the same row index."
+    },
+    {
+      "type": "concept",
+      "heading": "Getting oriented in new data",
+      "body": "Before doing anything else with a DataFrame, check its shape and contents: head()/tail() for a peek, info() for dtypes and nulls, describe() for numeric stats."
+    },
+    {
+      "type": "example",
+      "heading": "First look at a DataFrame",
+      "code": "df.shape\ndf.head(3)\ndf.info()",
+      "output": "# (8, 4) — 8 rows, 4 columns\n# plus the first 3 rows and a dtype/null summary",
+      "caption": "You'll practice shape, head/tail, info, describe, dtypes, columns, and index in the cards that follow."
+    }
+  ]
+}

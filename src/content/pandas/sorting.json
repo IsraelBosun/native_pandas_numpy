@@ -1,0 +1,438 @@
+{
+  "version": "1.0.0",
+  "cards": [
+    {
+      "id": "sorting_basic",
+      "topic": "sorting",
+      "subtopic": "sort_values",
+      "tags": [
+        "sort_values"
+      ],
+      "difficulty": "easy",
+      "prerequisites": [],
+      "dataset": "df",
+      "type": "flashcard",
+      "prompt": "Sort df by revenue, lowest to highest.",
+      "answer": "df.sort_values('revenue')",
+      "why": "sort_values() reorders rows by the values in a column; ascending order is the default.",
+      "whenToUse": "Ranking rows by a numeric or string column.",
+      "commonMistake": "Forgetting the column name is a string, e.g. writing df.sort_values(revenue).",
+      "relatedMethods": [
+        "sort_values",
+        "sort_index",
+        "nsmallest"
+      ],
+      "example": "#   region category  revenue  units\n# 4   West     Bags       45      5\n# 6  North    Shoes       50      5\n# ...\n# 0   West    Shoes      120     12",
+      "starterCode": "",
+      "expectedOutput": "",
+      "tokens": [],
+      "distractors": []
+    },
+    {
+      "id": "sorting_descending",
+      "topic": "sorting",
+      "subtopic": "sort_values",
+      "tags": [
+        "sort_values"
+      ],
+      "difficulty": "easy",
+      "prerequisites": [
+        "sorting_basic"
+      ],
+      "dataset": "df",
+      "type": "flashcard",
+      "prompt": "Sort df by revenue, highest to lowest.",
+      "answer": "df.sort_values('revenue', ascending=False)",
+      "why": "ascending=False reverses the default sort order.",
+      "whenToUse": "Ranking rows from biggest to smallest.",
+      "commonMistake": "Sorting ascending then calling .iloc[::-1] instead of just passing ascending=False.",
+      "relatedMethods": [
+        "sort_values",
+        "nlargest"
+      ],
+      "example": "#   region category  revenue  units\n# 0   West    Shoes      120     12\n# 1   East    Shoes       95      9\n# ...\n# 4   West     Bags       45      5",
+      "starterCode": "",
+      "expectedOutput": "",
+      "tokens": [],
+      "distractors": []
+    },
+    {
+      "id": "sorting_multi_column",
+      "topic": "sorting",
+      "subtopic": "sort_values",
+      "tags": [
+        "sort_values",
+        "multi-key"
+      ],
+      "difficulty": "medium",
+      "prerequisites": [
+        "sorting_basic"
+      ],
+      "dataset": "df",
+      "type": "flashcard",
+      "prompt": "Sort df by region first, then by revenue within each region, both ascending.",
+      "answer": "df.sort_values(['region', 'revenue'])",
+      "why": "Passing a list of columns sorts by the first column, using later columns only to break ties.",
+      "whenToUse": "A primary sort key with a secondary tiebreaker.",
+      "commonMistake": "Sorting by revenue alone and losing the grouping by region.",
+      "relatedMethods": [
+        "sort_values"
+      ],
+      "example": "#   region category  revenue  units\n# 3   East     Bags       60      6\n# 5   East    Shoes       70      7\n# 1   East    Shoes       95      9\n# 6  North    Shoes       50      5\n# ...",
+      "starterCode": "",
+      "expectedOutput": "",
+      "tokens": [],
+      "distractors": []
+    },
+    {
+      "id": "sorting_mixed_direction",
+      "topic": "sorting",
+      "subtopic": "sort_values",
+      "tags": [
+        "sort_values",
+        "multi-key"
+      ],
+      "difficulty": "hard",
+      "prerequisites": [
+        "sorting_multi_column"
+      ],
+      "dataset": "df",
+      "type": "flashcard",
+      "prompt": "Sort df by region ascending, but by revenue descending within each region.",
+      "answer": "df.sort_values(['region', 'revenue'], ascending=[True, False])",
+      "why": "Passing a list to ascending lets each sort key have its own direction.",
+      "whenToUse": "Multi-column sorts where the columns need different directions.",
+      "commonMistake": "Passing a single ascending=False, which reverses every key instead of just one.",
+      "relatedMethods": [
+        "sort_values"
+      ],
+      "example": "#   region category  revenue  units\n# 1   East    Shoes       95      9\n# 5   East    Shoes       70      7\n# 3   East     Bags       60      6\n# ...",
+      "starterCode": "",
+      "expectedOutput": "",
+      "tokens": [],
+      "distractors": []
+    },
+    {
+      "id": "sorting_sort_index",
+      "topic": "sorting",
+      "subtopic": "sort_index",
+      "tags": [
+        "sort_index"
+      ],
+      "difficulty": "medium",
+      "prerequisites": [],
+      "dataset": "df",
+      "type": "flashcard",
+      "prompt": "You have df.iloc[[5, 2, 7]], rows out of their original order. Restore the original row order using the index.",
+      "answer": "df.iloc[[5, 2, 7]].sort_index()",
+      "why": "sort_index() sorts by the row labels rather than any column's values, restoring the original order if labels weren't changed.",
+      "whenToUse": "Undoing a reorder that came from filtering, sampling, or a previous sort_values() call.",
+      "commonMistake": "Calling sort_values() instead, which sorts by data, not by the index labels.",
+      "relatedMethods": [
+        "sort_index",
+        "sort_values",
+        "reset_index"
+      ],
+      "example": "#   region category  revenue  units\n# 2   West     Bags       80      8\n# 5   East    Shoes       70      7\n# 7  North     Bags       65      6",
+      "starterCode": "",
+      "expectedOutput": "",
+      "tokens": [],
+      "distractors": []
+    },
+    {
+      "id": "sorting_sort_index_axis1",
+      "topic": "sorting",
+      "subtopic": "sort_index",
+      "tags": [
+        "sort_index"
+      ],
+      "difficulty": "medium",
+      "prerequisites": [
+        "sorting_sort_index"
+      ],
+      "dataset": "df",
+      "type": "flashcard",
+      "prompt": "Sort df's columns alphabetically, left to right.",
+      "answer": "df.sort_index(axis=1)",
+      "why": "sort_index(axis=1) sorts the column labels instead of the row labels.",
+      "whenToUse": "Getting a consistent, predictable column order regardless of how the DataFrame was built.",
+      "commonMistake": "Forgetting axis=1 \u2014 the default axis=0 sorts rows, not columns.",
+      "relatedMethods": [
+        "sort_index"
+      ],
+      "example": "#   category  region  revenue  units\n# 0    Shoes    West      120     12",
+      "starterCode": "",
+      "expectedOutput": "",
+      "tokens": [],
+      "distractors": []
+    },
+    {
+      "id": "sorting_nlargest",
+      "topic": "sorting",
+      "subtopic": "nlargest",
+      "tags": [
+        "nlargest"
+      ],
+      "difficulty": "easy",
+      "prerequisites": [
+        "sorting_descending"
+      ],
+      "dataset": "df",
+      "type": "flashcard",
+      "prompt": "Get the 3 rows with the highest revenue.",
+      "answer": "df.nlargest(3, 'revenue')",
+      "why": "nlargest() sorts and slices in a single call, clearer than sort_values().head().",
+      "whenToUse": "You only need the top N rows, not the full ranking.",
+      "commonMistake": "Writing sort_values('revenue', ascending=False).head(3) when nlargest(3, 'revenue') says the same thing more directly.",
+      "relatedMethods": [
+        "nlargest",
+        "nsmallest",
+        "sort_values"
+      ],
+      "example": "#   region category  revenue  units\n# 0   West    Shoes      120     12\n# 1   East    Shoes       95      9\n# 2   West     Bags       80      8",
+      "starterCode": "",
+      "expectedOutput": "",
+      "tokens": [],
+      "distractors": []
+    },
+    {
+      "id": "sorting_nsmallest",
+      "topic": "sorting",
+      "subtopic": "nlargest",
+      "tags": [
+        "nsmallest"
+      ],
+      "difficulty": "easy",
+      "prerequisites": [
+        "sorting_nlargest"
+      ],
+      "dataset": "df",
+      "type": "flashcard",
+      "prompt": "Get the 2 rows with the lowest revenue.",
+      "answer": "df.nsmallest(2, 'revenue')",
+      "why": "nsmallest() is the mirror of nlargest() \u2014 smallest values instead of largest.",
+      "whenToUse": "You need the bottom N rows by some metric, e.g. worst performers.",
+      "commonMistake": "Using nlargest() with a negative count instead of switching to nsmallest().",
+      "relatedMethods": [
+        "nsmallest",
+        "nlargest"
+      ],
+      "example": "#   region category  revenue  units\n# 4   West     Bags       45      5\n# 6  North    Shoes       50      5",
+      "starterCode": "",
+      "expectedOutput": "",
+      "tokens": [],
+      "distractors": []
+    },
+    {
+      "id": "sorting_rank",
+      "topic": "sorting",
+      "subtopic": "rank",
+      "tags": [
+        "rank"
+      ],
+      "difficulty": "medium",
+      "prerequisites": [
+        "sorting_basic"
+      ],
+      "dataset": "df",
+      "type": "flashcard",
+      "prompt": "Give every row a rank by revenue, where rank 1 is the highest revenue.",
+      "answer": "df['revenue'].rank(ascending=False)",
+      "why": "rank() assigns a position to every value instead of reordering the rows themselves.",
+      "whenToUse": "You need each row's standing (1st, 2nd, 3rd...) without changing row order.",
+      "commonMistake": "Assuming rank() sorts the DataFrame \u2014 it only adds rank numbers, the row order is unchanged.",
+      "relatedMethods": [
+        "rank",
+        "sort_values"
+      ],
+      "example": "# 0    1.0\n# 1    2.0\n# 2    3.0\n# 3    5.0\n# 4    8.0\n# 5    4.0\n# 6    7.0\n# 7    6.0",
+      "starterCode": "",
+      "expectedOutput": "",
+      "tokens": [],
+      "distractors": []
+    },
+    {
+      "id": "sorting_two_cols_same_dir",
+      "topic": "sorting",
+      "subtopic": "sort_values",
+      "tags": [
+        "sort_values",
+        "multi-key"
+      ],
+      "difficulty": "easy",
+      "prerequisites": [
+        "sorting_multi_column"
+      ],
+      "dataset": "df",
+      "type": "flashcard",
+      "prompt": "Sort df by region, then by category, both ascending \u2014 a simple two-key sort with no mixed directions.",
+      "answer": "df.sort_values(['region', 'category'])",
+      "why": "When every key sorts the same direction, a plain list of column names is enough \u2014 no need for the ascending= list.",
+      "whenToUse": "Multi-key sorts where all keys share the same direction.",
+      "commonMistake": "Reaching for ascending=[True, True] when the plain default already does that.",
+      "relatedMethods": [
+        "sort_values"
+      ],
+      "example": "#   region category  revenue  units\n# 3   East     Bags       60      6\n# 1   East    Shoes       95      9\n# 5   East    Shoes       70      7\n# ...",
+      "starterCode": "",
+      "expectedOutput": "",
+      "tokens": [],
+      "distractors": []
+    },
+    {
+      "id": "sorting_ascending_blank",
+      "topic": "sorting",
+      "subtopic": "sort_values",
+      "tags": [
+        "sort_values"
+      ],
+      "difficulty": "easy",
+      "prerequisites": [
+        "sorting_descending"
+      ],
+      "dataset": "df",
+      "type": "fill-blank",
+      "prompt": "Sort df by revenue, highest first. Fill in the blank.",
+      "answer": "df.sort_values('revenue', ascending=False)",
+      "why": "ascending=False reverses sort_values()'s default low-to-high order.",
+      "whenToUse": "Ranking rows from biggest to smallest.",
+      "commonMistake": "Passing ascending=0 or ascending='False' (a string) instead of the boolean False.",
+      "relatedMethods": [
+        "sort_values"
+      ],
+      "example": "#   region category  revenue  units\n# 0   West    Shoes      120     12\n# 1   East    Shoes       95      9",
+      "starterCode": "df.sort_values('revenue', ascending=___)",
+      "expectedOutput": "",
+      "tokens": [
+        "False"
+      ],
+      "distractors": [
+        "True",
+        "None",
+        "0"
+      ]
+    },
+    {
+      "id": "sorting_head_after_sort",
+      "topic": "sorting",
+      "subtopic": "sort_values",
+      "tags": [
+        "sort_values",
+        "head"
+      ],
+      "difficulty": "easy",
+      "prerequisites": [
+        "sorting_descending"
+      ],
+      "dataset": "df",
+      "type": "flashcard",
+      "prompt": "Get the top 3 rows by revenue using sort_values and head instead of nlargest.",
+      "answer": "df.sort_values('revenue', ascending=False).head(3)",
+      "why": "sort_values().head(n) is the more explicit two-step equivalent of nlargest(n, col).",
+      "whenToUse": "When you want the sorted order visible in code, not just the top slice.",
+      "commonMistake": "Forgetting ascending=False and getting the bottom 3 rows instead of the top 3.",
+      "relatedMethods": [
+        "sort_values",
+        "head",
+        "nlargest"
+      ],
+      "example": "#   region category  revenue  units\n# 0   West    Shoes      120     12\n# 1   East    Shoes       95      9\n# 2   West     Bags       80      8",
+      "starterCode": "",
+      "expectedOutput": "",
+      "tokens": [],
+      "distractors": []
+    },
+    {
+      "id": "sorting_groupby_sort_units",
+      "topic": "sorting",
+      "subtopic": "sort_values",
+      "tags": [
+        "sort_values",
+        "groupby"
+      ],
+      "difficulty": "medium",
+      "prerequisites": [
+        "sorting_basic"
+      ],
+      "dataset": "df",
+      "type": "flashcard",
+      "prompt": "Total units sold per category, sorted lowest to highest.",
+      "answer": "df.groupby('category')['units'].sum().sort_values()",
+      "why": "Chaining sort_values() after a groupby aggregation ranks the resulting groups by their summary value.",
+      "whenToUse": "Ranking aggregated groups rather than raw rows.",
+      "commonMistake": "Calling sort_values() before groupby(), which sorts the raw rows and has no effect on the aggregated order.",
+      "relatedMethods": [
+        "sort_values",
+        "groupby",
+        "sum"
+      ],
+      "example": "# category\n# Bags     25\n# Shoes    33",
+      "starterCode": "",
+      "expectedOutput": "",
+      "tokens": [],
+      "distractors": []
+    },
+    {
+      "id": "sorting_ignore_index",
+      "topic": "sorting",
+      "subtopic": "sort_values",
+      "tags": [
+        "sort_values",
+        "reset_index"
+      ],
+      "difficulty": "medium",
+      "prerequisites": [
+        "sorting_descending"
+      ],
+      "dataset": "df",
+      "type": "flashcard",
+      "prompt": "Sort df by revenue descending, and give the result a fresh 0..n index directly in the same call.",
+      "answer": "df.sort_values('revenue', ascending=False, ignore_index=True)",
+      "why": "ignore_index=True discards the old row labels and assigns a new 0..n-1 range, without a separate reset_index() call.",
+      "whenToUse": "Sorting when the original index values are meaningless afterward anyway.",
+      "commonMistake": "Forgetting ignore_index=True and ending up with a shuffled, non-sequential index.",
+      "relatedMethods": [
+        "sort_values",
+        "reset_index"
+      ],
+      "example": "#   region category  revenue  units\n# 0   West    Shoes      120     12\n# 1   East    Shoes       95      9",
+      "starterCode": "",
+      "expectedOutput": "",
+      "tokens": [],
+      "distractors": []
+    },
+    {
+      "id": "sorting_idxmax_choice",
+      "topic": "sorting",
+      "subtopic": "rank",
+      "tags": [
+        "idxmax",
+        "sort_values"
+      ],
+      "difficulty": "hard",
+      "prerequisites": [
+        "sorting_nlargest"
+      ],
+      "dataset": "df",
+      "type": "multiple-choice",
+      "prompt": "Which call correctly returns the single row (as a Series) with the highest revenue?",
+      "answer": "df.loc[df['revenue'].idxmax()]",
+      "why": "idxmax() finds the index label of the maximum value, and loc[...] on a single label returns a Series (one row).",
+      "whenToUse": "Grabbing one specific row identified by an extreme value in some column.",
+      "commonMistake": "Using nlargest(1, 'revenue'), which returns a one-row DataFrame, not a Series \u2014 a different shape than 'the row'.",
+      "relatedMethods": [
+        "idxmax",
+        "loc",
+        "nlargest"
+      ],
+      "example": "# region     West\n# category  Shoes\n# revenue     120\n# units       12",
+      "starterCode": "",
+      "expectedOutput": "",
+      "tokens": [],
+      "distractors": [
+        "df.nlargest(1, 'revenue')",
+        "df.sort_values('revenue').iloc[0]"
+      ]
+    }
+  ]
+}

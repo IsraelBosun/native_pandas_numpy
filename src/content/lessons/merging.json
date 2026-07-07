@@ -1,0 +1,30 @@
+{
+  "topic": "merging",
+  "version": "1.0.0",
+  "steps": [
+    {
+      "type": "concept",
+      "heading": "merge() joins on a key",
+      "body": "df.merge(other, on='column') combines two DataFrames by matching rows where the join column has the same value — the same idea as a SQL JOIN."
+    },
+    {
+      "type": "example",
+      "heading": "Keep only what matches",
+      "code": "df.merge(region_managers, on='region', how='inner')",
+      "output": "#   region  ...  manager\n# 0   West  ...    Priya\n# 1   East  ...     Omar",
+      "caption": "how='inner' (the default) keeps only rows whose key exists on both sides."
+    },
+    {
+      "type": "concept",
+      "heading": "how= controls what survives",
+      "body": "'left' keeps every row from the left DataFrame even without a match (filling gaps with NaN); 'outer' keeps every row from both sides; 'inner' keeps only rows present in both."
+    },
+    {
+      "type": "example",
+      "heading": "Don't lose unmatched rows",
+      "code": "df.merge(region_managers, on='region', how='left')",
+      "output": "# North rows kept, with manager = NaN (no manager listed for North)",
+      "caption": "You'll practice inner/left/outer joins and simple concat() stacking in the cards that follow."
+    }
+  ]
+}

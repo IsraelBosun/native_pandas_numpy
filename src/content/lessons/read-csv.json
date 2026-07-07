@@ -1,0 +1,30 @@
+{
+  "topic": "read-csv",
+  "version": "1.0.0",
+  "steps": [
+    {
+      "type": "concept",
+      "heading": "From a file to a DataFrame",
+      "body": "pd.read_csv(path) is the standard way real data enters pandas. By default it infers a header row, guesses each column's dtype, and assigns a plain integer index — often not exactly what you want."
+    },
+    {
+      "type": "example",
+      "heading": "The basic load",
+      "code": "pd.read_csv('sales.csv')",
+      "output": "#    order_date region category  revenue  units\n# 0  2024-01-05   West    Shoes      120     12",
+      "caption": "Always check .dtypes and .head() right after loading — inference can surprise you."
+    },
+    {
+      "type": "concept",
+      "heading": "Controlling the load",
+      "body": "index_col, usecols, dtype, and parse_dates all shape the load itself, rather than fixing things up afterward. na_values tells pandas which placeholder strings (like '?') mean missing, not literal text."
+    },
+    {
+      "type": "example",
+      "heading": "Dates as dates, not text",
+      "code": "pd.read_csv('sales.csv', index_col='order_date', parse_dates=True)",
+      "output": "# order_date becomes a real DatetimeIndex, not a text column",
+      "caption": "You'll practice index_col, usecols, dtype, parse_dates, na_values, and writing back out with to_csv in the cards that follow."
+    }
+  ]
+}

@@ -1,0 +1,30 @@
+{
+  "topic": "pivot",
+  "version": "1.0.0",
+  "steps": [
+    {
+      "type": "concept",
+      "heading": "Long data, wide grid",
+      "body": "pivot_table(values=, index=, columns=, aggfunc=) reshapes tall data into a grid: one row per index value, one column per columns value, aggregated with aggfunc wherever more than one row lands in the same cell."
+    },
+    {
+      "type": "example",
+      "heading": "Revenue by region and category",
+      "code": "pd.pivot_table(df, values='revenue', index='region', columns='category', aggfunc='sum')",
+      "output": "# category  Bags  Shoes\n# region\n# East        60    165\n# West       125    120",
+      "caption": "The default aggfunc is 'mean', not 'sum' — always set it explicitly if you want totals."
+    },
+    {
+      "type": "concept",
+      "heading": "Related tools",
+      "body": "crosstab() is a shortcut for pure frequency counts between two columns. stack()/unstack() move column labels into (or out of) the row index, converting between wide and long shapes without re-aggregating."
+    },
+    {
+      "type": "example",
+      "heading": "Filling in the gaps",
+      "code": "pd.pivot_table(df, values='revenue', index='region', columns='category', aggfunc='sum', fill_value=0)",
+      "output": "# a region/category combo with no rows shows 0 instead of NaN",
+      "caption": "You'll practice fill_value, margins, multiple values/aggfuncs, crosstab, and stack/unstack in the cards that follow."
+    }
+  ]
+}

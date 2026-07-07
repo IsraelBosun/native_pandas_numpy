@@ -1,0 +1,30 @@
+{
+  "topic": "window-functions",
+  "version": "1.0.0",
+  "steps": [
+    {
+      "type": "concept",
+      "heading": "Windows over time",
+      "body": "rolling(n) looks at a fixed-size trailing window of n rows; expanding() grows from the start of the series, never resetting. Both need an aggregation (.mean(), .sum(), .std()...) to actually produce a value."
+    },
+    {
+      "type": "example",
+      "heading": "A moving average",
+      "code": "ts['revenue'].rolling(3).mean()",
+      "output": "# 0          NaN\n# 1          NaN\n# 2    98.333333",
+      "caption": "The first window_size - 1 rows are NaN — there's no full window yet."
+    },
+    {
+      "type": "concept",
+      "heading": "Comparing to earlier rows",
+      "body": "shift() lines up a value from n rows away against the current row. diff() and pct_change() are shorthand for the absolute and relative change against the previous row. cumsum()/cummax() accumulate from the very start, with no window at all."
+    },
+    {
+      "type": "example",
+      "heading": "Day-over-day change",
+      "code": "ts['revenue'].diff()",
+      "output": "# 0     NaN\n# 1   -25.0\n# 2   -15.0",
+      "caption": "You'll practice rolling, expanding, shift, diff, pct_change, cumulative functions, and ewm in the cards that follow."
+    }
+  ]
+}

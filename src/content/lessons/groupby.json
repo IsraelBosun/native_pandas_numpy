@@ -1,0 +1,30 @@
+{
+  "topic": "groupby",
+  "version": "1.0.0",
+  "steps": [
+    {
+      "type": "concept",
+      "heading": "Split, apply, combine",
+      "body": "df.groupby('col') splits rows into buckets by the values in col. You then apply an aggregation (.sum(), .mean(), .count()...) to each bucket, and pandas combines the results into one output — one row per unique value in col."
+    },
+    {
+      "type": "example",
+      "heading": "One line, one answer",
+      "code": "df.groupby('region')['revenue'].sum()",
+      "output": "# East     225\n# North    115\n# West     245",
+      "caption": "Select the column you care about before aggregating — otherwise every numeric column gets summed, which is rarely what you want."
+    },
+    {
+      "type": "concept",
+      "heading": "Multiple stats at once",
+      "body": ".agg() lets you compute more than one summary statistic in a single call, instead of chaining separate groupby calls together."
+    },
+    {
+      "type": "example",
+      "heading": "Sum and count together",
+      "code": "df.groupby('region')['revenue'].agg(['sum', 'count'])",
+      "output": "#         sum  count\n# region\n# East    225      3\n# North   115      2\n# West    245      3",
+      "caption": "You'll drill both single-stat and multi-stat aggregations, plus sorting, filtering, and transforming groups, in the cards that follow."
+    }
+  ]
+}

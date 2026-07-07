@@ -1,0 +1,30 @@
+{
+  "topic": "performance",
+  "version": "1.0.0",
+  "steps": [
+    {
+      "type": "concept",
+      "heading": "Vectorize, don't loop",
+      "body": "pandas is fastest when an operation runs once across a whole column (vectorized) rather than once per row. Plain arithmetic, boolean masks, .str, and groupby() are all vectorized; .apply(), .map() with a lambda, and iterrows() all fall back to slow, per-row Python calls."
+    },
+    {
+      "type": "example",
+      "heading": "Same result, different speed",
+      "code": "df['revenue'] * 1.1                      # fast, vectorized\ndf['revenue'].apply(lambda x: x * 1.1)    # slow, one Python call per row",
+      "output": "# identical output, very different performance at scale",
+      "caption": "Reach for apply()/map() only when there's genuinely no vectorized equivalent."
+    },
+    {
+      "type": "concept",
+      "heading": "Dtypes and assignment matter too",
+      "body": "category dtype and smaller numeric types (int32, downcast) cut memory for repetitive or over-sized columns. df.loc[condition, 'col'] = value is the safe way to assign conditionally — chained bracket assignment can silently do nothing or trigger a SettingWithCopyWarning."
+    },
+    {
+      "type": "example",
+      "heading": "Safe conditional assignment",
+      "code": "df.loc[df['revenue'] > 100, 'units'] = 0",
+      "output": "# assigns directly into df, no warning",
+      "caption": "You'll practice dtype optimization, avoiding chained indexing, and picking vectorized alternatives to loops in the cards that follow."
+    }
+  ]
+}

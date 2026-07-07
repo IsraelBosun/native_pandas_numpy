@@ -1,0 +1,30 @@
+{
+  "topic": "indexing",
+  "version": "1.0.0",
+  "steps": [
+    {
+      "type": "concept",
+      "heading": "loc vs. iloc",
+      "body": "loc selects by label (what the index/column is actually named); iloc selects by integer position (where it sits), regardless of what the labels say. Mixing them up is one of the most common early pandas bugs."
+    },
+    {
+      "type": "example",
+      "heading": "Position vs. label",
+      "code": "df.iloc[:3]",
+      "output": "# first 3 rows, by position — labels don't matter here",
+      "caption": "Compare to df.loc[:3], which is label-based and would include the row actually labeled 3."
+    },
+    {
+      "type": "concept",
+      "heading": "Boolean indexing",
+      "body": "df[condition] filters rows using a boolean Series — the same shape as a column, but True/False instead of data. It's the single most common way to filter a DataFrame."
+    },
+    {
+      "type": "example",
+      "heading": "Filter by a condition",
+      "code": "df[df['revenue'] > 100]",
+      "output": "#   region category  revenue  units\n# 0   West    Shoes      120     12",
+      "caption": "You'll practice loc, iloc, boolean masks, and set_index in the cards that follow."
+    }
+  ]
+}

@@ -1,0 +1,30 @@
+{
+  "topic": "series",
+  "version": "1.0.0",
+  "steps": [
+    {
+      "type": "concept",
+      "heading": "A Series is values plus a label",
+      "body": "Every Series pairs an array of values with an index and an optional name. Pulling a column out of a DataFrame (df['revenue']) gives you exactly this: the values, the shared row index, and the column name."
+    },
+    {
+      "type": "example",
+      "heading": "Custom labels",
+      "code": "pd.Series([10, 20, 30], index=['a', 'b', 'c'])",
+      "output": "# a    10\n# b    20\n# c    30\n# dtype: int64",
+      "caption": "The index doesn't have to be numbers — it can be anything meaningful."
+    },
+    {
+      "type": "concept",
+      "heading": "Aligned arithmetic, and per-element transforms",
+      "body": "Arithmetic between two Series lines up by index first, then computes — not just by position. map()/apply() transform every element with a lookup or a function; unique()/value_counts() summarize what's actually in a column."
+    },
+    {
+      "type": "example",
+      "heading": "A derived difference",
+      "code": "df['revenue'] - df['units']",
+      "output": "# 0    108\n# 1     86\n# ...",
+      "caption": "You'll practice renaming, converting, mapping, and aggregating Series values in the cards that follow."
+    }
+  ]
+}

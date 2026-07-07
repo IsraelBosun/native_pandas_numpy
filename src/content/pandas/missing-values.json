@@ -1,0 +1,433 @@
+{
+  "version": "1.0.0",
+  "cards": [
+    {
+      "id": "mv_isna",
+      "topic": "missing-values",
+      "subtopic": "isna",
+      "tags": [
+        "isna"
+      ],
+      "difficulty": "easy",
+      "prerequisites": [],
+      "dataset": "sales_gaps",
+      "type": "flashcard",
+      "prompt": "sales_gaps has some missing revenue values. Select just the rows where revenue is missing.",
+      "answer": "sales_gaps[sales_gaps['revenue'].isna()]",
+      "why": "isna() produces a boolean mask marking every missing (NaN) value, which can filter rows like any other condition.",
+      "whenToUse": "Inspecting exactly which rows have a gap before deciding how to handle it.",
+      "commonMistake": "Comparing to None or NaN with ==, which never matches \u2014 NaN isn't equal to anything, including itself.",
+      "relatedMethods": [
+        "isna",
+        "notna",
+        "dropna"
+      ],
+      "example": "#   region category  revenue  units\n# 1   East    Shoes      NaN      9\n# 5   East    Shoes      NaN      7",
+      "starterCode": "",
+      "expectedOutput": "",
+      "tokens": [],
+      "distractors": []
+    },
+    {
+      "id": "mv_notna",
+      "topic": "missing-values",
+      "subtopic": "isna",
+      "tags": [
+        "notna"
+      ],
+      "difficulty": "easy",
+      "prerequisites": [
+        "mv_isna"
+      ],
+      "dataset": "sales_gaps",
+      "type": "flashcard",
+      "prompt": "Select just the rows where revenue is NOT missing.",
+      "answer": "sales_gaps[sales_gaps['revenue'].notna()]",
+      "why": "notna() is the exact inverse of isna() \u2014 True wherever a value is present.",
+      "whenToUse": "Working only with the complete, known values in a column.",
+      "commonMistake": "Writing ~sales_gaps['revenue'].isna() instead \u2014 correct, but notna() says the same thing more directly.",
+      "relatedMethods": [
+        "notna",
+        "isna"
+      ],
+      "example": "# 6 rows \u2014 every row except the two with missing revenue",
+      "starterCode": "",
+      "expectedOutput": "",
+      "tokens": [],
+      "distractors": []
+    },
+    {
+      "id": "mv_isna_sum",
+      "topic": "missing-values",
+      "subtopic": "isna",
+      "tags": [
+        "isna"
+      ],
+      "difficulty": "easy",
+      "prerequisites": [
+        "mv_isna"
+      ],
+      "dataset": "sales_gaps",
+      "type": "flashcard",
+      "prompt": "Count how many missing values each column has.",
+      "answer": "sales_gaps.isna().sum()",
+      "why": "isna() turns every cell into True/False, and sum() treats True as 1, giving a per-column missing-value count.",
+      "whenToUse": "A first-pass audit of how much data is missing, column by column.",
+      "commonMistake": "Calling .count() instead, which counts non-null values, the opposite of what's being asked here.",
+      "relatedMethods": [
+        "isna",
+        "sum",
+        "count"
+      ],
+      "example": "# region      0\n# category    1\n# revenue     2\n# units       2",
+      "starterCode": "",
+      "expectedOutput": "",
+      "tokens": [],
+      "distractors": []
+    },
+    {
+      "id": "mv_dropna_any",
+      "topic": "missing-values",
+      "subtopic": "dropna",
+      "tags": [
+        "dropna"
+      ],
+      "difficulty": "easy",
+      "prerequisites": [
+        "mv_isna"
+      ],
+      "dataset": "sales_gaps",
+      "type": "flashcard",
+      "prompt": "Drop every row that has at least one missing value, in any column.",
+      "answer": "sales_gaps.dropna()",
+      "why": "dropna() defaults to how='any' \u2014 a row is dropped the moment a single column is missing.",
+      "whenToUse": "You need a fully complete DataFrame and can afford to lose partially-filled rows.",
+      "commonMistake": "Assuming dropna() only checks one specific column \u2014 by default it checks every column.",
+      "relatedMethods": [
+        "dropna",
+        "isna",
+        "fillna"
+      ],
+      "example": "# 4 rows remain \u2014 every row with a gap in any column is gone",
+      "starterCode": "",
+      "expectedOutput": "",
+      "tokens": [],
+      "distractors": []
+    },
+    {
+      "id": "mv_dropna_subset",
+      "topic": "missing-values",
+      "subtopic": "dropna",
+      "tags": [
+        "dropna"
+      ],
+      "difficulty": "medium",
+      "prerequisites": [
+        "mv_dropna_any"
+      ],
+      "dataset": "sales_gaps",
+      "type": "flashcard",
+      "prompt": "Drop rows only where revenue specifically is missing \u2014 ignore gaps in any other column.",
+      "answer": "sales_gaps.dropna(subset=['revenue'])",
+      "why": "subset restricts which columns are checked for missing values, instead of the default 'any column'.",
+      "whenToUse": "One particular column is required, but gaps elsewhere are fine to keep.",
+      "commonMistake": "Calling plain dropna() here, which would also drop rows whose only gap is in a different column.",
+      "relatedMethods": [
+        "dropna",
+        "isna"
+      ],
+      "example": "# 6 rows remain \u2014 only the 2 rows with missing revenue are dropped",
+      "starterCode": "",
+      "expectedOutput": "",
+      "tokens": [],
+      "distractors": []
+    },
+    {
+      "id": "mv_dropna_how_all",
+      "topic": "missing-values",
+      "subtopic": "dropna",
+      "tags": [
+        "dropna"
+      ],
+      "difficulty": "medium",
+      "prerequisites": [
+        "mv_dropna_any"
+      ],
+      "dataset": "sales_gaps",
+      "type": "flashcard",
+      "prompt": "Drop a row only if every single value in it is missing, not just one.",
+      "answer": "sales_gaps.dropna(how='all')",
+      "why": "how='all' requires every column in a row to be NaN before it's dropped, a much stricter bar than the default how='any'.",
+      "whenToUse": "Filtering out completely blank rows (e.g. from a bad CSV export) while keeping partially-filled ones.",
+      "commonMistake": "Assuming how='all' behaves like the default \u2014 it keeps far more rows, since a real dataset rarely has every column missing at once.",
+      "relatedMethods": [
+        "dropna"
+      ],
+      "example": "# all 8 rows remain \u2014 no row here is completely empty",
+      "starterCode": "",
+      "expectedOutput": "",
+      "tokens": [],
+      "distractors": []
+    },
+    {
+      "id": "mv_dropna_thresh",
+      "topic": "missing-values",
+      "subtopic": "dropna",
+      "tags": [
+        "dropna"
+      ],
+      "difficulty": "hard",
+      "prerequisites": [
+        "mv_dropna_how_all"
+      ],
+      "dataset": "sales_gaps",
+      "type": "flashcard",
+      "prompt": "Keep only rows that have at least 3 non-missing values out of the 4 columns.",
+      "answer": "sales_gaps.dropna(thresh=3)",
+      "why": "thresh sets a minimum number of non-null values a row must have to survive, a middle ground between how='any' and how='all'.",
+      "whenToUse": "Rows with one small gap are still useful, but rows missing most of their data aren't.",
+      "commonMistake": "Confusing thresh's meaning with how='all' \u2014 thresh counts required non-null values, not required null values.",
+      "relatedMethods": [
+        "dropna"
+      ],
+      "example": "# 7 rows remain \u2014 only the row missing both category and units is dropped",
+      "starterCode": "",
+      "expectedOutput": "",
+      "tokens": [],
+      "distractors": []
+    },
+    {
+      "id": "mv_fillna_scalar",
+      "topic": "missing-values",
+      "subtopic": "fillna",
+      "tags": [
+        "fillna"
+      ],
+      "difficulty": "easy",
+      "prerequisites": [
+        "mv_isna"
+      ],
+      "dataset": "sales_gaps",
+      "type": "flashcard",
+      "prompt": "Fill missing revenue values with 0.",
+      "answer": "sales_gaps['revenue'].fillna(0)",
+      "why": "fillna() replaces every NaN in a Series or DataFrame with the given value.",
+      "whenToUse": "Missing genuinely means 'none', e.g. no sales recorded.",
+      "commonMistake": "Forgetting fillna() returns a new Series \u2014 sales_gaps itself is unchanged unless reassigned or inplace=True is passed.",
+      "relatedMethods": [
+        "fillna",
+        "isna"
+      ],
+      "example": "# 0    120.0\n# 1      0.0\n# 2     80.0",
+      "starterCode": "",
+      "expectedOutput": "",
+      "tokens": [],
+      "distractors": []
+    },
+    {
+      "id": "mv_fillna_mean",
+      "topic": "missing-values",
+      "subtopic": "fillna",
+      "tags": [
+        "fillna"
+      ],
+      "difficulty": "medium",
+      "prerequisites": [
+        "mv_fillna_scalar"
+      ],
+      "dataset": "sales_gaps",
+      "type": "flashcard",
+      "prompt": "Fill missing revenue values with the column's own average, instead of a fixed number.",
+      "answer": "sales_gaps['revenue'].fillna(sales_gaps['revenue'].mean())",
+      "why": "mean() automatically skips NaNs when computing the average, so it's safe to feed straight back into fillna().",
+      "whenToUse": "A reasonable default value beats zero when zero would misrepresent a plausible sale.",
+      "commonMistake": "Computing the mean on a column that still contains the missing values being filled \u2014 mean() already ignores NaN by default, so this isn't actually a problem, but it's worth knowing why.",
+      "relatedMethods": [
+        "fillna",
+        "mean"
+      ],
+      "example": "# 0    120.0\n# 1     70.0\n# 2     80.0",
+      "starterCode": "",
+      "expectedOutput": "",
+      "tokens": [],
+      "distractors": []
+    },
+    {
+      "id": "mv_ffill",
+      "topic": "missing-values",
+      "subtopic": "fillna",
+      "tags": [
+        "ffill"
+      ],
+      "difficulty": "medium",
+      "prerequisites": [
+        "mv_fillna_scalar"
+      ],
+      "dataset": "sales_gaps",
+      "type": "flashcard",
+      "prompt": "Forward-fill missing revenue values using the previous valid value.",
+      "answer": "sales_gaps['revenue'].ffill()",
+      "why": "ffill() carries the last known value forward into each following gap.",
+      "whenToUse": "Time-ordered data where a missing reading likely equals the last known one.",
+      "commonMistake": "Using the older fillna(method='ffill') spelling \u2014 the direct .ffill() method is the current, non-deprecated way to write this.",
+      "relatedMethods": [
+        "ffill",
+        "bfill",
+        "fillna"
+      ],
+      "example": "# 0    120.0\n# 1    120.0\n# 2     80.0",
+      "starterCode": "",
+      "expectedOutput": "",
+      "tokens": [],
+      "distractors": []
+    },
+    {
+      "id": "mv_bfill",
+      "topic": "missing-values",
+      "subtopic": "fillna",
+      "tags": [
+        "bfill"
+      ],
+      "difficulty": "medium",
+      "prerequisites": [
+        "mv_ffill"
+      ],
+      "dataset": "sales_gaps",
+      "type": "flashcard",
+      "prompt": "Backward-fill missing revenue values using the next valid value instead.",
+      "answer": "sales_gaps['revenue'].bfill()",
+      "why": "bfill() is the mirror of ffill() \u2014 it looks forward to the next known value instead of back.",
+      "whenToUse": "The next reading is a better estimate for a gap than the previous one.",
+      "commonMistake": "Mixing up ffill and bfill \u2014 one looks backward in the sequence, the other forward.",
+      "relatedMethods": [
+        "bfill",
+        "ffill"
+      ],
+      "example": "# 0    120.0\n# 1     80.0\n# 2     80.0",
+      "starterCode": "",
+      "expectedOutput": "",
+      "tokens": [],
+      "distractors": []
+    },
+    {
+      "id": "mv_fillna_column_dict",
+      "topic": "missing-values",
+      "subtopic": "fillna",
+      "tags": [
+        "fillna"
+      ],
+      "difficulty": "hard",
+      "prerequisites": [
+        "mv_fillna_scalar"
+      ],
+      "dataset": "sales_gaps",
+      "type": "flashcard",
+      "prompt": "Fill missing revenue with 0 and missing units with 1, in a single call.",
+      "answer": "sales_gaps.fillna({'revenue': 0, 'units': 1})",
+      "why": "Passing a dict lets each column get its own fill value in one call, instead of filling column by column.",
+      "whenToUse": "Different columns need different, column-appropriate defaults.",
+      "commonMistake": "Calling fillna(0) on the whole DataFrame, which forces every column to the same fill value.",
+      "relatedMethods": [
+        "fillna"
+      ],
+      "example": "#   region category  revenue  units\n# 1   East    Shoes      0.0    9.0\n# 4   West     None     45.0    1.0",
+      "starterCode": "",
+      "expectedOutput": "",
+      "tokens": [],
+      "distractors": []
+    },
+    {
+      "id": "mv_interpolate",
+      "topic": "missing-values",
+      "subtopic": "interpolate",
+      "tags": [
+        "interpolate"
+      ],
+      "difficulty": "hard",
+      "prerequisites": [
+        "mv_fillna_mean"
+      ],
+      "dataset": "sales_gaps",
+      "type": "flashcard",
+      "prompt": "Fill missing revenue values using linear interpolation between the surrounding known values, instead of a fixed fill.",
+      "answer": "sales_gaps['revenue'].interpolate()",
+      "why": "interpolate() estimates each gap as a straight line between its nearest known neighbors, rather than one flat value for every gap.",
+      "whenToUse": "Roughly continuous data (like a running total or a sensor reading) where a straight-line estimate beats a constant.",
+      "commonMistake": "Using interpolate() on unordered or categorical data, where 'between' has no real meaning.",
+      "relatedMethods": [
+        "interpolate",
+        "fillna",
+        "ffill"
+      ],
+      "example": "# 0    120.0\n# 1    100.0\n# 2     80.0",
+      "starterCode": "",
+      "expectedOutput": "",
+      "tokens": [],
+      "distractors": []
+    },
+    {
+      "id": "mv_fillna_blank",
+      "topic": "missing-values",
+      "subtopic": "fillna",
+      "tags": [
+        "fillna"
+      ],
+      "difficulty": "easy",
+      "prerequisites": [
+        "mv_fillna_scalar"
+      ],
+      "dataset": "sales_gaps",
+      "type": "fill-blank",
+      "prompt": "Fill missing revenue values with 0. Fill in the blank.",
+      "answer": "sales_gaps['revenue'].fillna(0)",
+      "why": "fillna() replaces every NaN in the Series with the given value.",
+      "whenToUse": "Missing genuinely means 'none' rather than 'unknown'.",
+      "commonMistake": "Passing the string '0' instead of the number 0, which fills with text rather than a usable number.",
+      "relatedMethods": [
+        "fillna"
+      ],
+      "example": "# 0    120.0\n# 1      0.0\n# 2     80.0",
+      "starterCode": "sales_gaps['revenue'].fillna(___)",
+      "expectedOutput": "",
+      "tokens": [
+        "0"
+      ],
+      "distractors": [
+        "None",
+        "NaN",
+        "'0'"
+      ]
+    },
+    {
+      "id": "mv_isna_choice",
+      "topic": "missing-values",
+      "subtopic": "isna",
+      "tags": [
+        "isna"
+      ],
+      "difficulty": "medium",
+      "prerequisites": [
+        "mv_isna_sum"
+      ],
+      "dataset": "sales_gaps",
+      "type": "multiple-choice",
+      "prompt": "Which call correctly returns the TOTAL number of missing values across the whole DataFrame, as a single number?",
+      "answer": "sales_gaps.isna().sum().sum()",
+      "why": "The first sum() gives a per-column count (a Series); the second sum() adds those column counts into one grand total.",
+      "whenToUse": "A single headline number for 'how much data is missing overall.'",
+      "commonMistake": "Stopping after one sum(), which gives a per-column breakdown instead of a single overall total.",
+      "relatedMethods": [
+        "isna",
+        "sum"
+      ],
+      "example": "# 5",
+      "starterCode": "",
+      "expectedOutput": "",
+      "tokens": [],
+      "distractors": [
+        "sales_gaps.isna().sum()",
+        "sales_gaps.isna().count()"
+      ]
+    }
+  ]
+}

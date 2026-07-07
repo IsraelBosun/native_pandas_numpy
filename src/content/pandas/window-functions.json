@@ -1,0 +1,384 @@
+{
+  "version": "1.0.0",
+  "cards": [
+    {
+      "id": "win_rolling_mean",
+      "topic": "window-functions",
+      "subtopic": "rolling",
+      "tags": [
+        "rolling",
+        "mean"
+      ],
+      "difficulty": "medium",
+      "prerequisites": [],
+      "dataset": "ts",
+      "type": "flashcard",
+      "prompt": "Compute a 3-day rolling average of ts's revenue.",
+      "answer": "ts['revenue'].rolling(3).mean()",
+      "why": "rolling(3) creates a moving window of 3 consecutive rows; .mean() then aggregates each window \u2014 the first 2 rows have no full window yet, so they're NaN.",
+      "whenToUse": "Smoothing noisy time-series data to see the underlying trend.",
+      "commonMistake": "Expecting a value for every row \u2014 by default the first window_size - 1 rows are NaN, since there isn't a full window yet.",
+      "relatedMethods": [
+        "rolling",
+        "expanding"
+      ],
+      "example": "# 0          NaN\n# 1          NaN\n# 2    98.333333\n# 3    78.333333",
+      "starterCode": "",
+      "expectedOutput": "",
+      "tokens": [],
+      "distractors": []
+    },
+    {
+      "id": "win_rolling_sum",
+      "topic": "window-functions",
+      "subtopic": "rolling",
+      "tags": [
+        "rolling",
+        "sum"
+      ],
+      "difficulty": "medium",
+      "prerequisites": [
+        "win_rolling_mean"
+      ],
+      "dataset": "ts",
+      "type": "flashcard",
+      "prompt": "Compute a 3-day rolling total of ts's revenue instead of the average.",
+      "answer": "ts['revenue'].rolling(3).sum()",
+      "why": "Any aggregation (.sum(), .max(), .std()...) can follow rolling() \u2014 the window mechanics stay the same, only the aggregation changes.",
+      "whenToUse": "A trailing total over a fixed number of periods, e.g. '3-day rolling sales.'",
+      "commonMistake": "Confusing a rolling sum with cumsum() \u2014 rolling only includes the last n rows, cumsum includes everything from the start.",
+      "relatedMethods": [
+        "rolling",
+        "cumsum"
+      ],
+      "example": "# 0      NaN\n# 1      NaN\n# 2    295.0\n# 3    235.0",
+      "starterCode": "",
+      "expectedOutput": "",
+      "tokens": [],
+      "distractors": []
+    },
+    {
+      "id": "win_rolling_min_periods",
+      "topic": "window-functions",
+      "subtopic": "rolling",
+      "tags": [
+        "rolling",
+        "min_periods"
+      ],
+      "difficulty": "hard",
+      "prerequisites": [
+        "win_rolling_mean"
+      ],
+      "dataset": "ts",
+      "type": "flashcard",
+      "prompt": "Compute a 3-day rolling average, but allow a result even for the first couple of rows that don't have a full window yet.",
+      "answer": "ts['revenue'].rolling(3, min_periods=1).mean()",
+      "why": "min_periods lowers how many observations are required before producing a value \u2014 with min_periods=1, row 0 averages over just itself.",
+      "whenToUse": "You'd rather see a partial-window estimate at the start of the series than a run of NaNs.",
+      "commonMistake": "Setting min_periods higher than the window size \u2014 that's a no-op at best and raises for some window types, since you can never have more observations than the window itself.",
+      "relatedMethods": [
+        "rolling"
+      ],
+      "example": "# 0    120.000000\n# 1    107.500000\n# 2     98.333333",
+      "starterCode": "",
+      "expectedOutput": "",
+      "tokens": [],
+      "distractors": []
+    },
+    {
+      "id": "win_expanding",
+      "topic": "window-functions",
+      "subtopic": "expanding",
+      "tags": [
+        "expanding"
+      ],
+      "difficulty": "medium",
+      "prerequisites": [
+        "win_rolling_mean"
+      ],
+      "dataset": "ts",
+      "type": "flashcard",
+      "prompt": "Compute a running average of ts's revenue using every row seen so far, not just a fixed-size window.",
+      "answer": "ts['revenue'].expanding().mean()",
+      "why": "expanding() grows the window by one row at a time from the start of the series, unlike rolling()'s fixed-size window.",
+      "whenToUse": "A 'running average to date' metric, like year-to-date performance.",
+      "commonMistake": "Reaching for rolling() with a huge window size to fake this \u2014 expanding() says the intent directly and needs no window-size guess.",
+      "relatedMethods": [
+        "expanding",
+        "rolling",
+        "cumsum"
+      ],
+      "example": "# 0    120.000000\n# 1    107.500000\n# 2     98.333333",
+      "starterCode": "",
+      "expectedOutput": "",
+      "tokens": [],
+      "distractors": []
+    },
+    {
+      "id": "win_shift",
+      "topic": "window-functions",
+      "subtopic": "shift",
+      "tags": [
+        "shift"
+      ],
+      "difficulty": "medium",
+      "prerequisites": [],
+      "dataset": "ts",
+      "type": "flashcard",
+      "prompt": "Get yesterday's revenue value alongside every row (shift the Series forward by 1).",
+      "answer": "ts['revenue'].shift(1)",
+      "why": "shift(1) moves every value down one position, so row n shows what was at row n-1 \u2014 the classic way to compare 'this period vs. last period.'",
+      "whenToUse": "Computing period-over-period comparisons, or building a lag feature.",
+      "commonMistake": "Assuming shift() reorders or drops rows \u2014 it keeps every row's position, just fills the newly-empty first slot with NaN.",
+      "relatedMethods": [
+        "shift",
+        "diff",
+        "pct_change"
+      ],
+      "example": "# 0      NaN\n# 1    120.0\n# 2     95.0",
+      "starterCode": "",
+      "expectedOutput": "",
+      "tokens": [],
+      "distractors": []
+    },
+    {
+      "id": "win_diff",
+      "topic": "window-functions",
+      "subtopic": "diff",
+      "tags": [
+        "diff"
+      ],
+      "difficulty": "medium",
+      "prerequisites": [
+        "win_shift"
+      ],
+      "dataset": "ts",
+      "type": "flashcard",
+      "prompt": "Compute the day-over-day change in ts's revenue.",
+      "answer": "ts['revenue'].diff()",
+      "why": "diff() is shorthand for value - value.shift(1) \u2014 the absolute change from the previous row.",
+      "whenToUse": "Highlighting day-to-day swings rather than the raw level.",
+      "commonMistake": "Confusing diff() (absolute change) with pct_change() (relative/percentage change) \u2014 they answer different questions.",
+      "relatedMethods": [
+        "diff",
+        "shift",
+        "pct_change"
+      ],
+      "example": "# 0     NaN\n# 1   -25.0\n# 2   -15.0",
+      "starterCode": "",
+      "expectedOutput": "",
+      "tokens": [],
+      "distractors": []
+    },
+    {
+      "id": "win_pct_change",
+      "topic": "window-functions",
+      "subtopic": "pct_change",
+      "tags": [
+        "pct_change"
+      ],
+      "difficulty": "medium",
+      "prerequisites": [
+        "win_diff"
+      ],
+      "dataset": "ts",
+      "type": "flashcard",
+      "prompt": "Compute the day-over-day percentage change in ts's revenue.",
+      "answer": "ts['revenue'].pct_change()",
+      "why": "pct_change() expresses the change relative to the previous value (as a fraction), rather than diff()'s absolute difference.",
+      "whenToUse": "Growth-rate reporting, where a relative change matters more than the raw amount.",
+      "commonMistake": "Forgetting the first row is always NaN \u2014 there's no prior value to compare against.",
+      "relatedMethods": [
+        "pct_change",
+        "diff",
+        "shift"
+      ],
+      "example": "# 0         NaN\n# 1   -0.208333\n# 2   -0.157895",
+      "starterCode": "",
+      "expectedOutput": "",
+      "tokens": [],
+      "distractors": []
+    },
+    {
+      "id": "win_cumsum",
+      "topic": "window-functions",
+      "subtopic": "cumulative",
+      "tags": [
+        "cumsum"
+      ],
+      "difficulty": "easy",
+      "prerequisites": [],
+      "dataset": "ts",
+      "type": "flashcard",
+      "prompt": "Compute a running total of ts's revenue from the start of the series.",
+      "answer": "ts['revenue'].cumsum()",
+      "why": "cumsum() accumulates every value from the beginning through the current row \u2014 never resets, unlike a rolling window.",
+      "whenToUse": "Total-to-date metrics, like cumulative revenue or a running balance.",
+      "commonMistake": "Expecting cumsum() to reset per group automatically \u2014 combine it with groupby() explicitly if you need per-group running totals.",
+      "relatedMethods": [
+        "cumsum",
+        "cummax",
+        "cummin",
+        "expanding"
+      ],
+      "example": "# 0    120\n# 1    215\n# 2    295",
+      "starterCode": "",
+      "expectedOutput": "",
+      "tokens": [],
+      "distractors": []
+    },
+    {
+      "id": "win_cummax",
+      "topic": "window-functions",
+      "subtopic": "cumulative",
+      "tags": [
+        "cummax"
+      ],
+      "difficulty": "easy",
+      "prerequisites": [
+        "win_cumsum"
+      ],
+      "dataset": "ts",
+      "type": "flashcard",
+      "prompt": "Track the highest revenue seen so far at each point in ts.",
+      "answer": "ts['revenue'].cummax()",
+      "why": "cummax() carries forward the running maximum \u2014 once a new high is hit, it stays until an even higher value appears.",
+      "whenToUse": "A 'best value to date' metric, like an all-time-high tracker.",
+      "commonMistake": "Expecting the running value to ever decrease \u2014 a cumulative max can only stay flat or increase, never drop.",
+      "relatedMethods": [
+        "cummax",
+        "cummin",
+        "cumsum"
+      ],
+      "example": "# 0    120\n# 1    120\n# 2    120\n# 3    120\n# 4    120",
+      "starterCode": "",
+      "expectedOutput": "",
+      "tokens": [],
+      "distractors": []
+    },
+    {
+      "id": "win_ewm",
+      "topic": "window-functions",
+      "subtopic": "ewm",
+      "tags": [
+        "ewm"
+      ],
+      "difficulty": "hard",
+      "prerequisites": [
+        "win_rolling_mean"
+      ],
+      "dataset": "ts",
+      "type": "flashcard",
+      "prompt": "Compute an exponentially weighted moving average of ts's revenue with a span of 3.",
+      "answer": "ts['revenue'].ewm(span=3).mean()",
+      "why": "Unlike rolling(), which weights every row in the window equally, ewm() weights recent rows more heavily \u2014 'span' controls how quickly older rows fade out.",
+      "whenToUse": "Smoothing that should react faster to recent changes than a plain rolling average would.",
+      "commonMistake": "Expecting ewm() to produce NaNs like rolling() does at the start \u2014 by default it returns a value from the very first row, weighted only by what's been seen so far.",
+      "relatedMethods": [
+        "ewm",
+        "rolling"
+      ],
+      "example": "# 0    120.000000\n# 1    104.000000\n# 2     93.454545",
+      "starterCode": "",
+      "expectedOutput": "",
+      "tokens": [],
+      "distractors": []
+    },
+    {
+      "id": "win_rolling_apply",
+      "topic": "window-functions",
+      "subtopic": "rolling",
+      "tags": [
+        "rolling",
+        "apply"
+      ],
+      "difficulty": "hard",
+      "prerequisites": [
+        "win_rolling_mean"
+      ],
+      "dataset": "ts",
+      "type": "flashcard",
+      "prompt": "Compute the range (max minus min) within every 3-day rolling window of ts's revenue.",
+      "answer": "ts['revenue'].rolling(3).apply(lambda x: x.max() - x.min())",
+      "why": "rolling().apply() runs a custom function against each window when no built-in aggregation (.mean(), .sum()...) covers what you need.",
+      "whenToUse": "A window statistic that isn't one of the built-in rolling aggregations.",
+      "commonMistake": "Reaching for rolling().apply() when a built-in exists \u2014 e.g. rolling(3).std() is both simpler and faster than a custom lambda replicating standard deviation.",
+      "relatedMethods": [
+        "rolling",
+        "apply"
+      ],
+      "example": "# 0     NaN\n# 1     NaN\n# 2    40.0\n# 3    35.0",
+      "starterCode": "",
+      "expectedOutput": "",
+      "tokens": [],
+      "distractors": []
+    },
+    {
+      "id": "win_shift_negative",
+      "topic": "window-functions",
+      "subtopic": "shift",
+      "tags": [
+        "shift"
+      ],
+      "difficulty": "medium",
+      "prerequisites": [
+        "win_shift"
+      ],
+      "dataset": "ts",
+      "type": "fill-blank",
+      "prompt": "Instead of looking backward, get tomorrow's revenue alongside every row \u2014 shift the Series backward by 1. Fill in the blank.",
+      "answer": "ts['revenue'].shift(-1)",
+      "why": "A negative shift argument looks forward instead of backward \u2014 shift(-1) pulls each row's value up from the next row.",
+      "whenToUse": "Comparing a row to what comes next, e.g. checking if tomorrow's value will be higher.",
+      "commonMistake": "Assuming shift() only looks backward \u2014 the sign of the argument controls the direction entirely.",
+      "relatedMethods": [
+        "shift"
+      ],
+      "example": "# 0     95.0\n# 1     80.0\n# 2     60.0",
+      "starterCode": "ts['revenue'].shift(___)",
+      "expectedOutput": "",
+      "tokens": [
+        "-1"
+      ],
+      "distractors": [
+        "1",
+        "0",
+        "None"
+      ]
+    },
+    {
+      "id": "win_rolling_vs_expanding_choice",
+      "topic": "window-functions",
+      "subtopic": "expanding",
+      "tags": [
+        "rolling",
+        "expanding"
+      ],
+      "difficulty": "medium",
+      "prerequisites": [
+        "win_expanding",
+        "win_rolling_mean"
+      ],
+      "dataset": "ts",
+      "type": "multiple-choice",
+      "prompt": "Which computes a running total using every prior row from the start, rather than a fixed-size window?",
+      "answer": "ts['revenue'].expanding().sum()",
+      "why": "expanding() always includes every row from the beginning through the current one \u2014 rolling() only looks at a fixed-size trailing window, and diff().cumsum() computes something else entirely (a running total of the changes, not of the values).",
+      "whenToUse": "A 'total to date' style metric where the window should keep growing, never staying a fixed size.",
+      "commonMistake": "Reaching for rolling() with a very large window size to approximate this \u2014 expanding() says exactly what's meant and needs no window-size guess.",
+      "relatedMethods": [
+        "expanding",
+        "rolling",
+        "cumsum"
+      ],
+      "example": "# 0    120\n# 1    215\n# 2    295",
+      "starterCode": "",
+      "expectedOutput": "",
+      "tokens": [],
+      "distractors": [
+        "ts['revenue'].rolling(3).sum()",
+        "ts['revenue'].diff().cumsum()"
+      ]
+    }
+  ]
+}

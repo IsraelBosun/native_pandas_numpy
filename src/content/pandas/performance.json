@@ -1,0 +1,353 @@
+{
+  "version": "1.0.0",
+  "cards": [
+    {
+      "id": "perf_category_dtype",
+      "topic": "performance",
+      "subtopic": "dtypes",
+      "tags": [
+        "category"
+      ],
+      "difficulty": "medium",
+      "prerequisites": [],
+      "dataset": "df",
+      "type": "flashcard",
+      "prompt": "Convert the category column to pandas' category dtype to save memory.",
+      "answer": "df['category'].astype('category')",
+      "why": "category dtype stores each distinct value once and uses small integer codes for the rest \u2014 a big memory win for text columns with few distinct values repeated many times.",
+      "whenToUse": "A text column with a small number of repeating values (like region, status, or category) in a large DataFrame.",
+      "commonMistake": "Applying category dtype to a column that's almost all unique values (like an id or a free-text field) \u2014 there's little to no memory benefit there.",
+      "relatedMethods": [
+        "astype",
+        "memory_usage"
+      ],
+      "example": "# 0    Shoes\n# 1    Shoes\n# dtype: category\n# Categories (2, object): ['Bags', 'Shoes']",
+      "starterCode": "",
+      "expectedOutput": "",
+      "tokens": [],
+      "distractors": []
+    },
+    {
+      "id": "perf_memory_usage",
+      "topic": "performance",
+      "subtopic": "dtypes",
+      "tags": [
+        "memory_usage"
+      ],
+      "difficulty": "medium",
+      "prerequisites": [
+        "perf_category_dtype"
+      ],
+      "dataset": "df",
+      "type": "flashcard",
+      "prompt": "Check exactly how much memory each column of df is using, including the true size of text columns.",
+      "answer": "df.memory_usage(deep=True)",
+      "why": "Without deep=True, object columns report only the pointer size, not the actual string data \u2014 deep=True walks the real objects for an accurate number.",
+      "whenToUse": "Diagnosing which columns are actually driving a DataFrame's memory footprint before optimizing.",
+      "commonMistake": "Comparing memory_usage() (shallow) across a DataFrame with text columns \u2014 it drastically understates their real size.",
+      "relatedMethods": [
+        "memory_usage",
+        "astype",
+        "info"
+      ],
+      "example": "# Index         132\n# region        420\n# category      410\n# revenue        64\n# units          64\n# dtype: int64",
+      "starterCode": "",
+      "expectedOutput": "",
+      "tokens": [],
+      "distractors": []
+    },
+    {
+      "id": "perf_downcast_numeric",
+      "topic": "performance",
+      "subtopic": "dtypes",
+      "tags": [
+        "downcast"
+      ],
+      "difficulty": "hard",
+      "prerequisites": [],
+      "dataset": "df",
+      "type": "flashcard",
+      "prompt": "Downcast the revenue column to the smallest integer dtype that can still hold its values.",
+      "answer": "pd.to_numeric(df['revenue'], downcast='integer')",
+      "why": "downcast='integer' shrinks a column from the default int64 to the smallest int subtype (int8/16/32) that fits every value, without changing what the numbers mean.",
+      "whenToUse": "Large DataFrames with numeric columns whose values comfortably fit in a smaller type than pandas' int64 default.",
+      "commonMistake": "Downcasting a column that might later hold larger values (e.g. after a join or an update) \u2014 the smaller dtype can silently overflow or need re-casting.",
+      "relatedMethods": [
+        "to_numeric",
+        "astype"
+      ],
+      "example": "# same values, dtype shrinks from int64 to int8",
+      "starterCode": "",
+      "expectedOutput": "",
+      "tokens": [],
+      "distractors": []
+    },
+    {
+      "id": "perf_avoid_chained_indexing",
+      "topic": "performance",
+      "subtopic": "assignment",
+      "tags": [
+        "loc",
+        "chained-indexing"
+      ],
+      "difficulty": "hard",
+      "prerequisites": [],
+      "dataset": "df",
+      "type": "flashcard",
+      "prompt": "Set units to 0 for every row where revenue is over 100, in a single loc call rather than two chained bracket operations.",
+      "answer": "df.loc[df['revenue'] > 100, 'units'] = 0",
+      "why": "A single loc call assigns directly into df; chaining df[df['revenue'] > 100]['units'] = 0 instead assigns into a temporary copy that's immediately discarded, and often triggers a SettingWithCopyWarning.",
+      "whenToUse": "Any conditional assignment back into a DataFrame \u2014 this is the reliable pattern, not a bracket-then-bracket chain.",
+      "commonMistake": "Writing df[condition]['column'] = value \u2014 it may appear to work, may warn, or may silently do nothing, depending on pandas internals.",
+      "relatedMethods": [
+        "loc",
+        "where"
+      ],
+      "example": "# rows where revenue > 100 now have units == 0",
+      "starterCode": "",
+      "expectedOutput": "",
+      "tokens": [],
+      "distractors": []
+    },
+    {
+      "id": "perf_itertuples",
+      "topic": "performance",
+      "subtopic": "iteration",
+      "tags": [
+        "itertuples"
+      ],
+      "difficulty": "medium",
+      "prerequisites": [],
+      "dataset": "df",
+      "type": "flashcard",
+      "prompt": "List every row of df as lightweight namedtuples, a faster alternative to iterrows() for row-by-row iteration.",
+      "answer": "list(df.itertuples())",
+      "why": "itertuples() returns namedtuples instead of rebuilding a Series per row (what iterrows() does), which is significantly faster on large DataFrames.",
+      "whenToUse": "Row-by-row iteration is genuinely unavoidable and no vectorized alternative exists.",
+      "commonMistake": "Reaching for either iterrows() or itertuples() by default \u2014 vectorized operations (column-wise math, .apply(), boolean masks) are almost always faster than any row-by-row loop.",
+      "relatedMethods": [
+        "itertuples",
+        "iterrows"
+      ],
+      "example": "# [Pandas(Index=0, region='West', category='Shoes', revenue=120, units=12), ...]",
+      "starterCode": "",
+      "expectedOutput": "",
+      "tokens": [],
+      "distractors": []
+    },
+    {
+      "id": "perf_query_speed",
+      "topic": "performance",
+      "subtopic": "filtering",
+      "tags": [
+        "query"
+      ],
+      "difficulty": "medium",
+      "prerequisites": [],
+      "dataset": "df",
+      "type": "flashcard",
+      "prompt": "Filter df for rows where revenue is over 60 and units is over 5, using query() instead of chained boolean indexing.",
+      "answer": "df.query('revenue > 60 and units > 5')",
+      "why": "query() parses the expression and evaluates it with numexpr under the hood when available, which can outperform boolean indexing on large DataFrames \u2014 and it reads more like plain English.",
+      "whenToUse": "Filters with several conditions, on large DataFrames, where readability and (sometimes) speed both matter.",
+      "commonMistake": "Assuming query() is always faster \u2014 for small DataFrames the overhead of parsing the expression can make it slower than a direct boolean mask.",
+      "relatedMethods": [
+        "query",
+        "loc"
+      ],
+      "example": "#   region category  revenue  units\n# 0   West    Shoes      120     12\n# 5   East    Shoes       70      7",
+      "starterCode": "",
+      "expectedOutput": "",
+      "tokens": [],
+      "distractors": []
+    },
+    {
+      "id": "perf_boolean_sum_no_copy",
+      "topic": "performance",
+      "subtopic": "filtering",
+      "tags": [
+        "boolean"
+      ],
+      "difficulty": "medium",
+      "prerequisites": [],
+      "dataset": "df",
+      "type": "flashcard",
+      "prompt": "Count how many rows have revenue over 100, without building a filtered copy of df just to call len() on it.",
+      "answer": "(df['revenue'] > 100).sum()",
+      "why": "A boolean Series sums to a count directly (True counts as 1) \u2014 no need to materialize a filtered DataFrame first just to measure its length.",
+      "whenToUse": "You only need the count of matching rows, not the matching rows themselves.",
+      "commonMistake": "Writing len(df[df['revenue'] > 100]) \u2014 correct, but it builds an entire filtered DataFrame just to throw it away after counting.",
+      "relatedMethods": [
+        "sum",
+        "loc"
+      ],
+      "example": "# 1",
+      "starterCode": "",
+      "expectedOutput": "",
+      "tokens": [],
+      "distractors": []
+    },
+    {
+      "id": "perf_isin_series",
+      "topic": "performance",
+      "subtopic": "filtering",
+      "tags": [
+        "isin"
+      ],
+      "difficulty": "easy",
+      "prerequisites": [],
+      "dataset": "df",
+      "type": "flashcard",
+      "prompt": "Build a boolean mask for rows where region is 'West' or 'East', without chaining multiple == comparisons with |.",
+      "answer": "df['region'].isin(['West', 'East'])",
+      "why": "isin() checks membership against a list in one call \u2014 a chain of == comparisons joined by | does the same thing but scales worse to read and to write as the list of options grows.",
+      "whenToUse": "Filtering against a set of allowed values, especially as that set grows past 2-3 options.",
+      "commonMistake": "Writing df['region'] == ['West', 'East'] directly \u2014 that's not valid membership testing, it's a shape-mismatched comparison.",
+      "relatedMethods": [
+        "isin",
+        "loc"
+      ],
+      "example": "# 0     True\n# 1     True\n# 6    False\n# dtype: bool",
+      "starterCode": "",
+      "expectedOutput": "",
+      "tokens": [],
+      "distractors": []
+    },
+    {
+      "id": "perf_vectorized_vs_apply_choice",
+      "topic": "performance",
+      "subtopic": "vectorization",
+      "tags": [
+        "vectorization",
+        "apply"
+      ],
+      "difficulty": "medium",
+      "prerequisites": [],
+      "dataset": "df",
+      "type": "multiple-choice",
+      "prompt": "Which is the fastest way to add a 10% markup to every value in the revenue column?",
+      "answer": "df['revenue'] * 1.1",
+      "why": "Plain arithmetic on a Series runs as a single vectorized, compiled operation across every element \u2014 apply() and map() both fall back to calling a Python function once per row, which is much slower at scale.",
+      "whenToUse": "Any time the transformation is expressible as ordinary arithmetic or a built-in vectorized method \u2014 reach for apply()/map() only when it genuinely isn't.",
+      "commonMistake": "Defaulting to .apply(lambda x: ...) out of habit even when the same result is available as plain vectorized arithmetic.",
+      "relatedMethods": [
+        "apply",
+        "map"
+      ],
+      "example": "# 0    132.0\n# 1    104.5\n# dtype: float64",
+      "starterCode": "",
+      "expectedOutput": "",
+      "tokens": [],
+      "distractors": [
+        "df['revenue'].apply(lambda x: x * 1.1)",
+        "df['revenue'].map(lambda x: x * 1.1)"
+      ]
+    },
+    {
+      "id": "perf_sort_values_no_inplace",
+      "topic": "performance",
+      "subtopic": "assignment",
+      "tags": [
+        "inplace"
+      ],
+      "difficulty": "medium",
+      "prerequisites": [],
+      "dataset": "df",
+      "type": "flashcard",
+      "prompt": "Sort df by revenue descending, assigning the result rather than relying on inplace=True.",
+      "answer": "df.sort_values('revenue', ascending=False)",
+      "why": "Despite the name, inplace=True doesn't skip creating a new internal array in most pandas operations \u2014 it just hides the reassignment step, with no real memory or speed advantage, and it breaks method chaining.",
+      "whenToUse": "Any pandas transformation \u2014 prefer reassigning the result (df = df.sort_values(...)) over inplace=True as the default habit.",
+      "commonMistake": "Choosing inplace=True believing it's the 'faster' or 'more memory-efficient' option \u2014 internally it's still building a new result, just assigning it back to the same name.",
+      "relatedMethods": [
+        "sort_values"
+      ],
+      "example": "#   region category  revenue  units\n# 0   West    Shoes      120     12\n# 1   East    Shoes       95      9",
+      "starterCode": "",
+      "expectedOutput": "",
+      "tokens": [],
+      "distractors": []
+    },
+    {
+      "id": "perf_groupby_vectorized",
+      "topic": "performance",
+      "subtopic": "vectorization",
+      "tags": [
+        "groupby"
+      ],
+      "difficulty": "medium",
+      "prerequisites": [],
+      "dataset": "df",
+      "type": "flashcard",
+      "prompt": "Sum units per region using groupby, instead of manually looping over each distinct region.",
+      "answer": "df.groupby('region')['units'].sum()",
+      "why": "groupby() computes per-group aggregation in vectorized, compiled code \u2014 a manual Python loop over unique regions, filtering and summing each one, does the same work far slower.",
+      "whenToUse": "Any per-category aggregation \u2014 sum, mean, count \u2014 reach for groupby() before writing a manual loop.",
+      "commonMistake": "Looping over df['region'].unique() and filtering df for each one \u2014 it recomputes a full scan of df once per category instead of a single grouped pass.",
+      "relatedMethods": [
+        "groupby",
+        "sum"
+      ],
+      "example": "# region\n# East     22\n# North    11\n# West     25\n# Name: units, dtype: int64",
+      "starterCode": "",
+      "expectedOutput": "",
+      "tokens": [],
+      "distractors": []
+    },
+    {
+      "id": "perf_string_contains",
+      "topic": "performance",
+      "subtopic": "vectorization",
+      "tags": [
+        "str"
+      ],
+      "difficulty": "medium",
+      "prerequisites": [],
+      "dataset": "df",
+      "type": "flashcard",
+      "prompt": "Filter df to rows where category contains the text 'Shoe', using a vectorized string method instead of apply().",
+      "answer": "df[df['category'].str.contains('Shoe')]",
+      "why": "The .str accessor runs string operations across the whole Series in one vectorized call \u2014 apply(lambda x: 'Shoe' in x) does the same check, just one slow Python function call per row.",
+      "whenToUse": "Any text-matching filter on a column \u2014 substring search, prefix/suffix checks, case changes.",
+      "commonMistake": "Reaching for .apply() with a lambda for string logic that .str already covers directly and faster.",
+      "relatedMethods": [
+        "str",
+        "isin",
+        "query"
+      ],
+      "example": "#   region category  revenue  units\n# 0   West    Shoes      120     12\n# 1   East    Shoes       95      9",
+      "starterCode": "",
+      "expectedOutput": "",
+      "tokens": [],
+      "distractors": []
+    },
+    {
+      "id": "perf_read_csv_dtype",
+      "topic": "performance",
+      "subtopic": "dtypes",
+      "tags": [
+        "read_csv",
+        "dtype"
+      ],
+      "difficulty": "hard",
+      "prerequisites": [],
+      "dataset": "csv_path",
+      "type": "flashcard",
+      "prompt": "Load csv_path with revenue as a smaller int32 dtype from the start, instead of loading as int64 and downcasting afterward.",
+      "answer": "pd.read_csv(csv_path, dtype={'revenue': 'int32'})",
+      "why": "Specifying dtype at load time avoids ever allocating the larger default dtype in the first place \u2014 cheaper than loading big and downcasting after.",
+      "whenToUse": "Loading a large CSV where you already know a column's values fit comfortably in a smaller numeric type.",
+      "commonMistake": "Loading with default dtypes and downcasting afterward as a matter of habit \u2014 fine occasionally, but wasteful for consistently large files where the smaller dtype is known upfront.",
+      "relatedMethods": [
+        "read_csv",
+        "to_numeric",
+        "astype"
+      ],
+      "example": "# revenue column loads directly as int32 instead of int64",
+      "starterCode": "",
+      "expectedOutput": "",
+      "tokens": [],
+      "distractors": []
+    }
+  ]
+}
