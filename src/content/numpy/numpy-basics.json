@@ -10,7 +10,7 @@
       ],
       "difficulty": "easy",
       "prerequisites": [],
-      "type": "flashcard",
+      "type": "multiple-choice",
       "prompt": "Create a NumPy array from the list [10, 20, 30, 40, 50].",
       "answer": "np.array([10, 20, 30, 40, 50])",
       "why": "np.array() converts a Python list into a NumPy array, unlocking vectorized operations.",
@@ -25,7 +25,10 @@
       "starterCode": "",
       "expectedOutput": "",
       "tokens": [],
-      "distractors": []
+      "distractors": [
+        "[10, 20, 30, 40, 50]",
+        "np.array([10, 20, 30, 40])"
+      ]
     },
     {
       "id": "numpy_elementwise",
@@ -39,7 +42,7 @@
         "numpy_create_array"
       ],
       "dataset": "arr",
-      "type": "flashcard",
+      "type": "multiple-choice",
       "prompt": "Multiply every element of arr by 2.",
       "answer": "arr * 2",
       "why": "Arithmetic on a NumPy array applies element-wise, with no explicit loop needed.",
@@ -54,7 +57,10 @@
       "starterCode": "",
       "expectedOutput": "",
       "tokens": [],
-      "distractors": []
+      "distractors": [
+        "arr + 2",
+        "arr ** 2"
+      ]
     },
     {
       "id": "numpy_boolean_mask",
@@ -68,8 +74,8 @@
         "numpy_create_array"
       ],
       "dataset": "arr",
-      "type": "flashcard",
-      "prompt": "Select only the elements of arr greater than 25.",
+      "type": "fill-blank",
+      "prompt": "Select only the elements of arr greater than 25. Fill in the blank.",
       "answer": "arr[arr > 25]",
       "why": "arr > 25 produces a boolean array used to filter arr itself, the same pattern used for pandas boolean indexing.",
       "whenToUse": "Filtering numeric data by a condition.",
@@ -79,10 +85,15 @@
         "nonzero"
       ],
       "example": "# array([30, 40, 50])",
-      "starterCode": "",
+      "starterCode": "arr[arr > ___]",
       "expectedOutput": "",
-      "tokens": [],
-      "distractors": []
+      "tokens": [
+        "25"
+      ],
+      "distractors": [
+        "20",
+        "30"
+      ]
     },
     {
       "id": "numpy_mean",
@@ -96,8 +107,8 @@
         "numpy_create_array"
       ],
       "dataset": "arr",
-      "type": "flashcard",
-      "prompt": "Average of all elements in arr.",
+      "type": "fill-blank",
+      "prompt": "Average of all elements in arr. Fill in the blank.",
       "answer": "arr.mean()",
       "why": "mean() is a built-in reduction method on any NumPy array.",
       "whenToUse": "Summarizing a whole array with a single statistic.",
@@ -108,10 +119,15 @@
         "median"
       ],
       "example": "# 30.0",
-      "starterCode": "",
+      "starterCode": "arr.___()",
       "expectedOutput": "",
-      "tokens": [],
-      "distractors": []
+      "tokens": [
+        "mean"
+      ],
+      "distractors": [
+        "sum",
+        "median"
+      ]
     },
     {
       "id": "numpy_reshape",
@@ -124,8 +140,8 @@
       "prerequisites": [
         "numpy_create_array"
       ],
-      "type": "flashcard",
-      "prompt": "Create a range of 6 numbers and reshape it into a 2x3 matrix.",
+      "type": "fill-blank",
+      "prompt": "Create a range of 6 numbers and reshape it into a 2x3 matrix. Fill in the blank.",
       "answer": "np.arange(6).reshape(2, 3)",
       "why": "reshape() rearranges the same data into a new shape, as long as the total element count matches.",
       "whenToUse": "Converting a flat sequence into a 2D (or higher) matrix layout.",
@@ -136,10 +152,15 @@
         "transpose"
       ],
       "example": "# array([[0, 1, 2],\n#        [3, 4, 5]])",
-      "starterCode": "",
+      "starterCode": "np.arange(6).reshape(___, 3)",
       "expectedOutput": "",
-      "tokens": [],
-      "distractors": []
+      "tokens": [
+        "2"
+      ],
+      "distractors": [
+        "3",
+        "6"
+      ]
     },
     {
       "id": "numpy_arange",
@@ -152,8 +173,8 @@
       "prerequisites": [
         "numpy_create_array"
       ],
-      "type": "flashcard",
-      "prompt": "Create an array of 0, 10, 20, 30, 40 using a range-like function instead of listing each number.",
+      "type": "fill-blank",
+      "prompt": "Create an array of 0, 10, 20, 30, 40 using a range-like function instead of listing each number. Fill in the blank.",
       "answer": "np.arange(0, 50, 10)",
       "why": "arange(start, stop, step) generates evenly spaced values, stopping before the stop value.",
       "whenToUse": "Generating a sequence with a known start, stop, and step size.",
@@ -163,10 +184,15 @@
         "linspace"
       ],
       "example": "# array([ 0, 10, 20, 30, 40])",
-      "starterCode": "",
+      "starterCode": "np.arange(0, ___, 10)",
       "expectedOutput": "",
-      "tokens": [],
-      "distractors": []
+      "tokens": [
+        "50"
+      ],
+      "distractors": [
+        "40",
+        "45"
+      ]
     },
     {
       "id": "numpy_linspace",
@@ -179,8 +205,8 @@
       "prerequisites": [
         "numpy_arange"
       ],
-      "type": "flashcard",
-      "prompt": "Create 5 evenly spaced numbers from 0 to 1, inclusive of both ends.",
+      "type": "fill-blank",
+      "prompt": "Create 5 evenly spaced numbers from 0 to 1, inclusive of both ends. Fill in the blank.",
       "answer": "np.linspace(0, 1, 5)",
       "why": "linspace(start, stop, num) includes both endpoints by default, unlike arange's exclusive stop.",
       "whenToUse": "You know how many points you want, not the step size.",
@@ -190,10 +216,15 @@
         "linspace"
       ],
       "example": "# array([0.  , 0.25, 0.5 , 0.75, 1.  ])",
-      "starterCode": "",
+      "starterCode": "np.___(0, 1, 5)",
       "expectedOutput": "",
-      "tokens": [],
-      "distractors": []
+      "tokens": [
+        "linspace"
+      ],
+      "distractors": [
+        "arange",
+        "array"
+      ]
     },
     {
       "id": "numpy_std",
@@ -208,8 +239,8 @@
         "numpy_mean"
       ],
       "dataset": "arr",
-      "type": "flashcard",
-      "prompt": "Standard deviation of all elements in arr.",
+      "type": "fill-blank",
+      "prompt": "Standard deviation of all elements in arr. Fill in the blank.",
       "answer": "arr.std()",
       "why": "std() is a built-in reduction, same family as mean()/sum().",
       "whenToUse": "Measuring spread/variability of numeric data.",
@@ -220,10 +251,15 @@
         "sum"
       ],
       "example": "# 14.142135623730951",
-      "starterCode": "",
+      "starterCode": "arr.___()",
       "expectedOutput": "",
-      "tokens": [],
-      "distractors": []
+      "tokens": [
+        "std"
+      ],
+      "distractors": [
+        "var",
+        "mean"
+      ]
     },
     {
       "id": "numpy_where",
@@ -237,8 +273,8 @@
         "numpy_boolean_mask"
       ],
       "dataset": "arr",
-      "type": "flashcard",
-      "prompt": "Replace every element of arr that's 25 or under with 0, keeping the rest unchanged.",
+      "type": "fill-blank",
+      "prompt": "Replace every element of arr that's 25 or under with 0, keeping the rest unchanged. Fill in the blank.",
       "answer": "np.where(arr > 25, arr, 0)",
       "why": "where(condition, if_true, if_false) picks element-wise between two values based on a boolean condition.",
       "whenToUse": "Conditionally replacing values without a Python loop.",
@@ -248,10 +284,15 @@
         "clip"
       ],
       "example": "# array([ 0,  0, 30, 40, 50])",
-      "starterCode": "",
+      "starterCode": "np.where(arr > 25, ___, 0)",
       "expectedOutput": "",
-      "tokens": [],
-      "distractors": []
+      "tokens": [
+        "arr"
+      ],
+      "distractors": [
+        "0",
+        "25"
+      ]
     },
     {
       "id": "numpy_argmax",
@@ -265,8 +306,8 @@
         "numpy_mean"
       ],
       "dataset": "arr",
-      "type": "flashcard",
-      "prompt": "Index of the largest element in arr.",
+      "type": "fill-blank",
+      "prompt": "Index of the largest element in arr. Fill in the blank.",
       "answer": "arr.argmax()",
       "why": "argmax() returns the position of the maximum value, not the value itself.",
       "whenToUse": "Finding where a peak occurs, not just what the peak value is.",
@@ -277,10 +318,15 @@
         "max"
       ],
       "example": "# 4",
-      "starterCode": "",
+      "starterCode": "arr.___()",
       "expectedOutput": "",
-      "tokens": [],
-      "distractors": []
+      "tokens": [
+        "argmax"
+      ],
+      "distractors": [
+        "argmin",
+        "max"
+      ]
     },
     {
       "id": "numpy_cumsum",
@@ -294,8 +340,8 @@
         "numpy_mean"
       ],
       "dataset": "arr",
-      "type": "flashcard",
-      "prompt": "Running (cumulative) total across arr.",
+      "type": "fill-blank",
+      "prompt": "Running (cumulative) total across arr. Fill in the blank.",
       "answer": "arr.cumsum()",
       "why": "cumsum() returns an array the same length as the input, where each element is the sum of all elements up to that point.",
       "whenToUse": "Running totals, e.g. cumulative revenue over time.",
@@ -305,10 +351,15 @@
         "cumprod"
       ],
       "example": "# array([ 10,  30,  60, 100, 150])",
-      "starterCode": "",
+      "starterCode": "arr.___()",
       "expectedOutput": "",
-      "tokens": [],
-      "distractors": []
+      "tokens": [
+        "cumsum"
+      ],
+      "distractors": [
+        "sum",
+        "cumprod"
+      ]
     },
     {
       "id": "numpy_sort_desc",
@@ -322,8 +373,8 @@
         "numpy_create_array"
       ],
       "dataset": "arr",
-      "type": "flashcard",
-      "prompt": "Sort arr from largest to smallest.",
+      "type": "fill-blank",
+      "prompt": "Sort arr from largest to smallest. Fill in the blank.",
       "answer": "np.sort(arr)[::-1]",
       "why": "np.sort() always sorts ascending; reversing the sorted result with [::-1] gives descending order.",
       "whenToUse": "Ranking numeric data from highest to lowest.",
@@ -333,10 +384,15 @@
         "argsort"
       ],
       "example": "# array([50, 40, 30, 20, 10])",
-      "starterCode": "",
+      "starterCode": "np.sort(arr)___",
       "expectedOutput": "",
-      "tokens": [],
-      "distractors": []
+      "tokens": [
+        "[::-1]"
+      ],
+      "distractors": [
+        "[::1]",
+        ".reverse()"
+      ]
     },
     {
       "id": "numpy_2d_axis_sum",
@@ -350,8 +406,8 @@
       "prerequisites": [
         "numpy_reshape"
       ],
-      "type": "flashcard",
-      "prompt": "Reshape a range of 6 numbers into a 2x3 matrix, then sum each column (not each row).",
+      "type": "fill-blank",
+      "prompt": "Reshape a range of 6 numbers into a 2x3 matrix, then sum each column (not each row). Fill in the blank.",
       "answer": "np.arange(6).reshape(2, 3).sum(axis=0)",
       "why": "axis=0 sums down columns; axis=1 would sum across rows instead.",
       "whenToUse": "Aggregating a 2D array along one specific dimension.",
@@ -361,10 +417,15 @@
         "reshape"
       ],
       "example": "# array([3, 5, 7])",
-      "starterCode": "",
+      "starterCode": "np.arange(6).reshape(2, 3).sum(axis=___)",
       "expectedOutput": "",
-      "tokens": [],
-      "distractors": []
+      "tokens": [
+        "0"
+      ],
+      "distractors": [
+        "1",
+        "None"
+      ]
     },
     {
       "id": "numpy_astype_blank",

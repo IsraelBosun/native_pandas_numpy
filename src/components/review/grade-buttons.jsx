@@ -24,33 +24,45 @@ function formatInterval(grade, interval) {
   return interval === 1 ? '1 day' : `${interval} days`;
 }
 
-export function GradeButtons({ card, onGrade }) {
+// suggestedGrade comes from auto-checked card types (fill-blank chains,
+// multiple-choice) — it pre-highlights the grade that matches how cleanly
+// the user actually answered, so confirming is a single tap, but every
+// button stays pressable since the user has final say.
+export function GradeButtons({ card, onGrade, suggestedGrade }) {
   const theme = useTheme();
   const previews = useMemo(() => previewCardIntervals(card), [card.id]);
 
   return (
     <Animated.View style={styles.grid} entering={FadeInUp.duration(250)}>
-      {GRADE_META.map(({ grade, label, colorKey }) => (
-        <ScalePressable
-          key={grade}
-          haptic="light"
-          scaleTo={0.94}
-          onPress={() => onGrade(grade)}
-          style={styles.buttonWrap}>
-          <View
-            style={[
-              styles.button,
-              { borderColor: theme[colorKey], backgroundColor: theme.backgroundElement },
-            ]}>
-            <ThemedText type="smallBold" style={{ color: theme[colorKey] }}>
-              {label}
-            </ThemedText>
-            <ThemedText themeColor="textSecondary" type="small">
-              {formatInterval(grade, previews[grade].interval)}
-            </ThemedText>
-          </View>
-        </ScalePressable>
-      ))}
+      {GRADE_META.map(({ grade, label, colorKey }) => {
+        const isSuggested = grade === suggestedGrade;
+        return (
+          <ScalePressable
+            key={grade}
+            haptic="light"
+            scaleTo={0.94}
+            onPress={() => onGrade(grade)}
+            style={styles.buttonWrap}>
+            <View
+              style={[
+                styles.button,
+                {
+                  borderColor: theme[colorKey],
+                  backgroundColor: isSuggested ? theme[colorKey] : theme.backgroundElement,
+                },
+              ]}>
+              <ThemedText type="smallBold" style={{ color: isSuggested ? '#FFFFFF' : theme[colorKey] }}>
+                {label}
+              </ThemedText>
+              <ThemedText
+                type="small"
+                style={{ color: isSuggested ? '#FFFFFF' : theme.textSecondary }}>
+                {formatInterval(grade, previews[grade].interval)}
+              </ThemedText>
+            </View>
+          </ScalePressable>
+        );
+      })}
     </Animated.View>
   );
 }

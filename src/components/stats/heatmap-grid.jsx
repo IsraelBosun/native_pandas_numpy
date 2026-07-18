@@ -1,21 +1,37 @@
+import { useState } from 'react';
 import { StyleSheet, View } from 'react-native';
 
 import { Spacing } from '@/constants/theme';
 import { useTheme } from '@/hooks/use-theme';
 
-const SQUARE_SIZE = 12;
+const GAP = Spacing.half;
+const FALLBACK_SQUARE_SIZE = 12;
 
 export function HeatmapGrid({ data }) {
   const theme = useTheme();
+  const [containerWidth, setContainerWidth] = useState(0);
   const weeks = chunkIntoWeeks(data);
   const maxCount = Math.max(1, ...data.map((day) => day.count));
 
+  // Squares stretch to fill the full row width — size derives from however
+  // much horizontal space the parent actually gives us, not a fixed pixel
+  // value, so the grid always spans edge to edge like a GitHub contribution graph.
+  const squareSize = containerWidth
+    ? Math.floor((containerWidth - GAP * (weeks.length - 1)) / weeks.length)
+    : FALLBACK_SQUARE_SIZE;
+
   return (
-    <View style={styles.row}>
+    <View style={styles.row} onLayout={(e) => setContainerWidth(e.nativeEvent.layout.width)}>
       {weeks.map((week, weekIndex) => (
         <View key={weekIndex} style={styles.column}>
           {week.map((day) => (
-            <View key={day.date} style={[styles.square, squareStyle(theme, day.count, maxCount)]} />
+            <View
+              key={day.date}
+              style={[
+                { width: squareSize, height: squareSize, borderRadius: 3 },
+                squareStyle(theme, day.count, maxCount),
+              ]}
+            />
           ))}
         </View>
       ))}
@@ -41,13 +57,9 @@ const styles = StyleSheet.create({
   row: {
     flexDirection: 'row',
     gap: Spacing.half,
+    width: '100%',
   },
   column: {
     gap: Spacing.half,
-  },
-  square: {
-    width: SQUARE_SIZE,
-    height: SQUARE_SIZE,
-    borderRadius: 3,
   },
 });

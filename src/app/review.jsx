@@ -6,6 +6,7 @@ import Animated, { FadeInRight } from 'react-native-reanimated';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { ProgressBar } from '@/components/progress-bar';
+import { ComboPill } from '@/components/review/combo-pill';
 import { GradeButtons } from '@/components/review/grade-buttons';
 import { ReviewCard } from '@/components/review/review-card';
 import { SessionSummary } from '@/components/session-summary';
@@ -41,13 +42,19 @@ export default function ReviewScreen() {
       <SessionSummary
         reviewed={session.stats.reviewed}
         missed={session.stats.missed}
+        xp={session.stats.xp}
         streak={streak}
+        newAchievements={session.newAchievements}
         onDone={() => router.replace('/')}
       />
     );
   }
 
   const { currentCard } = session;
+  // One-render gap: grading the last card advances `index` past the end of
+  // the queue immediately, but `complete` only flips true on the next effect
+  // pass — currentCard is briefly undefined in between.
+  if (!currentCard) return null;
   const topicMeta = TOPICS.find((t) => t.id === currentCard.topic);
   const identity = hues[topicMeta?.hue] ?? hues.blue;
 
@@ -72,7 +79,10 @@ export default function ReviewScreen() {
               {topicMeta?.label}
             </ThemedText>
           </View>
-          <StreakPill days={streak} label="day streak" />
+          <View style={styles.badges}>
+            <ComboPill combo={session.combo} />
+            <StreakPill days={streak} label="day streak" />
+          </View>
         </View>
 
         <KeyboardAvoidingView
@@ -90,16 +100,17 @@ export default function ReviewScreen() {
               entering={FadeInRight.duration(280)}>
               <ReviewCard
                 card={currentCard}
-                revealed={session.revealed}
                 onReveal={session.reveal}
                 onGrade={session.grade}
-                onInputFocus={() => scrollRef.current?.scrollToEnd({ animated: true })}
+                onToggleFavorite={session.toggleFavorite}
+                onNoteChange={session.updateNote}
+                onNoteFocus={() => scrollRef.current?.scrollToEnd({ animated: true })}
               />
             </Animated.View>
           </ScrollView>
 
           {session.revealed && currentCard.type !== 'multiple-choice' && (
-            <GradeButtons card={currentCard} onGrade={session.grade} />
+            <GradeButtons card={currentCard} onGrade={session.grade} suggestedGrade={session.suggestedGrade} />
           )}
         </KeyboardAvoidingView>
       </SafeAreaView>
@@ -131,6 +142,11 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
+  },
+  badges: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: Spacing.two,
   },
   topicPill: {
     paddingVertical: Spacing.one,

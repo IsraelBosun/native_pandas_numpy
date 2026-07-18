@@ -11,7 +11,7 @@
       "difficulty": "medium",
       "prerequisites": [],
       "dataset": "df",
-      "type": "flashcard",
+      "type": "multiple-choice",
       "prompt": "Build a table of total revenue with regions as rows and categories as columns.",
       "answer": "pd.pivot_table(df, values='revenue', index='region', columns='category', aggfunc='sum')",
       "why": "pivot_table reshapes long data into a wide grid, aggregating with aggfunc wherever a region/category combination has more than one row.",
@@ -26,7 +26,10 @@
       "starterCode": "",
       "expectedOutput": "",
       "tokens": [],
-      "distractors": []
+      "distractors": [
+        "pd.pivot_table(df, values='revenue', index='category', columns='region', aggfunc='sum')",
+        "pd.pivot_table(df, values='revenue', index='region', columns='category')"
+      ]
     },
     {
       "id": "pivot_default_mean",
@@ -40,7 +43,7 @@
         "pivot_basic"
       ],
       "dataset": "df",
-      "type": "flashcard",
+      "type": "multiple-choice",
       "prompt": "Build the same region/category grid, but leave aggfunc unspecified.",
       "answer": "pd.pivot_table(df, values='revenue', index='region', columns='category')",
       "why": "pivot_table's default aggfunc is 'mean', not 'sum' \u2014 every cell becomes an average when aggfunc isn't given.",
@@ -53,7 +56,10 @@
       "starterCode": "",
       "expectedOutput": "",
       "tokens": [],
-      "distractors": []
+      "distractors": [
+        "pd.pivot_table(df, values='revenue', index='region', columns='category', aggfunc='sum')",
+        "pd.pivot_table(df, values='revenue', index='region', columns='category', aggfunc='count')"
+      ]
     },
     {
       "id": "pivot_aggfunc_count",
@@ -67,8 +73,8 @@
         "pivot_basic"
       ],
       "dataset": "df",
-      "type": "flashcard",
-      "prompt": "Build the region/category grid showing how many rows fall into each combination, instead of a revenue total.",
+      "type": "fill-blank",
+      "prompt": "Build the region/category grid showing how many rows fall into each combination, instead of a revenue total. Fill in the blank.",
       "answer": "pd.pivot_table(df, values='revenue', index='region', columns='category', aggfunc='count')",
       "why": "aggfunc='count' counts the rows behind each cell instead of summing or averaging a value.",
       "whenToUse": "Checking how much data backs each combination, e.g. before trusting an average.",
@@ -78,10 +84,15 @@
         "crosstab"
       ],
       "example": "# category  Bags  Shoes\n# region\n# East         1      2\n# North        1      1\n# West         2      1",
-      "starterCode": "",
+      "starterCode": "pd.pivot_table(df, values='revenue', index='region', columns='category', aggfunc='___')",
       "expectedOutput": "",
-      "tokens": [],
-      "distractors": []
+      "tokens": [
+        "count"
+      ],
+      "distractors": [
+        "sum",
+        "mean"
+      ]
     },
     {
       "id": "pivot_multiple_values",
@@ -95,8 +106,8 @@
         "pivot_basic"
       ],
       "dataset": "df",
-      "type": "flashcard",
-      "prompt": "Total revenue AND total units per region, with no column split \u2014 just one row per region.",
+      "type": "fill-blank",
+      "prompt": "Total revenue AND total units per region, with no column split \u2014 just one row per region. Fill in the blank.",
       "answer": "pd.pivot_table(df, values=['revenue', 'units'], index='region', aggfunc='sum')",
       "why": "values can take a list, aggregating more than one column at once; omitting columns= keeps the result as simple rows instead of a wide grid.",
       "whenToUse": "Summarizing several metrics per group without needing a second dimension as columns.",
@@ -106,10 +117,15 @@
         "groupby"
       ],
       "example": "#         revenue  units\n# region\n# East        225     22\n# North       115     11\n# West        245     25",
-      "starterCode": "",
+      "starterCode": "pd.pivot_table(df, values=['revenue', 'units'], index='region', aggfunc='___')",
       "expectedOutput": "",
-      "tokens": [],
-      "distractors": []
+      "tokens": [
+        "sum"
+      ],
+      "distractors": [
+        "mean",
+        "count"
+      ]
     },
     {
       "id": "pivot_multiple_aggfunc",
@@ -123,7 +139,7 @@
         "pivot_basic"
       ],
       "dataset": "df",
-      "type": "flashcard",
+      "type": "multiple-choice",
       "prompt": "Show both the sum AND the mean of revenue per region in one pivot table.",
       "answer": "pd.pivot_table(df, values='revenue', index='region', aggfunc=['sum', 'mean'])",
       "why": "Passing a list to aggfunc runs each function and stacks the results as extra top-level columns.",
@@ -137,7 +153,10 @@
       "starterCode": "",
       "expectedOutput": "",
       "tokens": [],
-      "distractors": []
+      "distractors": [
+        "pd.pivot_table(df, values='revenue', index='region', aggfunc='sum')",
+        "pd.pivot_table(df, values='revenue', index='region', aggfunc=['mean', 'count'])"
+      ]
     },
     {
       "id": "pivot_fill_value",
@@ -151,8 +170,8 @@
         "pivot_basic"
       ],
       "dataset": "regional_sales",
-      "type": "flashcard",
-      "prompt": "regional_sales doesn't have a North/Bags row at all. Build the region/category revenue grid, showing 0 instead of a blank for that missing combination.",
+      "type": "fill-blank",
+      "prompt": "regional_sales doesn't have a North/Bags row at all. Build the region/category revenue grid, showing 0 instead of a blank for that missing combination. Fill in the blank.",
       "answer": "pd.pivot_table(regional_sales, values='revenue', index='region', columns='category', aggfunc='sum', fill_value=0)",
       "why": "fill_value replaces the NaN pandas would otherwise put in any region/category combination that has no matching rows.",
       "whenToUse": "A missing combination should read as 'zero activity' rather than 'unknown'.",
@@ -162,10 +181,15 @@
         "fillna"
       ],
       "example": "# category  Bags  Shoes\n# region\n# East        60     95\n# North        0     50\n# West        80    120",
-      "starterCode": "",
+      "starterCode": "pd.pivot_table(regional_sales, values='revenue', index='region', columns='category', aggfunc='sum', fill_value=___)",
       "expectedOutput": "",
-      "tokens": [],
-      "distractors": []
+      "tokens": [
+        "0"
+      ],
+      "distractors": [
+        "None",
+        "1"
+      ]
     },
     {
       "id": "pivot_margins",
@@ -180,8 +204,8 @@
         "pivot_basic"
       ],
       "dataset": "df",
-      "type": "flashcard",
-      "prompt": "Build the region/category revenue grid, with an extra row and column showing the grand totals.",
+      "type": "fill-blank",
+      "prompt": "Build the region/category revenue grid, with an extra row and column showing the grand totals. Fill in the blank.",
       "answer": "pd.pivot_table(df, values='revenue', index='region', columns='category', aggfunc='sum', margins=True)",
       "why": "margins=True adds an 'All' row and 'All' column with the row/column/grand totals, computed with the same aggfunc.",
       "whenToUse": "You want subtotals and a grand total in the same table, without a separate calculation.",
@@ -190,10 +214,15 @@
         "pivot_table"
       ],
       "example": "# category  Bags  Shoes  All\n# region\n# East        60    165  225\n# North       65     50  115\n# West       125    120  245\n# All        250    335  585",
-      "starterCode": "",
+      "starterCode": "pd.pivot_table(df, values='revenue', index='region', columns='category', aggfunc='sum', margins=___)",
       "expectedOutput": "",
-      "tokens": [],
-      "distractors": []
+      "tokens": [
+        "True"
+      ],
+      "distractors": [
+        "False",
+        "None"
+      ]
     },
     {
       "id": "pivot_reset_index",
@@ -208,8 +237,8 @@
         "pivot_basic"
       ],
       "dataset": "df",
-      "type": "flashcard",
-      "prompt": "Build the region/category revenue grid, then turn region back into an ordinary column instead of the row index.",
+      "type": "fill-blank",
+      "prompt": "Build the region/category revenue grid, then turn region back into an ordinary column instead of the row index. Fill in the blank.",
       "answer": "pd.pivot_table(df, values='revenue', index='region', columns='category', aggfunc='sum').reset_index()",
       "why": "pivot_table puts index= on the row labels; reset_index() flattens it back into a normal column, useful before exporting or plotting.",
       "whenToUse": "You need a flat table (e.g. for a CSV export) rather than a labeled-index grid.",
@@ -219,10 +248,15 @@
         "pivot_table"
       ],
       "example": "#  region  Bags  Shoes\n#0   East    60    165\n#1  North    65     50\n#2   West   125    120",
-      "starterCode": "",
+      "starterCode": "pd.pivot_table(df, values='revenue', index='region', columns='category', aggfunc='sum').___()",
       "expectedOutput": "",
-      "tokens": [],
-      "distractors": []
+      "tokens": [
+        "reset_index"
+      ],
+      "distractors": [
+        "stack",
+        "unstack"
+      ]
     },
     {
       "id": "pivot_crosstab_counts",
@@ -236,7 +270,7 @@
         "pivot_aggfunc_count"
       ],
       "dataset": "df",
-      "type": "flashcard",
+      "type": "multiple-choice",
       "prompt": "Build a simple frequency table of how many rows fall into each region/category combination, using crosstab instead of pivot_table.",
       "answer": "pd.crosstab(df['region'], df['category'])",
       "why": "crosstab() is a shortcut purpose-built for counting combinations of two columns \u2014 no values=/aggfunc='count' needed.",
@@ -250,7 +284,10 @@
       "starterCode": "",
       "expectedOutput": "",
       "tokens": [],
-      "distractors": []
+      "distractors": [
+        "pd.pivot_table(df, values='revenue', index='region', columns='category', aggfunc='count')",
+        "pd.crosstab(df['category'], df['region'])"
+      ]
     },
     {
       "id": "pivot_crosstab_normalize",
@@ -264,8 +301,8 @@
         "pivot_crosstab_counts"
       ],
       "dataset": "df",
-      "type": "flashcard",
-      "prompt": "Same crosstab, but show each region's row as proportions (summing to 1) instead of raw counts.",
+      "type": "fill-blank",
+      "prompt": "Same crosstab, but show each region's row as proportions (summing to 1) instead of raw counts. Fill in the blank.",
       "answer": "pd.crosstab(df['region'], df['category'], normalize='index')",
       "why": "normalize='index' divides each row by its own row total, turning counts into within-region proportions.",
       "whenToUse": "Comparing the category mix across regions of very different sizes, where raw counts aren't directly comparable.",
@@ -274,10 +311,15 @@
         "crosstab"
       ],
       "example": "# category      Bags     Shoes\n# region\n# East      0.333333  0.666667\n# North     0.500000  0.500000\n# West      0.666667  0.333333",
-      "starterCode": "",
+      "starterCode": "pd.crosstab(df['region'], df['category'], normalize='___')",
       "expectedOutput": "",
-      "tokens": [],
-      "distractors": []
+      "tokens": [
+        "index"
+      ],
+      "distractors": [
+        "columns",
+        "all"
+      ]
     },
     {
       "id": "pivot_stack",
@@ -291,8 +333,8 @@
         "pivot_basic"
       ],
       "dataset": "df",
-      "type": "flashcard",
-      "prompt": "Take the region/category revenue grid and convert it back into a single long Series with a region+category MultiIndex.",
+      "type": "fill-blank",
+      "prompt": "Take the region/category revenue grid and convert it back into a single long Series with a region+category MultiIndex. Fill in the blank.",
       "answer": "pd.pivot_table(df, values='revenue', index='region', columns='category', aggfunc='sum').stack()",
       "why": "stack() moves the column labels down into an inner index level, turning a wide grid back into a tall, long-format Series.",
       "whenToUse": "Reversing a pivot to feed a long-format Series into something that expects tidy, row-per-observation data.",
@@ -303,10 +345,15 @@
         "pivot_table"
       ],
       "example": "# region  category\n# East    Bags         60\n#         Shoes       165\n# North   Bags         65\n#         Shoes        50\n# West    Bags        125\n#         Shoes       120",
-      "starterCode": "",
+      "starterCode": "pd.pivot_table(df, values='revenue', index='region', columns='category', aggfunc='sum').___()",
       "expectedOutput": "",
-      "tokens": [],
-      "distractors": []
+      "tokens": [
+        "stack"
+      ],
+      "distractors": [
+        "unstack",
+        "reset_index"
+      ]
     },
     {
       "id": "pivot_unstack",
@@ -321,8 +368,8 @@
         "pivot_stack"
       ],
       "dataset": "df",
-      "type": "flashcard",
-      "prompt": "Starting from a groupby'd MultiIndex Series of revenue by region and category, reshape it into the same wide grid pivot_table would produce.",
+      "type": "fill-blank",
+      "prompt": "Starting from a groupby'd MultiIndex Series of revenue by region and category, reshape it into the same wide grid pivot_table would produce. Fill in the blank.",
       "answer": "df.groupby(['region', 'category'])['revenue'].sum().unstack()",
       "why": "unstack() moves the innermost index level (category) out to become columns, turning a tall MultiIndex Series wide.",
       "whenToUse": "You already have a groupby result and want a grid layout without redoing the aggregation with pivot_table.",
@@ -334,10 +381,15 @@
         "pivot_table"
       ],
       "example": "# category  Bags  Shoes\n# region\n# East        60    165\n# North       65     50\n# West       125    120",
-      "starterCode": "",
+      "starterCode": "df.groupby(['region', 'category'])['revenue'].sum().___()",
       "expectedOutput": "",
-      "tokens": [],
-      "distractors": []
+      "tokens": [
+        "unstack"
+      ],
+      "distractors": [
+        "stack",
+        "reset_index"
+      ]
     },
     {
       "id": "pivot_aggfunc_blank",
@@ -385,7 +437,7 @@
         "pivot_basic"
       ],
       "dataset": "df",
-      "type": "flashcard",
+      "type": "multiple-choice",
       "prompt": "Get total revenue per region and category, but as row labels (a MultiIndex) instead of splitting category out into columns.",
       "answer": "pd.pivot_table(df, values='revenue', index=['region', 'category'], aggfunc='sum')",
       "why": "Passing both columns to index= (and leaving columns= unset) stacks them as row levels instead of spreading one across the columns.",
@@ -399,7 +451,10 @@
       "starterCode": "",
       "expectedOutput": "",
       "tokens": [],
-      "distractors": []
+      "distractors": [
+        "pd.pivot_table(df, values='revenue', index='region', columns='category', aggfunc='sum')",
+        "pd.pivot_table(df, values='revenue', index=['category', 'region'], aggfunc='sum')"
+      ]
     },
     {
       "id": "pivot_vs_groupby_choice",

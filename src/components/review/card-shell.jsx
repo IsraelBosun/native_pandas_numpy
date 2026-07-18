@@ -1,24 +1,73 @@
-import { StyleSheet } from 'react-native';
+import Feather from '@expo/vector-icons/Feather';
+import Ionicons from '@expo/vector-icons/Ionicons';
+import { useState } from 'react';
+import { StyleSheet, TextInput, View } from 'react-native';
 
 import { DataTable } from './data-table';
 
+import { ScalePressable, triggerHaptic } from '@/components/scale-pressable';
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
 import { Radius, Spacing } from '@/constants/theme';
 import { useTheme } from '@/hooks/use-theme';
 
-export function CardShell({ prompt, dataset, children }) {
+// Star + note only render when a session wires them up (recordReview-backed
+// Review; not cram/Practice, which never touches persisted card_state).
+export function CardShell({ prompt, dataset, favorite, onToggleFavorite, note, onNoteChange, onNoteFocus, children }) {
   const theme = useTheme();
+  const [noteOpen, setNoteOpen] = useState(!!note);
+  const [draftNote, setDraftNote] = useState(note ?? '');
 
   return (
-    <ThemedView
-      type="backgroundElement"
-      style={[styles.card, { borderColor: theme.border }]}>
-      <ThemedText type="label" themeColor="textSecondary">
-        Task
-      </ThemedText>
+    <ThemedView type="backgroundElement" style={[styles.card, { borderColor: theme.border }]}>
+      <View style={styles.header}>
+        <ThemedText type="label" themeColor="textSecondary">
+          Task
+        </ThemedText>
+        {onToggleFavorite && (
+          <View style={styles.headerActions}>
+            <ScalePressable
+              hitSlop={8}
+              scaleTo={0.85}
+              onPress={() => {
+                setNoteOpen((prev) => !prev);
+                triggerHaptic('light');
+              }}>
+              <Feather
+                name="edit-3"
+                size={18}
+                color={noteOpen || note ? theme.action : theme.textSecondary}
+              />
+            </ScalePressable>
+            <ScalePressable hitSlop={8} scaleTo={0.85} onPress={onToggleFavorite} haptic="light">
+              <Ionicons
+                name={favorite ? 'star' : 'star-outline'}
+                size={20}
+                color={favorite ? theme.warning : theme.textSecondary}
+              />
+            </ScalePressable>
+          </View>
+        )}
+      </View>
       <ThemedText style={styles.prompt}>{prompt}</ThemedText>
       <DataTable dataset={dataset} />
+
+      {noteOpen && onNoteChange && (
+        <TextInput
+          value={draftNote}
+          onChangeText={setDraftNote}
+          onFocus={onNoteFocus}
+          onBlur={() => onNoteChange(draftNote)}
+          placeholder="Add a note for yourself…"
+          placeholderTextColor={theme.textSecondary}
+          multiline
+          style={[
+            styles.noteInput,
+            { color: theme.text, borderColor: theme.border, backgroundColor: theme.backgroundSelected },
+          ]}
+        />
+      )}
+
       {children}
     </ThemedView>
   );
@@ -31,8 +80,26 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     gap: Spacing.three,
   },
+  header: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
+  headerActions: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: Spacing.three,
+  },
   prompt: {
     fontSize: 18,
     lineHeight: 26,
+  },
+  noteInput: {
+    minHeight: 44,
+    padding: Spacing.two,
+    borderRadius: Radius.md,
+    borderWidth: 1,
+    fontSize: 14,
+    textAlignVertical: 'top',
   },
 });

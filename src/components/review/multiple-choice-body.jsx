@@ -46,7 +46,7 @@ export function MultipleChoiceBody({ card, onGrade }) {
               },
               pressed && !selected && styles.pressed,
             ]}>
-            <CodeBlock code={option} />
+            <CodeBlock code={option} copyable={showAsCorrect} />
           </Pressable>
         );
       })}

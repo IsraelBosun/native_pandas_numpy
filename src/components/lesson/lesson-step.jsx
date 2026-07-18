@@ -13,7 +13,7 @@ export function LessonStep({ step }) {
           {step.heading}
         </ThemedText>
         <ThemedView type="backgroundElement" style={styles.exampleCard}>
-          <CodeBlock code={step.code} />
+          <CodeBlock code={step.code} copyable />
           {step.output ? (
             <ThemedText type="code" themeColor="textSecondary">
               {step.output}

@@ -1,15 +1,18 @@
 import Feather from '@expo/vector-icons/Feather';
+import Ionicons from '@expo/vector-icons/Ionicons';
 import { useEffect, useState } from 'react';
 import { StyleSheet, View } from 'react-native';
 import Animated, { FadeInDown, FadeInUp, ZoomIn } from 'react-native-reanimated';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
+import { AchievementBadge } from '@/components/achievement-badge';
 import { ScalePressable, triggerHaptic } from '@/components/scale-pressable';
 import { StreakPill } from '@/components/streak-pill';
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
 import { Radius, Spacing } from '@/constants/theme';
 import { useTheme, useTopicHues } from '@/hooks/use-theme';
+import { playSound } from '@/lib/sound';
 
 // Numbers roll up to their value over this long — short enough to finish
 // before the eye settles, long enough to register as movement.
@@ -35,7 +38,7 @@ function useCountUp(target) {
   return value;
 }
 
-export function SessionSummary({ reviewed, missed, streak, onDone }) {
+export function SessionSummary({ reviewed, missed, xp, streak, newAchievements = [], onDone }) {
   const theme = useTheme();
   const hues = useTopicHues();
   const retention = reviewed > 0 ? Math.round(((reviewed - missed) / reviewed) * 100) : 0;
@@ -43,10 +46,14 @@ export function SessionSummary({ reviewed, missed, streak, onDone }) {
   const reviewedShown = useCountUp(reviewed);
   const missedShown = useCountUp(missed);
   const retentionShown = useCountUp(retention);
+  const xpShown = useCountUp(xp);
 
-  // This screen *is* the celebration — one success buzz as it lands.
+  // This screen *is* the celebration — one success buzz as it lands, plus the
+  // combo chime if a badge came along with it.
   useEffect(() => {
     triggerHaptic('success');
+    if (newAchievements.length > 0) playSound('combo');
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (
@@ -63,6 +70,37 @@ export function SessionSummary({ reviewed, missed, streak, onDone }) {
             Session complete
           </ThemedText>
         </Animated.View>
+
+        {xp > 0 && (
+          <Animated.View
+            entering={ZoomIn.delay(180).duration(350).springify().damping(11)}
+            style={[styles.xpPill, { backgroundColor: hues.amber.surface }]}>
+            <Ionicons name="flash" size={18} color={theme.warning} />
+            <ThemedText type="smallBold" style={{ color: theme.warning }}>
+              +{xpShown} XP
+            </ThemedText>
+          </Animated.View>
+        )}
+
+        {newAchievements.length > 0 && (
+          <Animated.View entering={FadeInDown.delay(200).duration(300)} style={styles.achievementsWrap}>
+            <ThemedText type="label" themeColor="textSecondary">
+              {newAchievements.length > 1 ? 'Achievements unlocked' : 'Achievement unlocked'}
+            </ThemedText>
+            <View style={styles.achievementsRow}>
+              {newAchievements.map((achievement, i) => (
+                <Animated.View
+                  key={achievement.id}
+                  entering={ZoomIn.delay(260 + i * 100)
+                    .duration(350)
+                    .springify()
+                    .damping(11)}>
+                  <AchievementBadge achievement={achievement} />
+                </Animated.View>
+              ))}
+            </View>
+          </Animated.View>
+        )}
 
         <Animated.View entering={FadeInUp.delay(220).duration(300)} style={styles.statsRow}>
           <Stat label="Reviewed" value={reviewedShown} />
@@ -128,6 +166,24 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 28,
     lineHeight: 34,
+  },
+  xpPill: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: Spacing.one,
+    paddingVertical: Spacing.one + Spacing.half,
+    paddingHorizontal: Spacing.four,
+    borderRadius: Radius.pill,
+  },
+  achievementsWrap: {
+    alignItems: 'center',
+    gap: Spacing.two,
+  },
+  achievementsRow: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    justifyContent: 'center',
+    gap: Spacing.two,
   },
   statsRow: {
     flexDirection: 'row',

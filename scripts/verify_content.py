@@ -79,13 +79,31 @@ def main():
                 continue
 
             if card_type == "fill-blank":
-                filled = card["starterCode"].replace("___", card["tokens"][0])
+                # tokens[i] fills the i-th "___" in starterCode, in order —
+                # true for both single-blank cards (tokens: [correct]) and
+                # chained multi-blank cards (tokens: [c1, c2, ...]).
+                blank_count = card["starterCode"].count("___")
+                if blank_count != len(card["tokens"]):
+                    failures.append(
+                        (
+                            path.name,
+                            card["id"],
+                            ValueError(
+                                f"starterCode has {blank_count} blank(s) but tokens has {len(card['tokens'])}"
+                            ),
+                        )
+                    )
+                    continue
+
+                filled = card["starterCode"]
+                for token in card["tokens"]:
+                    filled = filled.replace("___", token, 1)
                 if filled != card["answer"]:
                     failures.append(
                         (
                             path.name,
                             card["id"],
-                            ValueError(f"starterCode filled with tokens[0] ({filled!r}) != answer ({card['answer']!r})"),
+                            ValueError(f"starterCode filled with tokens ({filled!r}) != answer ({card['answer']!r})"),
                         )
                     )
 

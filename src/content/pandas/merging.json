@@ -15,7 +15,7 @@
         "df",
         "region_managers"
       ],
-      "type": "flashcard",
+      "type": "fill-blank",
       "prompt": "You have a second DataFrame region_managers with region and manager columns. Join it onto df, keeping only regions present in both.",
       "answer": "df.merge(region_managers, on='region', how='inner')",
       "why": "An inner merge keeps only rows whose join key exists on both sides.",
@@ -27,10 +27,16 @@
         "concat"
       ],
       "example": "#   region  ...  manager\n# 0   West  ...    Priya\n# 1   East  ...     Omar",
-      "starterCode": "",
+      "starterCode": "df.merge(region_managers, on='region', how='___')",
       "expectedOutput": "",
-      "tokens": [],
-      "distractors": []
+      "tokens": [
+        "inner"
+      ],
+      "distractors": [
+        "outer",
+        "left",
+        "right"
+      ]
     },
     {
       "id": "merge_left",
@@ -48,7 +54,7 @@
         "df",
         "region_managers"
       ],
-      "type": "flashcard",
+      "type": "fill-blank",
       "prompt": "Same join, but keep every row from df even if a region has no listed manager.",
       "answer": "df.merge(region_managers, on='region', how='left')",
       "why": "how='left' keeps all rows from the left DataFrame, filling unmatched columns with NaN.",
@@ -59,10 +65,16 @@
         "fillna"
       ],
       "example": "#    region  ...  manager\n# 6   North  ...      NaN\n# 7   North  ...      NaN",
-      "starterCode": "",
+      "starterCode": "df.merge(region_managers, on='region', how='___')",
       "expectedOutput": "",
-      "tokens": [],
-      "distractors": []
+      "tokens": [
+        "left"
+      ],
+      "distractors": [
+        "inner",
+        "right",
+        "outer"
+      ]
     },
     {
       "id": "merge_indicator",
@@ -81,21 +93,33 @@
         "df",
         "region_managers"
       ],
-      "type": "flashcard",
+      "type": "fill-blank",
       "prompt": "Merge df and region_managers keeping every row from both sides, and add a column showing which side each row came from.",
       "answer": "df.merge(region_managers, on='region', how='outer', indicator=True)",
       "why": "indicator=True adds a _merge column labeled 'left_only', 'right_only', or 'both'.",
-      "whenToUse": "Debugging a merge \u2014 seeing exactly which rows failed to match.",
-      "commonMistake": "Forgetting how='outer' \u2014 indicator=True alone won't surface unmatched rows under an inner join.",
+      "whenToUse": "Debugging a merge — seeing exactly which rows failed to match.",
+      "commonMistake": "Forgetting how='outer' — indicator=True alone won't surface unmatched rows under an inner join.",
       "relatedMethods": [
         "merge",
         "concat"
       ],
       "example": "#   region  ...  manager      _merge\n# 4  North  ...      NaN   left_only\n# 5  South  ...     Lena  right_only",
-      "starterCode": "",
+      "starterCode": "df.merge(region_managers, on='region', how='___', indicator=___)",
       "expectedOutput": "",
-      "tokens": [],
-      "distractors": []
+      "tokens": [
+        "outer",
+        "True"
+      ],
+      "distractors": [
+        [
+          "inner",
+          "left"
+        ],
+        [
+          "False",
+          "0"
+        ]
+      ]
     },
     {
       "id": "concat_rows",
@@ -107,21 +131,27 @@
       "difficulty": "easy",
       "prerequisites": [],
       "dataset": "df",
-      "type": "flashcard",
+      "type": "fill-blank",
       "prompt": "Stack two DataFrames with the same columns on top of each other.",
       "answer": "pd.concat([df.iloc[:2], df.iloc[2:]])",
       "why": "concat() stacks DataFrames along an axis (rows by default) rather than joining on a key.",
       "whenToUse": "Combining chunks of data with identical columns, e.g. multiple CSVs.",
-      "commonMistake": "Reaching for merge() when there's no join key at all \u2014 concat() is the right tool for simple stacking.",
+      "commonMistake": "Reaching for merge() when there's no join key at all — concat() is the right tool for simple stacking.",
       "relatedMethods": [
         "concat",
         "merge"
       ],
       "example": "# all 8 original rows back in their original order",
-      "starterCode": "",
+      "starterCode": "pd.___([df.iloc[:2], df.iloc[2:]])",
       "expectedOutput": "",
-      "tokens": [],
-      "distractors": []
+      "tokens": [
+        "concat"
+      ],
+      "distractors": [
+        "merge",
+        "append",
+        "join"
+      ]
     },
     {
       "id": "merge_right",
@@ -139,7 +169,7 @@
         "df",
         "region_managers"
       ],
-      "type": "flashcard",
+      "type": "fill-blank",
       "prompt": "Same join, but keep every row from region_managers even if a region has no matching sales.",
       "answer": "df.merge(region_managers, on='region', how='right')",
       "why": "how='right' mirrors how='left' but preserves all rows from the right DataFrame instead.",
@@ -149,10 +179,16 @@
         "merge"
       ],
       "example": "# South appears once with NaN sales columns; West/East rows repeat per matching sales row",
-      "starterCode": "",
+      "starterCode": "df.merge(region_managers, on='region', how='___')",
       "expectedOutput": "",
-      "tokens": [],
-      "distractors": []
+      "tokens": [
+        "right"
+      ],
+      "distractors": [
+        "left",
+        "inner",
+        "outer"
+      ]
     },
     {
       "id": "merge_suffixes",
@@ -167,7 +203,7 @@
         "merge_inner"
       ],
       "dataset": "df",
-      "type": "flashcard",
+      "type": "fill-blank",
       "prompt": "Merge df with itself on region (a self-join), with custom suffixes '_a' and '_b' instead of the default _x/_y.",
       "answer": "df.merge(df, on='region', suffixes=('_a', '_b'))",
       "why": "suffixes controls the labels appended to overlapping non-key column names instead of pandas' default _x/_y.",
@@ -178,10 +214,22 @@
         "rename"
       ],
       "example": "# category_a, revenue_a, units_a, category_b, revenue_b, units_b",
-      "starterCode": "",
+      "starterCode": "df.merge(df, on='region', suffixes=('___', '___'))",
       "expectedOutput": "",
-      "tokens": [],
-      "distractors": []
+      "tokens": [
+        "_a",
+        "_b"
+      ],
+      "distractors": [
+        [
+          "_x",
+          "_1"
+        ],
+        [
+          "_y",
+          "_2"
+        ]
+      ]
     },
     {
       "id": "merge_validate",
@@ -199,7 +247,7 @@
         "df",
         "region_managers"
       ],
-      "type": "flashcard",
+      "type": "fill-blank",
       "prompt": "Merge df onto region_managers, asserting that each df row matches at most one region_managers row (a many-to-one relationship).",
       "answer": "df.merge(region_managers, on='region', validate='m:1')",
       "why": "validate raises a MergeError if the actual key cardinality doesn't match what you asserted, catching join-key bugs early.",
@@ -208,11 +256,17 @@
       "relatedMethods": [
         "merge"
       ],
-      "example": "# succeeds silently \u2014 raises MergeError instead if the assumption is violated",
-      "starterCode": "",
+      "example": "# succeeds silently — raises MergeError instead if the assumption is violated",
+      "starterCode": "df.merge(region_managers, on='region', validate='___')",
       "expectedOutput": "",
-      "tokens": [],
-      "distractors": []
+      "tokens": [
+        "m:1"
+      ],
+      "distractors": [
+        "1:1",
+        "1:m",
+        "m:m"
+      ]
     },
     {
       "id": "concat_ignore_index",
@@ -226,7 +280,7 @@
         "concat_rows"
       ],
       "dataset": "df",
-      "type": "flashcard",
+      "type": "fill-blank",
       "prompt": "Stack two chunks of df back together with a fresh, continuous index instead of reusing their original row labels.",
       "answer": "pd.concat([df.iloc[:2], df.iloc[2:]], ignore_index=True)",
       "why": "ignore_index=True discards the original indices and assigns a new 0..n-1 range.",
@@ -237,10 +291,15 @@
         "reset_index"
       ],
       "example": "# index runs 0..7 with no duplicates or gaps",
-      "starterCode": "",
+      "starterCode": "pd.concat([df.iloc[:2], df.iloc[2:]], ignore_index=___)",
       "expectedOutput": "",
-      "tokens": [],
-      "distractors": []
+      "tokens": [
+        "True"
+      ],
+      "distractors": [
+        "False",
+        "None"
+      ]
     },
     {
       "id": "concat_columns",
@@ -254,7 +313,7 @@
         "concat_rows"
       ],
       "dataset": "df",
-      "type": "flashcard",
+      "type": "fill-blank",
       "prompt": "Add a derived tax column (10% of revenue) onto df by concatenating along columns instead of assigning directly.",
       "answer": "pd.concat([df, (df['revenue'] * 0.1).rename('tax')], axis=1)",
       "why": "axis=1 concatenates side-by-side by aligning on the index, rather than stacking rows.",
@@ -265,10 +324,15 @@
         "assign"
       ],
       "example": "#   region category  revenue  units   tax\n# 0   West    Shoes      120     12  12.0",
-      "starterCode": "",
+      "starterCode": "pd.concat([df, (df['revenue'] * 0.1).rename('tax')], axis=___)",
       "expectedOutput": "",
-      "tokens": [],
-      "distractors": []
+      "tokens": [
+        "1"
+      ],
+      "distractors": [
+        "0",
+        "None"
+      ]
     },
     {
       "id": "merge_indicator_filter",
@@ -286,7 +350,7 @@
         "df",
         "region_managers"
       ],
-      "type": "flashcard",
+      "type": "fill-blank",
       "prompt": "After a left indicator merge, keep only the df rows that had no matching manager.",
       "answer": "df.merge(region_managers, on='region', how='left', indicator=True).query(\"_merge == 'left_only'\")",
       "why": "Filtering on the _merge column isolates exactly the rows that failed to match, useful for debugging data gaps.",
@@ -296,11 +360,16 @@
         "merge",
         "query"
       ],
-      "example": "# both North rows \u2014 no manager listed for North",
-      "starterCode": "",
+      "example": "# both North rows — no manager listed for North",
+      "starterCode": "df.merge(region_managers, on='region', how='left', indicator=True).query(\"_merge == '___'\")",
       "expectedOutput": "",
-      "tokens": [],
-      "distractors": []
+      "tokens": [
+        "left_only"
+      ],
+      "distractors": [
+        "right_only",
+        "both"
+      ]
     },
     {
       "id": "merge_join_method",
@@ -317,12 +386,12 @@
         "df",
         "region_managers"
       ],
-      "type": "flashcard",
+      "type": "multiple-choice",
       "prompt": "Use join() (instead of merge()) to attach manager names onto df by region.",
       "answer": "df.join(region_managers.set_index('region'), on='region')",
       "why": "join() combines DataFrames by index by default; passing on='region' tells it which df column to match against the other DataFrame's index.",
       "whenToUse": "You already have (or can easily set) the right-hand DataFrame indexed by the join key.",
-      "commonMistake": "Calling join() without first indexing the other DataFrame by the key column \u2014 join() matches on index, not arbitrary columns, on both sides.",
+      "commonMistake": "Calling join() without first indexing the other DataFrame by the key column — join() matches on index, not arbitrary columns, on both sides.",
       "relatedMethods": [
         "join",
         "merge",
@@ -332,7 +401,10 @@
       "starterCode": "",
       "expectedOutput": "",
       "tokens": [],
-      "distractors": []
+      "distractors": [
+        "df.merge(region_managers, on='region')",
+        "df.set_index('region').join(region_managers.set_index('region'))"
+      ]
     },
     {
       "id": "merge_how_blank",
@@ -355,7 +427,7 @@
       "answer": "df.merge(region_managers, on='region', how='outer')",
       "why": "how='outer' keeps all rows from both DataFrames, filling non-matches with NaN on whichever side is missing.",
       "whenToUse": "You need the full union of both DataFrames' keys, not just matches or one side's rows.",
-      "commonMistake": "Confusing 'outer' with 'full' \u2014 pandas uses 'outer', not SQL's 'full outer join' spelling.",
+      "commonMistake": "Confusing 'outer' with 'full' — pandas uses 'outer', not SQL's 'full outer join' spelling.",
       "relatedMethods": [
         "merge"
       ],
@@ -390,7 +462,7 @@
       "answer": "pd.concat([df, df])",
       "why": "concat() stacks DataFrames by simply appending rows; merge() always tries to join on key columns, which isn't what 'stack rows together' means.",
       "whenToUse": "Combining chunks of data with identical columns, e.g. multiple CSVs.",
-      "commonMistake": "Reaching for merge() out of habit when there's no join key at all \u2014 concat() is the right tool for pure stacking.",
+      "commonMistake": "Reaching for merge() out of habit when there's no join key at all — concat() is the right tool for pure stacking.",
       "relatedMethods": [
         "concat",
         "merge"
@@ -421,21 +493,33 @@
         "df",
         "region_targets"
       ],
-      "type": "flashcard",
+      "type": "fill-blank",
       "prompt": "region_targets has the same regions under a column named area instead of region. Merge it onto df using that mismatched key.",
       "answer": "df.merge(region_targets, left_on='region', right_on='area')",
       "why": "left_on/right_on let you join two DataFrames whose key columns have different names.",
       "whenToUse": "The two DataFrames' join keys don't share a common column name.",
-      "commonMistake": "Trying on='region' when the right DataFrame doesn't have a column by that exact name \u2014 pandas raises a KeyError.",
+      "commonMistake": "Trying on='region' when the right DataFrame doesn't have a column by that exact name — pandas raises a KeyError.",
       "relatedMethods": [
         "merge",
         "rename"
       ],
       "example": "#   region category  revenue  units   area  target\n# 0   West    Shoes      120     12  West     200",
-      "starterCode": "",
+      "starterCode": "df.merge(region_targets, left_on='___', right_on='___')",
       "expectedOutput": "",
-      "tokens": [],
-      "distractors": []
+      "tokens": [
+        "region",
+        "area"
+      ],
+      "distractors": [
+        [
+          "category",
+          "revenue"
+        ],
+        [
+          "target",
+          "region"
+        ]
+      ]
     }
   ]
 }

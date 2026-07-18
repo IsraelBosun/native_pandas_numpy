@@ -12,7 +12,7 @@
       "difficulty": "easy",
       "prerequisites": [],
       "dataset": "df",
-      "type": "flashcard",
+      "type": "multiple-choice",
       "prompt": "Select the revenue column from df as a Series.",
       "answer": "df['revenue']",
       "why": "Bracket access with a single column name always returns a 1D Series, sharing df's index.",
@@ -26,7 +26,10 @@
       "starterCode": "",
       "expectedOutput": "",
       "tokens": [],
-      "distractors": []
+      "distractors": [
+        "df[['revenue']]",
+        "df['region']"
+      ]
     },
     {
       "id": "df_select_multiple_columns",
@@ -41,7 +44,7 @@
         "df_select_single_column"
       ],
       "dataset": "df",
-      "type": "flashcard",
+      "type": "multiple-choice",
       "prompt": "Select the region and revenue columns together, keeping the result a DataFrame.",
       "answer": "df[['region', 'revenue']]",
       "why": "A list of column names inside the brackets returns a DataFrame, even if the list has only one name.",
@@ -54,7 +57,10 @@
       "starterCode": "",
       "expectedOutput": "",
       "tokens": [],
-      "distractors": []
+      "distractors": [
+        "df['region']",
+        "df[['revenue']]"
+      ]
     },
     {
       "id": "df_add_column",
@@ -68,7 +74,7 @@
         "df_select_single_column"
       ],
       "dataset": "df",
-      "type": "flashcard",
+      "type": "multiple-choice",
       "prompt": "Add a new column revenue_per_unit computed from revenue divided by units.",
       "answer": "df['revenue_per_unit'] = df['revenue'] / df['units']",
       "why": "Assigning to a bracketed column name that doesn't exist yet creates it \u2014 pandas does the division element-wise across every row.",
@@ -81,7 +87,10 @@
       "starterCode": "",
       "expectedOutput": "",
       "tokens": [],
-      "distractors": []
+      "distractors": [
+        "df['revenue_per_unit'] = df['units'] / df['revenue']",
+        "df['revenue_per_unit'] = df['revenue'] * df['units']"
+      ]
     },
     {
       "id": "df_column_dtype_single",
@@ -95,8 +104,8 @@
         "df_select_single_column"
       ],
       "dataset": "df",
-      "type": "flashcard",
-      "prompt": "Check the data type of just the revenue column.",
+      "type": "fill-blank",
+      "prompt": "Check the data type of just the revenue column. Fill in the blank.",
       "answer": "df['revenue'].dtype",
       "why": "dtype (singular) is a Series attribute; dtypes (plural) is the DataFrame-level version covering every column at once.",
       "whenToUse": "Confirming one specific column's type before doing arithmetic or comparisons on it.",
@@ -107,10 +116,15 @@
         "astype"
       ],
       "example": "# dtype('int64')",
-      "starterCode": "",
+      "starterCode": "df['revenue'].___",
       "expectedOutput": "",
-      "tokens": [],
-      "distractors": []
+      "tokens": [
+        "dtype"
+      ],
+      "distractors": [
+        "dtypes",
+        "astype"
+      ]
     },
     {
       "id": "df_ndim",
@@ -122,8 +136,8 @@
       "difficulty": "easy",
       "prerequisites": [],
       "dataset": "df",
-      "type": "flashcard",
-      "prompt": "Check how many dimensions df has.",
+      "type": "fill-blank",
+      "prompt": "Check how many dimensions df has. Fill in the blank.",
       "answer": "df.ndim",
       "why": "A DataFrame is always 2D (rows and columns); a Series is always 1D \u2014 ndim confirms which you're holding.",
       "whenToUse": "Debugging when you're not sure whether a variable ended up as a Series or a DataFrame.",
@@ -133,10 +147,15 @@
         "size"
       ],
       "example": "# 2",
-      "starterCode": "",
+      "starterCode": "df.___",
       "expectedOutput": "",
-      "tokens": [],
-      "distractors": []
+      "tokens": [
+        "ndim"
+      ],
+      "distractors": [
+        "shape",
+        "size"
+      ]
     },
     {
       "id": "df_size",
@@ -150,8 +169,8 @@
         "df_ndim"
       ],
       "dataset": "df",
-      "type": "flashcard",
-      "prompt": "Get the total number of elements in df (rows times columns).",
+      "type": "fill-blank",
+      "prompt": "Get the total number of elements in df (rows times columns). Fill in the blank.",
       "answer": "df.size",
       "why": "size multiplies rows by columns into a single number \u2014 shape gives you the two numbers separately.",
       "whenToUse": "A rough sense of how much data you're holding, e.g. before an expensive operation.",
@@ -162,10 +181,15 @@
         "len"
       ],
       "example": "# 32",
-      "starterCode": "",
+      "starterCode": "df.___",
       "expectedOutput": "",
-      "tokens": [],
-      "distractors": []
+      "tokens": [
+        "size"
+      ],
+      "distractors": [
+        "shape",
+        "ndim"
+      ]
     },
     {
       "id": "df_copy",
@@ -177,8 +201,8 @@
       "difficulty": "medium",
       "prerequisites": [],
       "dataset": "df",
-      "type": "flashcard",
-      "prompt": "Make a full independent copy of df, so edits to the copy don't affect the original.",
+      "type": "fill-blank",
+      "prompt": "Make a full independent copy of df, so edits to the copy don't affect the original. Fill in the blank.",
       "answer": "df.copy()",
       "why": "Plain assignment (df2 = df) just creates a second name pointing at the same data \u2014 copy() actually duplicates it.",
       "whenToUse": "Before making edits to a DataFrame you still need the original, unmodified version of.",
@@ -187,10 +211,15 @@
         "copy"
       ],
       "example": "# an identical DataFrame that no longer shares memory with df",
-      "starterCode": "",
+      "starterCode": "df.___()",
       "expectedOutput": "",
-      "tokens": [],
-      "distractors": []
+      "tokens": [
+        "copy"
+      ],
+      "distractors": [
+        "clone",
+        "duplicate"
+      ]
     },
     {
       "id": "df_to_dict",
@@ -202,8 +231,8 @@
       "difficulty": "medium",
       "prerequisites": [],
       "dataset": "df",
-      "type": "flashcard",
-      "prompt": "Convert df to a plain dict of lists, one list per column.",
+      "type": "fill-blank",
+      "prompt": "Convert df to a plain dict of lists, one list per column. Fill in the blank.",
       "answer": "df.to_dict('list')",
       "why": "to_dict() accepts an orient argument controlling the output shape \u2014 'list' gives {column: [values...]}, the most common shape for exporting to plain Python.",
       "whenToUse": "Handing DataFrame data off to code (or a JSON API) that only understands plain dicts/lists.",
@@ -213,10 +242,15 @@
         "to_numpy"
       ],
       "example": "# {'region': ['West', 'East', ...], 'revenue': [120, 95, ...], ...}",
-      "starterCode": "",
+      "starterCode": "df.to_dict('___')",
       "expectedOutput": "",
-      "tokens": [],
-      "distractors": []
+      "tokens": [
+        "list"
+      ],
+      "distractors": [
+        "dict",
+        "records"
+      ]
     },
     {
       "id": "df_values",
@@ -263,8 +297,8 @@
         "intro_columns"
       ],
       "dataset": "df",
-      "type": "flashcard",
-      "prompt": "Check whether 'revenue' is one of df's column names.",
+      "type": "fill-blank",
+      "prompt": "Check whether 'revenue' is one of df's column names. Fill in the blank.",
       "answer": "'revenue' in df.columns",
       "why": "in checks membership against the column Index directly \u2014 a quick guard before referencing a column that might not exist.",
       "whenToUse": "Defensive checks before code that assumes a specific column is present, e.g. after a join or an external data load.",
@@ -273,10 +307,15 @@
         "columns"
       ],
       "example": "# True",
-      "starterCode": "",
+      "starterCode": "'revenue' in df.___",
       "expectedOutput": "",
-      "tokens": [],
-      "distractors": []
+      "tokens": [
+        "columns"
+      ],
+      "distractors": [
+        "index",
+        "values"
+      ]
     },
     {
       "id": "df_add_column_conditional",
@@ -291,7 +330,7 @@
         "df_add_column"
       ],
       "dataset": "df",
-      "type": "flashcard",
+      "type": "multiple-choice",
       "prompt": "Add a boolean column high_value that's True wherever revenue is over 100.",
       "answer": "df['high_value'] = df['revenue'] > 100",
       "why": "A comparison against a column produces a boolean Series, which assigns cleanly as a new column, one True/False per row.",
@@ -304,7 +343,10 @@
       "starterCode": "",
       "expectedOutput": "",
       "tokens": [],
-      "distractors": []
+      "distractors": [
+        "df['high_value'] = df['revenue'] >= 100",
+        "df['high_value'] = df['revenue'] < 100"
+      ]
     },
     {
       "id": "df_T",
@@ -316,8 +358,8 @@
       "difficulty": "medium",
       "prerequisites": [],
       "dataset": "df",
-      "type": "flashcard",
-      "prompt": "Transpose df, swapping rows and columns.",
+      "type": "fill-blank",
+      "prompt": "Transpose df, swapping rows and columns. Fill in the blank.",
       "answer": "df.T",
       "why": "T flips the DataFrame so former columns become the index and former rows become columns \u2014 mostly useful for small, wide summaries.",
       "whenToUse": "A DataFrame with few rows and many columns (or vice versa) that would display or read better flipped.",
@@ -326,10 +368,15 @@
         "transpose"
       ],
       "example": "# columns become row labels, row labels become column headers",
-      "starterCode": "",
+      "starterCode": "df.___",
       "expectedOutput": "",
-      "tokens": [],
-      "distractors": []
+      "tokens": [
+        "T"
+      ],
+      "distractors": [
+        "axes",
+        "size"
+      ]
     },
     {
       "id": "df_axes",
@@ -344,8 +391,8 @@
         "intro_columns"
       ],
       "dataset": "df",
-      "type": "flashcard",
-      "prompt": "Get both of df's axes (its row index and its columns) in one call.",
+      "type": "fill-blank",
+      "prompt": "Get both of df's axes (its row index and its columns) in one call. Fill in the blank.",
       "answer": "df.axes",
       "why": "axes returns a two-item list \u2014 [index, columns] \u2014 the same information index and columns give separately, bundled together.",
       "whenToUse": "Code that needs to iterate over 'both axes' generically, without hardcoding which is which.",
@@ -355,10 +402,15 @@
         "columns"
       ],
       "example": "# [RangeIndex(start=0, stop=8, step=1), Index(['region', 'category', 'revenue', 'units'], dtype='object')]",
-      "starterCode": "",
+      "starterCode": "df.___",
       "expectedOutput": "",
-      "tokens": [],
-      "distractors": []
+      "tokens": [
+        "axes"
+      ],
+      "distractors": [
+        "index",
+        "columns"
+      ]
     },
     {
       "id": "df_sample",
@@ -372,8 +424,8 @@
         "intro_head"
       ],
       "dataset": "df",
-      "type": "flashcard",
-      "prompt": "Randomly sample 2 rows from df, using a fixed random_state so the result is reproducible.",
+      "type": "fill-blank",
+      "prompt": "Randomly sample 2 rows from df, using a fixed random_state so the result is reproducible. Fill in the blank.",
       "answer": "df.sample(2, random_state=0)",
       "why": "sample() picks random rows rather than the first/last n like head()/tail() \u2014 random_state makes the 'random' choice reproducible across runs.",
       "whenToUse": "Eyeballing a representative slice of a large DataFrame instead of just its beginning.",
@@ -384,10 +436,15 @@
         "tail"
       ],
       "example": "# 2 randomly chosen rows, exact ones fixed by random_state=0",
-      "starterCode": "",
+      "starterCode": "df.___(2, random_state=0)",
       "expectedOutput": "",
-      "tokens": [],
-      "distractors": []
+      "tokens": [
+        "sample"
+      ],
+      "distractors": [
+        "head",
+        "tail"
+      ]
     },
     {
       "id": "df_column_selection_choice",

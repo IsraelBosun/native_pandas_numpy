@@ -5,10 +5,13 @@
 
 import { Colors, Gradients, TopicHues } from '@/constants/theme';
 import { useColorScheme } from '@/hooks/use-color-scheme';
+import { useThemePreference } from '@/hooks/use-theme-preference';
 
 export function useThemeName() {
-  const scheme = useColorScheme();
-  return scheme === 'unspecified' ? 'light' : scheme;
+  const { preference } = useThemePreference();
+  const systemScheme = useColorScheme();
+  if (preference !== 'system') return preference;
+  return systemScheme === 'unspecified' || !systemScheme ? 'light' : systemScheme;
 }
 
 export function useTheme() {

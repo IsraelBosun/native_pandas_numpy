@@ -14,7 +14,7 @@
       "prerequisites": [
         "intro_create_series"
       ],
-      "type": "flashcard",
+      "type": "fill-blank",
       "prompt": "Create a Series of 3 prices with custom labels 'a', 'b', 'c' instead of the default integer index.",
       "answer": "pd.Series([10, 20, 30], index=['a', 'b', 'c'])",
       "why": "The index argument lets you label each value with anything meaningful \u2014 not just 0, 1, 2 \u2014 right from creation.",
@@ -25,10 +25,15 @@
         "index"
       ],
       "example": "# a    10\n# b    20\n# c    30\n# dtype: int64",
-      "starterCode": "",
+      "starterCode": "pd.Series([10, 20, 30], ___=['a', 'b', 'c'])",
       "expectedOutput": "",
-      "tokens": [],
-      "distractors": []
+      "tokens": [
+        "index"
+      ],
+      "distractors": [
+        "name",
+        "dtype"
+      ]
     },
     {
       "id": "series_name",
@@ -40,7 +45,7 @@
       "difficulty": "easy",
       "prerequisites": [],
       "dataset": "df",
-      "type": "flashcard",
+      "type": "fill-blank",
       "prompt": "Get the name of the revenue column, treated as a Series.",
       "answer": "df['revenue'].name",
       "why": "Every Series carries a name, which is exactly the column name when it came from a DataFrame \u2014 it travels with the values.",
@@ -51,10 +56,16 @@
         "rename"
       ],
       "example": "# 'revenue'",
-      "starterCode": "",
+      "starterCode": "df['revenue'].___",
       "expectedOutput": "",
-      "tokens": [],
-      "distractors": []
+      "tokens": [
+        "name"
+      ],
+      "distractors": [
+        "dtype",
+        "index",
+        "values"
+      ]
     },
     {
       "id": "series_rename",
@@ -69,7 +80,7 @@
         "series_name"
       ],
       "dataset": "df",
-      "type": "flashcard",
+      "type": "fill-blank",
       "prompt": "Rename the revenue Series to 'sales' without touching the original df.",
       "answer": "df['revenue'].rename('sales')",
       "why": "rename() on a Series returns a new Series with a different name \u2014 it doesn't rename the column in the source DataFrame.",
@@ -80,10 +91,16 @@
         "name"
       ],
       "example": "# 0    120\n# 1     95\n# Name: sales, dtype: int64",
-      "starterCode": "",
+      "starterCode": "df['revenue'].___('sales')",
       "expectedOutput": "",
-      "tokens": [],
-      "distractors": []
+      "tokens": [
+        "rename"
+      ],
+      "distractors": [
+        "astype",
+        "map",
+        "replace"
+      ]
     },
     {
       "id": "series_tolist",
@@ -95,7 +112,7 @@
       "difficulty": "easy",
       "prerequisites": [],
       "dataset": "df",
-      "type": "flashcard",
+      "type": "fill-blank",
       "prompt": "Convert the revenue Series into a plain Python list.",
       "answer": "df['revenue'].tolist()",
       "why": "tolist() strips away the index and dtype, leaving a plain list of native Python values.",
@@ -106,10 +123,16 @@
         "to_numpy"
       ],
       "example": "# [120, 95, 80, 60, 45, 70, 50, 65]",
-      "starterCode": "",
+      "starterCode": "df['revenue'].___()",
       "expectedOutput": "",
-      "tokens": [],
-      "distractors": []
+      "tokens": [
+        "tolist"
+      ],
+      "distractors": [
+        "to_numpy",
+        "values",
+        "array"
+      ]
     },
     {
       "id": "series_unique",
@@ -121,7 +144,7 @@
       "difficulty": "easy",
       "prerequisites": [],
       "dataset": "df",
-      "type": "flashcard",
+      "type": "fill-blank",
       "prompt": "Get the distinct values in the region column, in order of first appearance.",
       "answer": "df['region'].unique()",
       "why": "unique() returns a NumPy array of distinct values, preserving first-seen order rather than sorting them.",
@@ -133,10 +156,16 @@
         "value_counts"
       ],
       "example": "# array(['West', 'East', 'North'], dtype=object)",
-      "starterCode": "",
+      "starterCode": "df['region'].___()",
       "expectedOutput": "",
-      "tokens": [],
-      "distractors": []
+      "tokens": [
+        "unique"
+      ],
+      "distractors": [
+        "nunique",
+        "value_counts",
+        "drop_duplicates"
+      ]
     },
     {
       "id": "series_nunique",
@@ -150,7 +179,7 @@
         "series_unique"
       ],
       "dataset": "df",
-      "type": "flashcard",
+      "type": "fill-blank",
       "prompt": "Count how many distinct regions appear in df.",
       "answer": "df['region'].nunique()",
       "why": "nunique() is shorthand for len(df['region'].unique()) \u2014 a direct count instead of building the array first.",
@@ -161,10 +190,16 @@
         "unique"
       ],
       "example": "# 3",
-      "starterCode": "",
+      "starterCode": "df['region'].___()",
       "expectedOutput": "",
-      "tokens": [],
-      "distractors": []
+      "tokens": [
+        "nunique"
+      ],
+      "distractors": [
+        "unique",
+        "count",
+        "size"
+      ]
     },
     {
       "id": "series_value_counts",
@@ -178,7 +213,7 @@
         "series_unique"
       ],
       "dataset": "df",
-      "type": "flashcard",
+      "type": "fill-blank",
       "prompt": "Count how many rows fall into each region.",
       "answer": "df['region'].value_counts()",
       "why": "value_counts() returns a Series of counts per distinct value, sorted from most to least common by default.",
@@ -190,10 +225,16 @@
         "groupby"
       ],
       "example": "# West     3\n# East     3\n# North    2\n# Name: count, dtype: int64",
-      "starterCode": "",
+      "starterCode": "df['region'].___()",
       "expectedOutput": "",
-      "tokens": [],
-      "distractors": []
+      "tokens": [
+        "value_counts"
+      ],
+      "distractors": [
+        "unique",
+        "nunique",
+        "count"
+      ]
     },
     {
       "id": "series_astype",
@@ -205,7 +246,7 @@
       "difficulty": "medium",
       "prerequisites": [],
       "dataset": "df",
-      "type": "flashcard",
+      "type": "fill-blank",
       "prompt": "Convert the revenue Series (currently int64) to float.",
       "answer": "df['revenue'].astype(float)",
       "why": "astype() changes a Series' dtype explicitly, returning a new Series rather than modifying in place.",
@@ -217,10 +258,16 @@
         "dtypes"
       ],
       "example": "# 0    120.0\n# 1     95.0\n# dtype: float64",
-      "starterCode": "",
+      "starterCode": "df['revenue'].___(float)",
       "expectedOutput": "",
-      "tokens": [],
-      "distractors": []
+      "tokens": [
+        "astype"
+      ],
+      "distractors": [
+        "to_numpy",
+        "convert_dtypes",
+        "round"
+      ]
     },
     {
       "id": "series_map",
@@ -232,7 +279,7 @@
       "difficulty": "medium",
       "prerequisites": [],
       "dataset": "df",
-      "type": "flashcard",
+      "type": "fill-blank",
       "prompt": "Replace each category value using a lookup dict: Shoes -> Footwear, Bags -> Accessories.",
       "answer": "df['category'].map({'Shoes': 'Footwear', 'Bags': 'Accessories'})",
       "why": "map() applies a dict (or function) element-wise to a Series \u2014 values not found in the dict become NaN.",
@@ -244,10 +291,16 @@
         "replace"
       ],
       "example": "# 0    Footwear\n# 1    Footwear\n# 2    Accessories\n# dtype: object",
-      "starterCode": "",
+      "starterCode": "df['category'].___({'Shoes': 'Footwear', 'Bags': 'Accessories'})",
       "expectedOutput": "",
-      "tokens": [],
-      "distractors": []
+      "tokens": [
+        "map"
+      ],
+      "distractors": [
+        "apply",
+        "replace",
+        "astype"
+      ]
     },
     {
       "id": "series_apply",
@@ -259,7 +312,7 @@
       "difficulty": "medium",
       "prerequisites": [],
       "dataset": "df",
-      "type": "flashcard",
+      "type": "fill-blank",
       "prompt": "Apply a 10% markup to every value in the revenue Series using a lambda.",
       "answer": "df['revenue'].apply(lambda x: x * 1.1)",
       "why": "apply() runs a function against every element \u2014 useful for logic too custom for a built-in vectorized method.",
@@ -270,10 +323,16 @@
         "map"
       ],
       "example": "# 0    132.0\n# 1    104.5\n# dtype: float64",
-      "starterCode": "",
+      "starterCode": "df['revenue'].___(lambda x: x * 1.1)",
       "expectedOutput": "",
-      "tokens": [],
-      "distractors": []
+      "tokens": [
+        "apply"
+      ],
+      "distractors": [
+        "map",
+        "transform",
+        "agg"
+      ]
     },
     {
       "id": "series_arithmetic",
@@ -286,7 +345,7 @@
       "difficulty": "medium",
       "prerequisites": [],
       "dataset": "df",
-      "type": "flashcard",
+      "type": "multiple-choice",
       "prompt": "Subtract the units Series from the revenue Series, element by element.",
       "answer": "df['revenue'] - df['units']",
       "why": "Arithmetic between two Series aligns by index first, then operates element-wise \u2014 not just by position.",
@@ -300,7 +359,10 @@
       "starterCode": "",
       "expectedOutput": "",
       "tokens": [],
-      "distractors": []
+      "distractors": [
+        "df['units'] - df['revenue']",
+        "df['revenue'] - df['units'].values"
+      ]
     },
     {
       "id": "series_sum",
@@ -312,7 +374,7 @@
       "difficulty": "easy",
       "prerequisites": [],
       "dataset": "df",
-      "type": "flashcard",
+      "type": "fill-blank",
       "prompt": "Add up every value in the revenue Series into a single total.",
       "answer": "df['revenue'].sum()",
       "why": "sum() reduces a Series to one scalar \u2014 the total across every row.",
@@ -323,10 +385,16 @@
         "mean"
       ],
       "example": "# 585",
-      "starterCode": "",
+      "starterCode": "df['revenue'].___()",
       "expectedOutput": "",
-      "tokens": [],
-      "distractors": []
+      "tokens": [
+        "sum"
+      ],
+      "distractors": [
+        "mean",
+        "count",
+        "size"
+      ]
     },
     {
       "id": "series_idxmax",
@@ -340,7 +408,7 @@
         "series_sum"
       ],
       "dataset": "df",
-      "type": "flashcard",
+      "type": "fill-blank",
       "prompt": "Get the index label of the row with the highest revenue.",
       "answer": "df['revenue'].idxmax()",
       "why": "idxmax() returns the label where the maximum occurs, not the maximum value itself \u2014 max() would give you the value.",
@@ -352,10 +420,16 @@
         "max"
       ],
       "example": "# 0",
-      "starterCode": "",
+      "starterCode": "df['revenue'].___()",
       "expectedOutput": "",
-      "tokens": [],
-      "distractors": []
+      "tokens": [
+        "idxmax"
+      ],
+      "distractors": [
+        "argmax",
+        "max",
+        "idxmin"
+      ]
     },
     {
       "id": "series_iloc_position",

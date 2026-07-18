@@ -41,7 +41,9 @@
           }
         }
       ],
-      "expo-sqlite"
+      "expo-sqlite",
+      "expo-audio",
+      "expo-notifications"
     ],
     "experiments": {
       "reactCompiler": true

@@ -16,7 +16,7 @@ export function ReferenceEntry({ entry, onMethodPress }) {
           <ThemedText type="label" themeColor="textSecondary">
             Syntax
           </ThemedText>
-          <CodeBlock code={entry.syntax} />
+          <CodeBlock code={entry.syntax} copyable />
         </View>
 
         {entry.example ? (
@@ -24,7 +24,7 @@ export function ReferenceEntry({ entry, onMethodPress }) {
             <ThemedText type="label" themeColor="textSecondary">
               Example
             </ThemedText>
-            <CodeBlock code={entry.example} />
+            <CodeBlock code={entry.example} copyable />
           </View>
         ) : null}
 

@@ -8,7 +8,10 @@ import { supabase } from './supabase';
 // Every entry point swallows failures — no network must never break studying.
 
 // Local bookkeeping keys that describe this device, not the user's progress.
-const LOCAL_ONLY_META = new Set(['schema_version', 'sync_last_review_id']);
+// reminder_notification_id is an OS-assigned scheduled-notification handle —
+// meaningless (and potentially wrong) on any device other than the one that
+// created it.
+const LOCAL_ONLY_META = new Set(['schema_version', 'sync_last_review_id', 'reminder_notification_id']);
 
 // PostgREST caps a select at 1000 rows; page through anything unbounded.
 const PAGE_SIZE = 1000;

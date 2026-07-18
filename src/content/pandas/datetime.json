@@ -10,8 +10,8 @@
       ],
       "difficulty": "easy",
       "prerequisites": [],
-      "type": "flashcard",
-      "prompt": "Convert a list of date strings into real datetime values.",
+      "type": "fill-blank",
+      "prompt": "Convert a list of date strings into real datetime values. Fill in the blank.",
       "answer": "pd.to_datetime(['2024-01-05', '2024-01-06'])",
       "why": "to_datetime() parses strings (or numbers, or mixed formats) into pandas Timestamps \u2014 the type that unlocks date arithmetic and the .dt accessor.",
       "whenToUse": "A date column loaded as plain text (very common straight out of read_csv) needs converting before any date-aware logic works.",
@@ -21,10 +21,15 @@
         "read_csv"
       ],
       "example": "# DatetimeIndex(['2024-01-05', '2024-01-06'], dtype='datetime64[ns]', freq=None)",
-      "starterCode": "",
+      "starterCode": "pd.___(['2024-01-05', '2024-01-06'])",
       "expectedOutput": "",
-      "tokens": [],
-      "distractors": []
+      "tokens": [
+        "to_datetime"
+      ],
+      "distractors": [
+        "Timestamp",
+        "date_range"
+      ]
     },
     {
       "id": "dt_dtype_check",
@@ -38,8 +43,8 @@
         "dt_to_datetime"
       ],
       "dataset": "ts",
-      "type": "flashcard",
-      "prompt": "Confirm ts's date column actually loaded as a real datetime type, not text.",
+      "type": "fill-blank",
+      "prompt": "Confirm ts's date column actually loaded as a real datetime type, not text. Fill in the blank.",
       "answer": "ts['date'].dtype",
       "why": "A column that looks like dates but loaded from CSV without parse_dates will show dtype('O') (object/text), not datetime64 \u2014 checking dtype catches this immediately.",
       "whenToUse": "Right after loading any file with a date column, before trusting .dt access or date comparisons on it.",
@@ -49,10 +54,15 @@
         "to_datetime"
       ],
       "example": "# dtype('<M8[ns]')",
-      "starterCode": "",
+      "starterCode": "ts['date'].___",
       "expectedOutput": "",
-      "tokens": [],
-      "distractors": []
+      "tokens": [
+        "dtype"
+      ],
+      "distractors": [
+        "dtypes",
+        "astype"
+      ]
     },
     {
       "id": "dt_year",
@@ -67,8 +77,8 @@
         "dt_dtype_check"
       ],
       "dataset": "ts",
-      "type": "flashcard",
-      "prompt": "Extract just the year from every value in ts's date column.",
+      "type": "fill-blank",
+      "prompt": "Extract just the year from every value in ts's date column. Fill in the blank.",
       "answer": "ts['date'].dt.year",
       "why": "The .dt accessor exposes date components (year, month, day...) on a datetime64 Series, mirroring .str for text columns.",
       "whenToUse": "Grouping or filtering by a date component rather than the full timestamp.",
@@ -78,10 +88,15 @@
         "to_datetime"
       ],
       "example": "# 0    2024\n# 1    2024\n# dtype: int32",
-      "starterCode": "",
+      "starterCode": "ts['date'].dt.___",
       "expectedOutput": "",
-      "tokens": [],
-      "distractors": []
+      "tokens": [
+        "year"
+      ],
+      "distractors": [
+        "month",
+        "day"
+      ]
     },
     {
       "id": "dt_month",
@@ -96,8 +111,8 @@
         "dt_year"
       ],
       "dataset": "ts",
-      "type": "flashcard",
-      "prompt": "Extract just the month number from ts's date column.",
+      "type": "fill-blank",
+      "prompt": "Extract just the month number from ts's date column. Fill in the blank.",
       "answer": "ts['date'].dt.month",
       "why": "dt.month gives the numeric month (1-12) \u2014 combine it with dt.year when grouping across multiple years to avoid mixing e.g. two different Januaries together.",
       "whenToUse": "Monthly aggregation or filtering, e.g. grouping revenue by month.",
@@ -107,10 +122,15 @@
         "year"
       ],
       "example": "# 0    1\n# 1    1\n# dtype: int32",
-      "starterCode": "",
+      "starterCode": "ts['date'].dt.___",
       "expectedOutput": "",
-      "tokens": [],
-      "distractors": []
+      "tokens": [
+        "month"
+      ],
+      "distractors": [
+        "year",
+        "day"
+      ]
     },
     {
       "id": "dt_day_name",
@@ -125,8 +145,8 @@
         "dt_year"
       ],
       "dataset": "ts",
-      "type": "flashcard",
-      "prompt": "Get the weekday name (e.g. 'Monday') for every date in ts.",
+      "type": "fill-blank",
+      "prompt": "Get the weekday name (e.g. 'Monday') for every date in ts. Fill in the blank.",
       "answer": "ts['date'].dt.day_name()",
       "why": "day_name() spells out the weekday directly \u2014 more readable than working with dayofweek's 0-6 integers.",
       "whenToUse": "Reporting or filtering by weekday in a human-readable form.",
@@ -136,10 +156,15 @@
         "dayofweek"
       ],
       "example": "# 0       Monday\n# 1      Tuesday\n# dtype: object",
-      "starterCode": "",
+      "starterCode": "ts['date'].dt.___()",
       "expectedOutput": "",
-      "tokens": [],
-      "distractors": []
+      "tokens": [
+        "day_name"
+      ],
+      "distractors": [
+        "dayofweek",
+        "month_name"
+      ]
     },
     {
       "id": "dt_dayofweek",
@@ -154,8 +179,8 @@
         "dt_day_name"
       ],
       "dataset": "ts",
-      "type": "flashcard",
-      "prompt": "Get the weekday as a number (Monday=0 ... Sunday=6) for every date in ts.",
+      "type": "fill-blank",
+      "prompt": "Get the weekday as a number (Monday=0 ... Sunday=6) for every date in ts. Fill in the blank.",
       "answer": "ts['date'].dt.dayofweek",
       "why": "dayofweek gives an integer, convenient for numeric comparisons like filtering weekends (dayofweek >= 5).",
       "whenToUse": "Numeric weekday logic, e.g. flagging weekend rows.",
@@ -165,10 +190,15 @@
         "day_name"
       ],
       "example": "# 0    0\n# 1    1\n# dtype: int32",
-      "starterCode": "",
+      "starterCode": "ts['date'].dt.___",
       "expectedOutput": "",
-      "tokens": [],
-      "distractors": []
+      "tokens": [
+        "dayofweek"
+      ],
+      "distractors": [
+        "day_name",
+        "weekday"
+      ]
     },
     {
       "id": "dt_set_index",
@@ -182,8 +212,8 @@
         "dt_dtype_check"
       ],
       "dataset": "ts",
-      "type": "flashcard",
-      "prompt": "Make ts's date column the row index, producing a DatetimeIndex.",
+      "type": "fill-blank",
+      "prompt": "Make ts's date column the row index, producing a DatetimeIndex. Fill in the blank.",
       "answer": "ts.set_index('date')",
       "why": "A DatetimeIndex unlocks date-based slicing (like partial-string ranges) and is required by resample().",
       "whenToUse": "Any time-series-style analysis \u2014 rolling windows, resampling, or date-range slicing all expect dates as the index, not a column.",
@@ -193,10 +223,15 @@
         "resample"
       ],
       "example": "#             revenue\n# date\n# 2024-01-01      120\n# 2024-01-02       95",
-      "starterCode": "",
+      "starterCode": "ts.___('date')",
       "expectedOutput": "",
-      "tokens": [],
-      "distractors": []
+      "tokens": [
+        "set_index"
+      ],
+      "distractors": [
+        "reindex",
+        "reset_index"
+      ]
     },
     {
       "id": "dt_partial_string_slice",
@@ -211,8 +246,8 @@
         "dt_set_index"
       ],
       "dataset": "ts",
-      "type": "flashcard",
-      "prompt": "After indexing ts by date, select every row from 2024-01-05 through 2024-01-07, inclusive.",
+      "type": "fill-blank",
+      "prompt": "After indexing ts by date, select every row from 2024-01-05 through 2024-01-07, inclusive. Fill in the blank.",
       "answer": "ts.set_index('date').loc['2024-01-05':'2024-01-07']",
       "why": "A DatetimeIndex supports partial-string label slicing directly in loc \u2014 no need to parse the strings yourself first.",
       "whenToUse": "Pulling a specific date range out of time-series data.",
@@ -222,10 +257,15 @@
         "set_index"
       ],
       "example": "#             revenue\n# date\n# 2024-01-05       45\n# 2024-01-06       70\n# 2024-01-07       50",
-      "starterCode": "",
+      "starterCode": "ts.set_index('date').___['2024-01-05':'2024-01-07']",
       "expectedOutput": "",
-      "tokens": [],
-      "distractors": []
+      "tokens": [
+        "loc"
+      ],
+      "distractors": [
+        "iloc",
+        "query"
+      ]
     },
     {
       "id": "dt_date_range",
@@ -236,8 +276,8 @@
       ],
       "difficulty": "medium",
       "prerequisites": [],
-      "type": "flashcard",
-      "prompt": "Generate 5 consecutive daily dates starting 2024-01-01.",
+      "type": "fill-blank",
+      "prompt": "Generate 5 consecutive daily dates starting 2024-01-01. Fill in the blank.",
       "answer": "pd.date_range('2024-01-01', periods=5, freq='D')",
       "why": "date_range() builds a DatetimeIndex from a start point plus either an end date or a periods count, at a given frequency.",
       "whenToUse": "Creating a complete date axis to reindex sparse time-series data against, or generating test/sample dates.",
@@ -247,10 +287,15 @@
         "to_datetime"
       ],
       "example": "# DatetimeIndex(['2024-01-01', ..., '2024-01-05'], dtype='datetime64[ns]', freq='D')",
-      "starterCode": "",
+      "starterCode": "pd.___('2024-01-01', periods=5, freq='D')",
       "expectedOutput": "",
-      "tokens": [],
-      "distractors": []
+      "tokens": [
+        "date_range"
+      ],
+      "distractors": [
+        "to_datetime",
+        "Timestamp"
+      ]
     },
     {
       "id": "dt_timedelta",
@@ -261,8 +306,8 @@
       ],
       "difficulty": "medium",
       "prerequisites": [],
-      "type": "flashcard",
-      "prompt": "Create a duration representing 3 days.",
+      "type": "fill-blank",
+      "prompt": "Create a duration representing 3 days. Fill in the blank.",
       "answer": "pd.Timedelta(days=3)",
       "why": "Timedelta represents a span of time, the difference-of-dates counterpart to Timestamp \u2014 adding one to a date shifts it by that duration.",
       "whenToUse": "Shifting dates by a fixed amount, or representing the result of subtracting two Timestamps.",
@@ -272,10 +317,15 @@
         "to_datetime"
       ],
       "example": "# Timedelta('3 days 00:00:00')",
-      "starterCode": "",
+      "starterCode": "pd.___(days=3)",
       "expectedOutput": "",
-      "tokens": [],
-      "distractors": []
+      "tokens": [
+        "Timedelta"
+      ],
+      "distractors": [
+        "DateOffset",
+        "Period"
+      ]
     },
     {
       "id": "dt_add_timedelta",
@@ -289,8 +339,8 @@
         "dt_timedelta"
       ],
       "dataset": "ts",
-      "type": "flashcard",
-      "prompt": "Shift every date in ts forward by one day.",
+      "type": "fill-blank",
+      "prompt": "Shift every date in ts forward by one day. Fill in the blank.",
       "answer": "ts['date'] + pd.Timedelta(days=1)",
       "why": "Adding a Timedelta to a datetime64 Series shifts every value by that same span, element-wise.",
       "whenToUse": "Computing a due date, an offset reporting period, or correcting a timezone/off-by-one issue.",
@@ -299,10 +349,15 @@
         "Timedelta"
       ],
       "example": "# every date shifted one day later, e.g. 2024-01-02, 2024-01-03, ...",
-      "starterCode": "",
+      "starterCode": "ts['date'] + pd.___(days=1)",
       "expectedOutput": "",
-      "tokens": [],
-      "distractors": []
+      "tokens": [
+        "Timedelta"
+      ],
+      "distractors": [
+        "DateOffset",
+        "Period"
+      ]
     },
     {
       "id": "dt_strftime",
@@ -316,8 +371,8 @@
         "dt_year"
       ],
       "dataset": "ts",
-      "type": "flashcard",
-      "prompt": "Format ts's date column as 'YYYY-MM' strings, e.g. '2024-01'.",
+      "type": "fill-blank",
+      "prompt": "Format ts's date column as 'YYYY-MM' strings, e.g. '2024-01'. Fill in the blank.",
       "answer": "ts['date'].dt.strftime('%Y-%m')",
       "why": "strftime() renders dates as custom-formatted text \u2014 useful for display or for creating a month-level grouping key.",
       "whenToUse": "Producing a human-facing label, or a coarser text key to group by (like year-month).",
@@ -327,10 +382,15 @@
         "to_datetime"
       ],
       "example": "# 0    2024-01\n# 1    2024-01\n# dtype: object",
-      "starterCode": "",
+      "starterCode": "ts['date'].dt.___('%Y-%m')",
       "expectedOutput": "",
-      "tokens": [],
-      "distractors": []
+      "tokens": [
+        "strftime"
+      ],
+      "distractors": [
+        "strptime",
+        "to_datetime"
+      ]
     },
     {
       "id": "dt_between_dates",

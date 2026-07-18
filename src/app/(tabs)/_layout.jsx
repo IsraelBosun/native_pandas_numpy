@@ -1,19 +1,19 @@
 import Feather from '@expo/vector-icons/Feather';
 import { Icon, Label, NativeTabs, VectorIcon } from 'expo-router/unstable-native-tabs';
-import { useColorScheme } from 'react-native';
 
 import { Colors } from '@/constants/theme';
+import { useThemeName } from '@/hooks/use-theme';
 
 const TABS = [
   { name: 'index', label: 'Home', icon: 'home' },
   { name: 'practice', label: 'Practice', icon: 'edit-3' },
   { name: 'stats', label: 'Stats', icon: 'bar-chart-2' },
   { name: 'reference', label: 'Reference', icon: 'book-open' },
+  { name: 'settings', label: 'Settings', icon: 'settings' },
 ];
 
 export default function TabsLayout() {
-  const scheme = useColorScheme();
-  const colors = Colors[scheme === 'unspecified' ? 'light' : scheme];
+  const colors = Colors[useThemeName()];
 
   return (
     <NativeTabs

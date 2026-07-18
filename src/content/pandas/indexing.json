@@ -12,7 +12,7 @@
       "difficulty": "easy",
       "prerequisites": [],
       "dataset": "df",
-      "type": "flashcard",
+      "type": "multiple-choice",
       "prompt": "Select just the revenue column using loc, keeping it a DataFrame instead of a Series.",
       "answer": "df.loc[:, ['revenue']]",
       "why": "Passing a list of column names to loc keeps the result 2D, even for a single column.",
@@ -26,7 +26,10 @@
       "starterCode": "",
       "expectedOutput": "",
       "tokens": [],
-      "distractors": []
+      "distractors": [
+        "df.loc[:, 'revenue']",
+        "df['revenue']"
+      ]
     },
     {
       "id": "indexing_iloc_rows",
@@ -39,8 +42,8 @@
       "difficulty": "easy",
       "prerequisites": [],
       "dataset": "df",
-      "type": "flashcard",
-      "prompt": "Select the first 3 rows by position.",
+      "type": "fill-blank",
+      "prompt": "Select the first 3 rows by position. Fill in the blank.",
       "answer": "df.iloc[:3]",
       "why": "iloc slices by integer position, regardless of what the index labels actually are.",
       "whenToUse": "You want rows by their position, not by a label.",
@@ -51,10 +54,15 @@
         "head"
       ],
       "example": "#   region category  revenue  units\n# 0   West    Shoes      120     12\n# 1   East    Shoes       95      9\n# 2   West     Bags       80      8",
-      "starterCode": "",
+      "starterCode": "df.iloc[:___]",
       "expectedOutput": "",
-      "tokens": [],
-      "distractors": []
+      "tokens": [
+        "3"
+      ],
+      "distractors": [
+        "4",
+        "2"
+      ]
     },
     {
       "id": "indexing_boolean",
@@ -67,8 +75,8 @@
       "difficulty": "easy",
       "prerequisites": [],
       "dataset": "df",
-      "type": "flashcard",
-      "prompt": "Select rows where revenue is greater than 100.",
+      "type": "fill-blank",
+      "prompt": "Select rows where revenue is greater than 100. Fill in the blank.",
       "answer": "df[df['revenue'] > 100]",
       "why": "df['revenue'] > 100 produces a boolean Series that's used to filter rows.",
       "whenToUse": "Filtering rows by a condition on one or more columns.",
@@ -78,10 +86,15 @@
         "query"
       ],
       "example": "#   region category  revenue  units\n# 0   West    Shoes      120     12",
-      "starterCode": "",
+      "starterCode": "df[df['revenue'] > ___]",
       "expectedOutput": "",
-      "tokens": [],
-      "distractors": []
+      "tokens": [
+        "100"
+      ],
+      "distractors": [
+        "50",
+        "200"
+      ]
     },
     {
       "id": "indexing_set_index",
@@ -93,8 +106,8 @@
       "difficulty": "medium",
       "prerequisites": [],
       "dataset": "df",
-      "type": "flashcard",
-      "prompt": "Use region as the DataFrame's index instead of the default integer index.",
+      "type": "fill-blank",
+      "prompt": "Use region as the DataFrame's index instead of the default integer index. Fill in the blank.",
       "answer": "df.set_index('region')",
       "why": "set_index() promotes a column to the index, useful before label-based lookups.",
       "whenToUse": "You'll repeatedly select rows by that column's values.",
@@ -105,10 +118,15 @@
         "loc"
       ],
       "example": "#        category  revenue  units\n# region\n# West      Shoes      120     12\n# East      Shoes       95      9",
-      "starterCode": "",
+      "starterCode": "df.set_index('___')",
       "expectedOutput": "",
-      "tokens": [],
-      "distractors": []
+      "tokens": [
+        "region"
+      ],
+      "distractors": [
+        "category",
+        "revenue"
+      ]
     },
     {
       "id": "indexing_loc_label",
@@ -124,8 +142,8 @@
         "indexing_loc_column"
       ],
       "dataset": "df",
-      "type": "flashcard",
-      "prompt": "After setting region as the index, select every row for 'West' using loc.",
+      "type": "fill-blank",
+      "prompt": "After setting region as the index, select every row for 'West' using loc. Fill in the blank.",
       "answer": "df.set_index('region').loc['West']",
       "why": "Once region is the index, loc looks it up by label directly.",
       "whenToUse": "Repeated label-based lookups are cleaner once the lookup column is the index.",
@@ -135,10 +153,15 @@
         "set_index"
       ],
       "example": "#        category  revenue  units\n# region\n# West      Shoes      120     12\n# West       Bags       80      8\n# West       Bags       45      5",
-      "starterCode": "",
+      "starterCode": "df.set_index('region').loc['___']",
       "expectedOutput": "",
-      "tokens": [],
-      "distractors": []
+      "tokens": [
+        "West"
+      ],
+      "distractors": [
+        "East",
+        "North"
+      ]
     },
     {
       "id": "indexing_at_scalar",
@@ -153,8 +176,8 @@
         "indexing_loc_column"
       ],
       "dataset": "df",
-      "type": "flashcard",
-      "prompt": "Get the revenue value at row 0 using a fast scalar accessor (not loc).",
+      "type": "fill-blank",
+      "prompt": "Get the revenue value at row 0 using a fast scalar accessor (not loc). Fill in the blank.",
       "answer": "df.at[0, 'revenue']",
       "why": "at is optimized for single scalar lookups by label, faster than loc for one value.",
       "whenToUse": "Reading or writing exactly one cell, not a slice or a whole column.",
@@ -165,10 +188,15 @@
         "loc"
       ],
       "example": "# 120",
-      "starterCode": "",
+      "starterCode": "df.___[0, 'revenue']",
       "expectedOutput": "",
-      "tokens": [],
-      "distractors": []
+      "tokens": [
+        "at"
+      ],
+      "distractors": [
+        "iat",
+        "loc"
+      ]
     },
     {
       "id": "indexing_query",
@@ -183,8 +211,8 @@
         "indexing_boolean"
       ],
       "dataset": "df",
-      "type": "flashcard",
-      "prompt": "Filter rows where revenue is over 100, using a string expression instead of boolean indexing.",
+      "type": "fill-blank",
+      "prompt": "Filter rows where revenue is over 100, using a string expression instead of boolean indexing. Fill in the blank.",
       "answer": "df.query('revenue > 100')",
       "why": "query() lets you write the filter condition as a readable string referencing column names directly.",
       "whenToUse": "Longer boolean conditions where query() reads more like plain English than chained comparisons.",
@@ -194,10 +222,15 @@
         "loc"
       ],
       "example": "#   region category  revenue  units\n# 0   West    Shoes      120     12",
-      "starterCode": "",
+      "starterCode": "df.___('revenue > 100')",
       "expectedOutput": "",
-      "tokens": [],
-      "distractors": []
+      "tokens": [
+        "query"
+      ],
+      "distractors": [
+        "eval",
+        "filter"
+      ]
     },
     {
       "id": "indexing_isin",
@@ -212,8 +245,8 @@
         "indexing_boolean"
       ],
       "dataset": "df",
-      "type": "flashcard",
-      "prompt": "Select rows where region is either 'West' or 'East'.",
+      "type": "fill-blank",
+      "prompt": "Select rows where region is either 'West' or 'East'. Fill in the blank.",
       "answer": "df[df['region'].isin(['West', 'East'])]",
       "why": "isin() checks membership against a list, cleaner than chaining multiple == comparisons with |.",
       "whenToUse": "Filtering against a set of allowed values rather than a single equality check.",
@@ -223,10 +256,15 @@
         "loc"
       ],
       "example": "# 6 rows \u2014 West and East only, North excluded",
-      "starterCode": "",
+      "starterCode": "df[df['region'].___(['West', 'East'])]",
       "expectedOutput": "",
-      "tokens": [],
-      "distractors": []
+      "tokens": [
+        "isin"
+      ],
+      "distractors": [
+        "between",
+        "eq"
+      ]
     },
     {
       "id": "indexing_between",
@@ -241,8 +279,8 @@
         "indexing_boolean"
       ],
       "dataset": "df",
-      "type": "flashcard",
-      "prompt": "Select rows where revenue is between 50 and 100, inclusive.",
+      "type": "fill-blank",
+      "prompt": "Select rows where revenue is between 50 and 100, inclusive. Fill in the blank.",
       "answer": "df[df['revenue'].between(50, 100)]",
       "why": "between() is shorthand for two chained comparisons (>= and <=) combined with &.",
       "whenToUse": "Range filters on a single numeric column.",
@@ -252,10 +290,15 @@
         "loc"
       ],
       "example": "# 6 rows: revenue 95, 80, 60, 70, 50, 65",
-      "starterCode": "",
+      "starterCode": "df[df['revenue'].___(50, 100)]",
       "expectedOutput": "",
-      "tokens": [],
-      "distractors": []
+      "tokens": [
+        "between"
+      ],
+      "distractors": [
+        "isin",
+        "clip"
+      ]
     },
     {
       "id": "indexing_multi_condition",
@@ -270,8 +313,8 @@
         "indexing_boolean"
       ],
       "dataset": "df",
-      "type": "flashcard",
-      "prompt": "Select rows where region is 'West' AND revenue is over 50.",
+      "type": "fill-blank",
+      "prompt": "Select rows where region is 'West' AND revenue is over 50. Fill in the blank.",
       "answer": "df[(df['region'] == 'West') & (df['revenue'] > 50)]",
       "why": "Combining conditions with & requires wrapping each condition in parentheses because of Python's operator precedence.",
       "whenToUse": "Filtering on more than one column condition at once.",
@@ -281,10 +324,15 @@
         "query"
       ],
       "example": "#   region category  revenue  units\n# 0   West    Shoes      120     12\n# 2   West     Bags       80      8",
-      "starterCode": "",
+      "starterCode": "df[(df['region'] == '___') & (df['revenue'] > 50)]",
       "expectedOutput": "",
-      "tokens": [],
-      "distractors": []
+      "tokens": [
+        "West"
+      ],
+      "distractors": [
+        "East",
+        "North"
+      ]
     },
     {
       "id": "indexing_drop_columns",
@@ -296,8 +344,8 @@
       "difficulty": "easy",
       "prerequisites": [],
       "dataset": "df",
-      "type": "flashcard",
-      "prompt": "Return a copy of df without the units column.",
+      "type": "fill-blank",
+      "prompt": "Return a copy of df without the units column. Fill in the blank.",
       "answer": "df.drop(columns=['units'])",
       "why": "drop(columns=...) removes columns without needing axis=1.",
       "whenToUse": "Discarding one or more columns you don't need downstream.",
@@ -307,10 +355,15 @@
         "loc"
       ],
       "example": "#   region category  revenue\n# 0   West    Shoes      120\n# 1   East    Shoes       95",
-      "starterCode": "",
+      "starterCode": "df.drop(columns=['___'])",
       "expectedOutput": "",
-      "tokens": [],
-      "distractors": []
+      "tokens": [
+        "units"
+      ],
+      "distractors": [
+        "revenue",
+        "category"
+      ]
     },
     {
       "id": "indexing_drop_rows",
@@ -324,8 +377,8 @@
         "indexing_drop_columns"
       ],
       "dataset": "df",
-      "type": "flashcard",
-      "prompt": "Remove the rows labeled 0 and 1 from df.",
+      "type": "fill-blank",
+      "prompt": "Remove the rows labeled 0 and 1 from df. Fill in the blank.",
       "answer": "df.drop([0, 1])",
       "why": "drop() defaults to axis=0 (rows), matching row labels rather than positions.",
       "whenToUse": "Removing specific known rows by their index label.",
@@ -335,10 +388,15 @@
         "reset_index"
       ],
       "example": "# rows 2 through 7 remain; 0 and 1 are gone",
-      "starterCode": "",
+      "starterCode": "df.___([0, 1])",
       "expectedOutput": "",
-      "tokens": [],
-      "distractors": []
+      "tokens": [
+        "drop"
+      ],
+      "distractors": [
+        "dropna",
+        "pop"
+      ]
     },
     {
       "id": "indexing_rename",
@@ -350,8 +408,8 @@
       "difficulty": "easy",
       "prerequisites": [],
       "dataset": "df",
-      "type": "flashcard",
-      "prompt": "Rename the revenue column to sales.",
+      "type": "fill-blank",
+      "prompt": "Rename the revenue column to sales. Fill in the blank.",
       "answer": "df.rename(columns={'revenue': 'sales'})",
       "why": "rename(columns={...}) maps old names to new ones without touching the rest of the DataFrame.",
       "whenToUse": "Renaming one or a few columns for clarity or to match a downstream schema.",
@@ -360,10 +418,15 @@
         "rename"
       ],
       "example": "#   region category  sales  units\n# 0   West    Shoes    120     12",
-      "starterCode": "",
+      "starterCode": "df.___(columns={'revenue': 'sales'})",
       "expectedOutput": "",
-      "tokens": [],
-      "distractors": []
+      "tokens": [
+        "rename"
+      ],
+      "distractors": [
+        "rename_axis",
+        "assign"
+      ]
     },
     {
       "id": "indexing_reset_index_drop",

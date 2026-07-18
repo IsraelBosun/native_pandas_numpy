@@ -1,27 +1,34 @@
+import Feather from '@expo/vector-icons/Feather';
 import { useFocusEffect } from '@react-navigation/native';
 import { useRouter } from 'expo-router';
 import { useCallback } from 'react';
-import { ScrollView, StyleSheet, View } from 'react-native';
+import { Pressable, ScrollView, StyleSheet, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { ChallengeTile } from '@/components/practice/challenge-tile';
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
 import { TopicTile } from '@/components/topic-tile';
-import { BottomTabInset, MaxContentWidth, Spacing } from '@/constants/theme';
+import { BottomTabInset, MaxContentWidth, Radius, Spacing } from '@/constants/theme';
 import { useChallenges } from '@/hooks/use-challenges';
+import { useFavoritesCount } from '@/hooks/use-favorites';
+import { useTheme, useTopicHues } from '@/hooks/use-theme';
 import { useTopics } from '@/hooks/use-topics';
 
 export default function PracticeScreen() {
   const router = useRouter();
+  const theme = useTheme();
+  const hues = useTopicHues();
   const { topics, refresh: refreshTopics } = useTopics();
   const { challenges, refresh: refreshChallenges } = useChallenges();
+  const { count: favoritesCount, refresh: refreshFavorites } = useFavoritesCount();
 
   useFocusEffect(
     useCallback(() => {
       refreshTopics();
       refreshChallenges();
-    }, [refreshTopics, refreshChallenges])
+      refreshFavorites();
+    }, [refreshTopics, refreshChallenges, refreshFavorites])
   );
 
   return (
@@ -44,6 +51,31 @@ export default function PracticeScreen() {
                 onPress={() => router.push(`/practice/challenge/${challenge.id}`)}
               />
             ))}
+          </View>
+
+          <View style={styles.section}>
+            <ThemedText type="label" themeColor="textSecondary">
+              Starred
+            </ThemedText>
+            <Pressable
+              disabled={favoritesCount === 0}
+              onPress={() => router.push('/practice/favorites')}
+              style={({ pressed }) => [
+                styles.starredRow,
+                { borderColor: theme.border },
+                favoritesCount === 0 && styles.starredRowDisabled,
+                pressed && favoritesCount > 0 && styles.pressed,
+              ]}>
+              <View style={styles.starredLeft}>
+                <View style={[styles.starredIconChip, { backgroundColor: hues.amber.surface }]}>
+                  <Feather name="star" size={16} color={hues.amber.fg} />
+                </View>
+                <ThemedText type="smallBold">
+                  {favoritesCount === 0 ? 'No starred cards yet' : `Review ${favoritesCount} starred card${favoritesCount === 1 ? '' : 's'}`}
+                </ThemedText>
+              </View>
+              {favoritesCount > 0 && <Feather name="chevron-right" size={18} color={theme.textSecondary} />}
+            </Pressable>
           </View>
 
           <View style={styles.section}>
@@ -96,5 +128,32 @@ const styles = StyleSheet.create({
     flexWrap: 'wrap',
     gap: Spacing.three,
     marginTop: Spacing.one,
+  },
+  starredRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginTop: Spacing.one,
+    padding: Spacing.three,
+    borderRadius: Radius.lg,
+    borderWidth: 1,
+  },
+  starredRowDisabled: {
+    opacity: 0.6,
+  },
+  starredLeft: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: Spacing.two,
+  },
+  starredIconChip: {
+    width: 30,
+    height: 30,
+    borderRadius: Radius.sm,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  pressed: {
+    opacity: 0.7,
   },
 });

@@ -12,6 +12,7 @@ const TABS = [
   { name: 'practice', href: '/practice', label: 'Practice', icon: 'edit-3' },
   { name: 'stats', href: '/stats', label: 'Stats', icon: 'bar-chart-2' },
   { name: 'reference', href: '/reference', label: 'Reference', icon: 'book-open' },
+  { name: 'settings', href: '/settings', label: 'Settings', icon: 'settings' },
 ];
 
 export default function TabsLayout() {

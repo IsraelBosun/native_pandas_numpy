@@ -1,9 +1,8 @@
 import { SyntaxColors } from '@/constants/theme';
-import { useColorScheme } from '@/hooks/use-color-scheme';
-import { useTheme } from '@/hooks/use-theme';
+import { useTheme, useThemeName } from '@/hooks/use-theme';
 
 export function useSyntaxColors() {
-  const scheme = useColorScheme();
+  const scheme = useThemeName();
   const theme = useTheme();
   const palette = SyntaxColors[scheme === 'dark' ? 'dark' : 'light'];
 

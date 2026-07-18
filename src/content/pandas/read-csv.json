@@ -11,7 +11,7 @@
       "difficulty": "easy",
       "prerequisites": [],
       "dataset": "csv_path",
-      "type": "flashcard",
+      "type": "fill-blank",
       "prompt": "Load a CSV file at csv_path into a DataFrame.",
       "answer": "pd.read_csv(csv_path)",
       "why": "read_csv() is pandas' default entry point for tabular text files \u2014 it infers a header row, column dtypes, and a default integer index automatically.",
@@ -23,10 +23,16 @@
         "info"
       ],
       "example": "#    order_date region category  revenue  units\n# 0  2024-01-05   West    Shoes      120     12",
-      "starterCode": "",
+      "starterCode": "pd.___(csv_path)",
       "expectedOutput": "",
-      "tokens": [],
-      "distractors": []
+      "tokens": [
+        "read_csv"
+      ],
+      "distractors": [
+        "read_table",
+        "read_excel",
+        "read_json"
+      ]
     },
     {
       "id": "csv_head_after_read",
@@ -41,7 +47,7 @@
         "csv_read_basic"
       ],
       "dataset": "csv_path",
-      "type": "flashcard",
+      "type": "fill-blank",
       "prompt": "Load csv_path and preview just its first 3 rows in one line.",
       "answer": "pd.read_csv(csv_path).head(3)",
       "why": "Chaining .head() right after read_csv() is a fast way to sanity-check a load without printing the whole file.",
@@ -52,10 +58,16 @@
         "head"
       ],
       "example": "#    order_date region category  revenue  units\n# 0  2024-01-05   West    Shoes      120     12\n# 1  2024-01-06   East    Shoes       95      9\n# 2  2024-01-07   West     Bags       80      8",
-      "starterCode": "",
+      "starterCode": "pd.read_csv(csv_path).___(3)",
       "expectedOutput": "",
-      "tokens": [],
-      "distractors": []
+      "tokens": [
+        "head"
+      ],
+      "distractors": [
+        "tail",
+        "sample",
+        "nlargest"
+      ]
     },
     {
       "id": "csv_index_col",
@@ -69,7 +81,7 @@
         "csv_read_basic"
       ],
       "dataset": "csv_path",
-      "type": "flashcard",
+      "type": "fill-blank",
       "prompt": "Load csv_path using the order_date column as the row index instead of a default integer index.",
       "answer": "pd.read_csv(csv_path, index_col='order_date')",
       "why": "index_col tells read_csv which column to promote to the index during the load, instead of doing set_index() as a separate step afterward.",
@@ -80,10 +92,16 @@
         "set_index"
       ],
       "example": "#             region category  revenue  units\n# order_date\n# 2024-01-05    West    Shoes      120     12",
-      "starterCode": "",
+      "starterCode": "pd.read_csv(csv_path, ___='order_date')",
       "expectedOutput": "",
-      "tokens": [],
-      "distractors": []
+      "tokens": [
+        "index_col"
+      ],
+      "distractors": [
+        "usecols",
+        "dtype",
+        "names"
+      ]
     },
     {
       "id": "csv_usecols",
@@ -97,7 +115,7 @@
         "csv_read_basic"
       ],
       "dataset": "csv_path",
-      "type": "flashcard",
+      "type": "fill-blank",
       "prompt": "Load only the region and revenue columns from csv_path, skipping the rest.",
       "answer": "pd.read_csv(csv_path, usecols=['region', 'revenue'])",
       "why": "usecols skips parsing the other columns entirely, which is both faster and avoids loading data you don't need.",
@@ -108,10 +126,16 @@
         "drop"
       ],
       "example": "#   region  revenue\n# 0   West      120\n# 1   East       95",
-      "starterCode": "",
+      "starterCode": "pd.read_csv(csv_path, ___=['region', 'revenue'])",
       "expectedOutput": "",
-      "tokens": [],
-      "distractors": []
+      "tokens": [
+        "usecols"
+      ],
+      "distractors": [
+        "dtype",
+        "na_values",
+        "names"
+      ]
     },
     {
       "id": "csv_dtype",
@@ -125,7 +149,7 @@
         "csv_read_basic"
       ],
       "dataset": "csv_path",
-      "type": "flashcard",
+      "type": "fill-blank",
       "prompt": "Load csv_path, forcing the revenue column to load as float instead of pandas' inferred type.",
       "answer": "pd.read_csv(csv_path, dtype={'revenue': float})",
       "why": "dtype takes a dict mapping column name to the type it should load as, overriding pandas' automatic inference for just that column.",
@@ -136,10 +160,16 @@
         "astype"
       ],
       "example": "# revenue column loads as 120.0, 95.0, ... (float64) instead of int64",
-      "starterCode": "",
+      "starterCode": "pd.read_csv(csv_path, ___={'revenue': float})",
       "expectedOutput": "",
-      "tokens": [],
-      "distractors": []
+      "tokens": [
+        "dtype"
+      ],
+      "distractors": [
+        "na_values",
+        "usecols",
+        "parse_dates"
+      ]
     },
     {
       "id": "csv_parse_dates",
@@ -153,7 +183,7 @@
         "csv_read_basic"
       ],
       "dataset": "csv_path",
-      "type": "flashcard",
+      "type": "fill-blank",
       "prompt": "Load csv_path, parsing order_date as an actual datetime column instead of plain text.",
       "answer": "pd.read_csv(csv_path, parse_dates=['order_date'])",
       "why": "parse_dates converts the listed columns to datetime64 during the load, so date arithmetic and .dt accessors work right away.",
@@ -164,10 +194,16 @@
         "to_datetime"
       ],
       "example": "# order_date column dtype becomes datetime64[ns] instead of object",
-      "starterCode": "",
+      "starterCode": "pd.read_csv(csv_path, ___=['order_date'])",
       "expectedOutput": "",
-      "tokens": [],
-      "distractors": []
+      "tokens": [
+        "parse_dates"
+      ],
+      "distractors": [
+        "index_col",
+        "dtype",
+        "usecols"
+      ]
     },
     {
       "id": "csv_nrows",
@@ -181,7 +217,7 @@
         "csv_read_basic"
       ],
       "dataset": "csv_path",
-      "type": "flashcard",
+      "type": "fill-blank",
       "prompt": "Load only the first 3 data rows of csv_path, without reading the rest of the file at all.",
       "answer": "pd.read_csv(csv_path, nrows=3)",
       "why": "nrows stops reading after n rows during parsing \u2014 unlike head(), it never reads the rest of the file in the first place.",
@@ -192,10 +228,16 @@
         "head"
       ],
       "example": "# same 3 rows as head(3), but the file was never fully read",
-      "starterCode": "",
+      "starterCode": "pd.read_csv(csv_path, ___=3)",
       "expectedOutput": "",
-      "tokens": [],
-      "distractors": []
+      "tokens": [
+        "nrows"
+      ],
+      "distractors": [
+        "skiprows",
+        "usecols",
+        "head"
+      ]
     },
     {
       "id": "csv_skiprows",
@@ -209,7 +251,7 @@
         "csv_read_basic"
       ],
       "dataset": "csv_path",
-      "type": "flashcard",
+      "type": "fill-blank",
       "prompt": "Load csv_path while skipping its very first line, before pandas even looks for a header.",
       "answer": "pd.read_csv(csv_path, skiprows=1)",
       "why": "skiprows removes lines from the file before header inference happens \u2014 skipping the real header row means the first data row gets mistaken for the header instead.",
@@ -220,10 +262,16 @@
         "header"
       ],
       "example": "# columns become '2024-01-05', 'West', 'Shoes', '120', '12' \u2014 the real header is gone",
-      "starterCode": "",
+      "starterCode": "pd.read_csv(csv_path, ___=1)",
       "expectedOutput": "",
-      "tokens": [],
-      "distractors": []
+      "tokens": [
+        "skiprows"
+      ],
+      "distractors": [
+        "nrows",
+        "header",
+        "usecols"
+      ]
     },
     {
       "id": "csv_no_header",
@@ -238,7 +286,7 @@
         "csv_skiprows"
       ],
       "dataset": "csv_path_no_header",
-      "type": "flashcard",
+      "type": "fill-blank",
       "prompt": "Load csv_path_no_header (a file with no header row at all) and supply column names yourself.",
       "answer": "pd.read_csv(csv_path_no_header, header=None, names=['order_date', 'region', 'category', 'revenue', 'units'])",
       "why": "header=None tells pandas the first line is data, not labels; names= then supplies the column labels pandas would otherwise have inferred.",
@@ -248,10 +296,16 @@
         "read_csv"
       ],
       "example": "#    order_date region category  revenue  units\n# 0  2024-01-05   West    Shoes      120     12",
-      "starterCode": "",
+      "starterCode": "pd.read_csv(csv_path_no_header, ___=None, names=['order_date', 'region', 'category', 'revenue', 'units'])",
       "expectedOutput": "",
-      "tokens": [],
-      "distractors": []
+      "tokens": [
+        "header"
+      ],
+      "distractors": [
+        "skiprows",
+        "usecols",
+        "dtype"
+      ]
     },
     {
       "id": "csv_na_values",
@@ -265,7 +319,7 @@
         "csv_read_basic"
       ],
       "dataset": "csv_path_missing",
-      "type": "flashcard",
+      "type": "fill-blank",
       "prompt": "Load csv_path_missing, treating the literal string '?' as a missing value.",
       "answer": "pd.read_csv(csv_path_missing, na_values=['?'])",
       "why": "Real-world CSVs mark missing data with all sorts of placeholders ('?', 'N/A', '-') \u2014 na_values tells pandas which strings to treat as NaN instead of literal text.",
@@ -277,10 +331,16 @@
         "fillna"
       ],
       "example": "# the '?' revenue cell becomes NaN, and the column loads as float64",
-      "starterCode": "",
+      "starterCode": "pd.read_csv(csv_path_missing, ___=['?'])",
       "expectedOutput": "",
-      "tokens": [],
-      "distractors": []
+      "tokens": [
+        "na_values"
+      ],
+      "distractors": [
+        "dtype",
+        "usecols",
+        "skiprows"
+      ]
     },
     {
       "id": "csv_isna_after_load",
@@ -295,7 +355,7 @@
         "csv_na_values"
       ],
       "dataset": "csv_path_missing",
-      "type": "flashcard",
+      "type": "fill-blank",
       "prompt": "After loading csv_path_missing with '?' treated as missing, count how many missing values landed in each column.",
       "answer": "pd.read_csv(csv_path_missing, na_values=['?']).isna().sum()",
       "why": "Chaining isna().sum() right after a load is a fast way to confirm which columns actually have gaps, and how many.",
@@ -308,10 +368,16 @@
         "fillna"
       ],
       "example": "# order_date    0\n# region        0\n# category      0\n# revenue       1\n# units         1\n# dtype: int64",
-      "starterCode": "",
+      "starterCode": "pd.read_csv(csv_path_missing, na_values=['?']).___().sum()",
       "expectedOutput": "",
-      "tokens": [],
-      "distractors": []
+      "tokens": [
+        "isna"
+      ],
+      "distractors": [
+        "notna",
+        "dropna",
+        "fillna"
+      ]
     },
     {
       "id": "csv_to_csv_string",
@@ -325,7 +391,7 @@
         "csv_read_basic"
       ],
       "dataset": "df",
-      "type": "flashcard",
+      "type": "fill-blank",
       "prompt": "Convert df into CSV text (as a string), without writing to a file, and without including the index column.",
       "answer": "df.to_csv(index=False)",
       "why": "to_csv() with no path argument returns the CSV content as a string instead of writing a file \u2014 handy for previewing exactly what would be saved.",
@@ -336,10 +402,16 @@
         "read_csv"
       ],
       "example": "# 'region,category,revenue,units\\nWest,Shoes,120,12\\n...'",
-      "starterCode": "",
+      "starterCode": "df.to_csv(___=False)",
       "expectedOutput": "",
-      "tokens": [],
-      "distractors": []
+      "tokens": [
+        "index"
+      ],
+      "distractors": [
+        "header",
+        "na_rep",
+        "columns"
+      ]
     },
     {
       "id": "csv_dtypes_blank",

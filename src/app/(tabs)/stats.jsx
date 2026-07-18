@@ -3,6 +3,7 @@ import { useCallback } from 'react';
 import { ScrollView, StyleSheet, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
+import { AchievementBadge } from '@/components/achievement-badge';
 import { HeatmapGrid } from '@/components/stats/heatmap-grid';
 import { RetentionBars } from '@/components/stats/retention-bars';
 import { WeakTopicRow } from '@/components/stats/weak-topic-row';
@@ -10,6 +11,7 @@ import { StreakPill } from '@/components/streak-pill';
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
 import { BottomTabInset, MaxContentWidth, Spacing } from '@/constants/theme';
+import { useAchievements } from '@/hooks/use-achievements';
 import { useStreak } from '@/hooks/use-app-meta';
 import { useReviewHeatmap, useRetentionSeries, useWeakestTopics } from '@/hooks/use-stats';
 
@@ -18,6 +20,7 @@ export default function StatsScreen() {
   const { data: retention, refresh: refreshRetention } = useRetentionSeries({ days: 14 });
   const { data: weakTopics, refresh: refreshWeakTopics } = useWeakestTopics({ limit: 3 });
   const { streak, refresh: refreshStreak } = useStreak();
+  const { achievements, refresh: refreshAchievements } = useAchievements();
 
   useFocusEffect(
     useCallback(() => {
@@ -25,8 +28,11 @@ export default function StatsScreen() {
       refreshRetention();
       refreshWeakTopics();
       refreshStreak();
-    }, [refreshHeatmap, refreshRetention, refreshWeakTopics, refreshStreak])
+      refreshAchievements();
+    }, [refreshHeatmap, refreshRetention, refreshWeakTopics, refreshStreak, refreshAchievements])
   );
+
+  const unlockedCount = achievements.filter((achievement) => achievement.unlockedAt).length;
 
   const totalReviews = heatmap.reduce((sum, day) => sum + day.count, 0);
 
@@ -45,6 +51,18 @@ export default function StatsScreen() {
 
           <Section title="Retention" subtitle="Last 14 days">
             <RetentionBars data={retention} />
+          </Section>
+
+          <Section title="Achievements" subtitle={`${unlockedCount}/${achievements.length} unlocked`}>
+            <View style={styles.achievementsGrid}>
+              {achievements.map((achievement) => (
+                <AchievementBadge
+                  key={achievement.id}
+                  achievement={achievement}
+                  locked={!achievement.unlockedAt}
+                />
+              ))}
+            </View>
           </Section>
 
           <Section title="Weakest topics" subtitle="Lowest average ease">
@@ -113,6 +131,11 @@ const styles = StyleSheet.create({
     marginTop: Spacing.one,
   },
   weakList: {
+    gap: Spacing.two,
+  },
+  achievementsGrid: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
     gap: Spacing.two,
   },
 });

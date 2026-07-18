@@ -11,7 +11,7 @@
       "difficulty": "easy",
       "prerequisites": [],
       "dataset": "df",
-      "type": "flashcard",
+      "type": "fill-blank",
       "prompt": "You have a sales DataFrame with `region` and `revenue` columns. Get total revenue per region.",
       "answer": "df.groupby('region')['revenue'].sum()",
       "why": "Selecting the column before aggregating keeps the result a single Series instead of aggregating every numeric column.",
@@ -23,10 +23,16 @@
         "reset_index"
       ],
       "example": "# East     225\n# North    115\n# West     245",
-      "starterCode": "",
+      "starterCode": "df.groupby('region')['revenue'].___()",
       "expectedOutput": "",
-      "tokens": [],
-      "distractors": []
+      "tokens": [
+        "sum"
+      ],
+      "distractors": [
+        "mean",
+        "count",
+        "max"
+      ]
     },
     {
       "id": "groupby_sum_sorted",
@@ -41,7 +47,7 @@
         "groupby_basic"
       ],
       "dataset": "df",
-      "type": "flashcard",
+      "type": "fill-blank",
       "prompt": "Total revenue per region, sorted high to low.",
       "answer": "df.groupby('region')['revenue'].sum().sort_values(ascending=False)",
       "why": "sort_values() reorders the resulting Series by value, not by the group key.",
@@ -53,10 +59,22 @@
         "sort_index"
       ],
       "example": "# West     245\n# East     225\n# North    115",
-      "starterCode": "",
+      "starterCode": "df.groupby('region')['revenue'].___().sort_values(ascending=___)",
       "expectedOutput": "",
-      "tokens": [],
-      "distractors": []
+      "tokens": [
+        "sum",
+        "False"
+      ],
+      "distractors": [
+        [
+          "mean",
+          "count"
+        ],
+        [
+          "True",
+          "0"
+        ]
+      ]
     },
     {
       "id": "groupby_multi_agg",
@@ -71,7 +89,7 @@
         "groupby_sum_sorted"
       ],
       "dataset": "df",
-      "type": "flashcard",
+      "type": "multiple-choice",
       "prompt": "You need both the sum AND the count of revenue per region in one call. Which method?",
       "answer": "df.groupby('region')['revenue'].agg(['sum', 'count'])",
       "why": ".agg() runs multiple functions in one pass instead of chaining separate groupbys.",
@@ -86,7 +104,52 @@
       "starterCode": "",
       "expectedOutput": "",
       "tokens": [],
-      "distractors": []
+      "distractors": [
+        "df.groupby('region')['revenue'].agg('sum')",
+        "df.groupby('region')[['revenue']].agg(['sum', 'count'])"
+      ]
+    },
+    {
+      "id": "groupby_multi_agg_chain",
+      "topic": "groupby",
+      "subtopic": "aggregation",
+      "tags": [
+        "aggregation",
+        "agg"
+      ],
+      "difficulty": "medium",
+      "prerequisites": [
+        "groupby_multi_agg"
+      ],
+      "dataset": "df",
+      "type": "fill-blank",
+      "prompt": "Same idea, chained: fill in both blanks to get the sum and count of revenue per region in one call.",
+      "answer": "df.groupby('region')['revenue'].agg(['sum', 'count'])",
+      "why": ".agg() takes a list of function names and applies each to the grouped column in a single pass.",
+      "whenToUse": "Need more than one summary stat per group.",
+      "commonMistake": "Calling .sum() and .count() separately and merging manually.",
+      "relatedMethods": [
+        "agg",
+        "sum",
+        "count"
+      ],
+      "example": "#         sum  count\n# region\n# East    225      3\n# North   115      2\n# West    245      3",
+      "starterCode": "df.groupby('region')['revenue'].agg(['___', '___'])",
+      "expectedOutput": "",
+      "tokens": [
+        "sum",
+        "count"
+      ],
+      "distractors": [
+        [
+          "mean",
+          "max"
+        ],
+        [
+          "nunique",
+          "median"
+        ]
+      ]
     },
     {
       "id": "groupby_mean",
@@ -101,7 +164,7 @@
         "groupby_basic"
       ],
       "dataset": "df",
-      "type": "flashcard",
+      "type": "fill-blank",
       "prompt": "Average units sold per category.",
       "answer": "df.groupby('category')['units'].mean()",
       "why": "mean() averages the selected column within each group.",
@@ -113,10 +176,16 @@
         "agg"
       ],
       "example": "# Bags     6.25\n# Shoes    8.25",
-      "starterCode": "",
+      "starterCode": "df.groupby('category')['units'].___()",
       "expectedOutput": "",
-      "tokens": [],
-      "distractors": []
+      "tokens": [
+        "mean"
+      ],
+      "distractors": [
+        "sum",
+        "median",
+        "count"
+      ]
     },
     {
       "id": "groupby_multi_key",
@@ -131,7 +200,7 @@
         "groupby_basic"
       ],
       "dataset": "df",
-      "type": "flashcard",
+      "type": "multiple-choice",
       "prompt": "Total revenue per region AND category combined.",
       "answer": "df.groupby(['region', 'category'])['revenue'].sum()",
       "why": "Passing a list of columns groups by every combination of those columns, producing a MultiIndex.",
@@ -146,7 +215,10 @@
       "starterCode": "",
       "expectedOutput": "",
       "tokens": [],
-      "distractors": []
+      "distractors": [
+        "df.groupby('region')['revenue'].sum()",
+        "df.groupby(['region', 'category']).sum()"
+      ]
     },
     {
       "id": "groupby_reset_index",
@@ -161,7 +233,7 @@
         "groupby_multi_key"
       ],
       "dataset": "df",
-      "type": "flashcard",
+      "type": "fill-blank",
       "prompt": "Same region-and-category revenue totals, but as a flat DataFrame instead of a MultiIndex Series.",
       "answer": "df.groupby(['region', 'category'])['revenue'].sum().reset_index()",
       "why": "reset_index() turns the group keys back into ordinary columns.",
@@ -173,10 +245,16 @@
         "sum"
       ],
       "example": "#   region category  revenue\n# 0   East     Bags       60\n# 1   East    Shoes      165\n# 2  North     Bags       65\n# 3  North    Shoes       50",
-      "starterCode": "",
+      "starterCode": "df.groupby(['region', 'category'])['revenue'].sum().___()",
       "expectedOutput": "",
-      "tokens": [],
-      "distractors": []
+      "tokens": [
+        "reset_index"
+      ],
+      "distractors": [
+        "sort_index",
+        "unstack",
+        "droplevel"
+      ]
     },
     {
       "id": "groupby_size_vs_count",
@@ -191,8 +269,8 @@
         "groupby_basic"
       ],
       "dataset": "df",
-      "type": "flashcard",
-      "prompt": "Number of rows per region \u2014 including rows where revenue might be missing.",
+      "type": "fill-blank",
+      "prompt": "Number of rows per region — including rows where revenue might be missing.",
       "answer": "df.groupby('region').size()",
       "why": "size() counts rows per group regardless of nulls; count() only counts non-null values in a chosen column.",
       "whenToUse": "You want raw row counts, not counts of a specific non-null column.",
@@ -203,10 +281,16 @@
         "value_counts"
       ],
       "example": "# East     3\n# North    2\n# West     3",
-      "starterCode": "",
+      "starterCode": "df.groupby('region').___()",
       "expectedOutput": "",
-      "tokens": [],
-      "distractors": []
+      "tokens": [
+        "size"
+      ],
+      "distractors": [
+        "count",
+        "sum",
+        "nunique"
+      ]
     },
     {
       "id": "groupby_count_column",
@@ -221,7 +305,7 @@
         "groupby_size_vs_count"
       ],
       "dataset": "df",
-      "type": "flashcard",
+      "type": "fill-blank",
       "prompt": "Number of non-null revenue entries per region.",
       "answer": "df.groupby('region')['revenue'].count()",
       "why": "count() on a selected column ignores NaNs in that column specifically.",
@@ -233,10 +317,16 @@
         "isna"
       ],
       "example": "# East     3\n# North    2\n# West     3",
-      "starterCode": "",
+      "starterCode": "df.groupby('region')['revenue'].___()",
       "expectedOutput": "",
-      "tokens": [],
-      "distractors": []
+      "tokens": [
+        "count"
+      ],
+      "distractors": [
+        "size",
+        "sum",
+        "nunique"
+      ]
     },
     {
       "id": "groupby_idxmax",
@@ -251,7 +341,7 @@
         "groupby_basic"
       ],
       "dataset": "df",
-      "type": "flashcard",
+      "type": "fill-blank",
       "prompt": "Which category had the single highest total revenue?",
       "answer": "df.groupby('category')['revenue'].sum().idxmax()",
       "why": "idxmax() returns the group label with the maximum value, not the value itself.",
@@ -263,10 +353,16 @@
         "max"
       ],
       "example": "# 'Shoes'",
-      "starterCode": "",
+      "starterCode": "df.groupby('category')['revenue'].sum().___()",
       "expectedOutput": "",
-      "tokens": [],
-      "distractors": []
+      "tokens": [
+        "idxmax"
+      ],
+      "distractors": [
+        "max",
+        "idxmin",
+        "argmax"
+      ]
     },
     {
       "id": "groupby_named_agg",
@@ -281,7 +377,7 @@
         "groupby_multi_agg"
       ],
       "dataset": "df",
-      "type": "flashcard",
+      "type": "fill-blank",
       "prompt": "Total revenue and average units per region, with clearly named result columns.",
       "answer": "df.groupby('region').agg(total_revenue=('revenue', 'sum'), avg_units=('units', 'mean'))",
       "why": "Named aggregation (agg(name=(column, func))) avoids the awkward MultiIndex columns you'd get from agg({...}).",
@@ -293,10 +389,22 @@
         "reset_index"
       ],
       "example": "#         total_revenue  avg_units\n# region\n# East              225   7.333333\n# North             115   5.500000\n# West              245   8.333333",
-      "starterCode": "",
+      "starterCode": "df.groupby('region').agg(total_revenue=('revenue', '___'), avg_units=('units', '___'))",
       "expectedOutput": "",
-      "tokens": [],
-      "distractors": []
+      "tokens": [
+        "sum",
+        "mean"
+      ],
+      "distractors": [
+        [
+          "mean",
+          "count"
+        ],
+        [
+          "sum",
+          "median"
+        ]
+      ]
     },
     {
       "id": "groupby_filter",
@@ -310,7 +418,7 @@
         "groupby_basic"
       ],
       "dataset": "df",
-      "type": "flashcard",
+      "type": "fill-blank",
       "prompt": "Keep only the original rows belonging to regions whose total revenue exceeds 150.",
       "answer": "df.groupby('region').filter(lambda g: g['revenue'].sum() > 150)",
       "why": "filter() keeps or drops entire groups based on a group-level condition, returning original rows, not an aggregated summary.",
@@ -321,11 +429,17 @@
         "groupby",
         "transform"
       ],
-      "example": "# rows for West and East only \u2014 North (total 115) is dropped",
-      "starterCode": "",
+      "example": "# rows for West and East only — North (total 115) is dropped",
+      "starterCode": "df.groupby('region').___(lambda g: g['revenue'].sum() > 150)",
       "expectedOutput": "",
-      "tokens": [],
-      "distractors": []
+      "tokens": [
+        "filter"
+      ],
+      "distractors": [
+        "transform",
+        "apply",
+        "agg"
+      ]
     },
     {
       "id": "groupby_transform",
@@ -339,7 +453,7 @@
         "groupby_filter"
       ],
       "dataset": "df",
-      "type": "flashcard",
+      "type": "fill-blank",
       "prompt": "Add a new column to the DataFrame showing each row's region-wide total revenue, without collapsing any rows.",
       "answer": "df['region_total'] = df.groupby('region')['revenue'].transform('sum')",
       "why": "transform() returns a result the same length as the original DataFrame, broadcasting the group aggregate back onto every row.",
@@ -351,10 +465,16 @@
         "assign"
       ],
       "example": "#   region  ...  region_total\n# 0   West  ...          245\n# 1   East  ...          225\n# 6  North  ...          115",
-      "starterCode": "",
+      "starterCode": "df['region_total'] = df.groupby('region')['revenue'].___('sum')",
       "expectedOutput": "",
-      "tokens": [],
-      "distractors": []
+      "tokens": [
+        "transform"
+      ],
+      "distractors": [
+        "apply",
+        "agg",
+        "assign"
+      ]
     },
     {
       "id": "groupby_nlargest",
@@ -369,7 +489,7 @@
         "groupby_sum_sorted"
       ],
       "dataset": "df",
-      "type": "flashcard",
+      "type": "fill-blank",
       "prompt": "Top 2 categories by total revenue.",
       "answer": "df.groupby('category')['revenue'].sum().nlargest(2)",
       "why": "nlargest() sorts and slices in one call, clearer than sort_values().head().",
@@ -381,10 +501,16 @@
         "sort_values"
       ],
       "example": "# Shoes    335\n# Bags     250",
-      "starterCode": "",
+      "starterCode": "df.groupby('category')['revenue'].sum().___(2)",
       "expectedOutput": "",
-      "tokens": [],
-      "distractors": []
+      "tokens": [
+        "nlargest"
+      ],
+      "distractors": [
+        "nsmallest",
+        "head",
+        "sort_values"
+      ]
     },
     {
       "id": "groupby_pct_share",
@@ -399,7 +525,7 @@
         "groupby_basic"
       ],
       "dataset": "df",
-      "type": "flashcard",
+      "type": "multiple-choice",
       "prompt": "Each region's share of total revenue, as a percentage rounded to 1 decimal place.",
       "answer": "(df.groupby('region')['revenue'].sum() / df['revenue'].sum() * 100).round(1)",
       "why": "Dividing the per-group sums by the grand total converts absolute revenue into a share of the whole.",
@@ -414,7 +540,10 @@
       "starterCode": "",
       "expectedOutput": "",
       "tokens": [],
-      "distractors": []
+      "distractors": [
+        "(df.groupby('region')['revenue'].sum() / df.groupby('region')['revenue'].sum() * 100).round(1)",
+        "(df.groupby('region')['revenue'].sum() / df['revenue'].sum() * 100)"
+      ]
     },
     {
       "id": "groupby_agg_dict",
@@ -428,7 +557,7 @@
         "groupby_multi_agg"
       ],
       "dataset": "df",
-      "type": "flashcard",
+      "type": "fill-blank",
       "prompt": "Sum of revenue and max of units per region, using a dictionary to apply a different function per column.",
       "answer": "df.groupby('region').agg({'revenue': 'sum', 'units': 'max'})",
       "why": "A dict maps each column to its own aggregation function in a single call.",
@@ -440,10 +569,22 @@
         "max"
       ],
       "example": "#         revenue  units\n# region\n# East        225      9\n# North       115      6\n# West        245     12",
-      "starterCode": "",
+      "starterCode": "df.groupby('region').agg({'revenue': '___', 'units': '___'})",
       "expectedOutput": "",
-      "tokens": [],
-      "distractors": []
+      "tokens": [
+        "sum",
+        "max"
+      ],
+      "distractors": [
+        [
+          "mean",
+          "count"
+        ],
+        [
+          "min",
+          "mean"
+        ]
+      ]
     },
     {
       "id": "groupby_sort_index",
@@ -457,7 +598,7 @@
         "groupby_sum_sorted"
       ],
       "dataset": "df",
-      "type": "flashcard",
+      "type": "fill-blank",
       "prompt": "Total revenue per region, sorted alphabetically by region name (not by value).",
       "answer": "df.groupby('region')['revenue'].sum().sort_index()",
       "why": "sort_index() sorts by the group labels; sort_values() sorts by the aggregated numbers.",
@@ -468,10 +609,16 @@
         "sort_values"
       ],
       "example": "# East     225\n# North    115\n# West     245",
-      "starterCode": "",
+      "starterCode": "df.groupby('region')['revenue'].sum().___()",
       "expectedOutput": "",
-      "tokens": [],
-      "distractors": []
+      "tokens": [
+        "sort_index"
+      ],
+      "distractors": [
+        "sort_values",
+        "reset_index",
+        "sort"
+      ]
     },
     {
       "id": "groupby_value_counts",
@@ -486,8 +633,8 @@
         "groupby_size_vs_count"
       ],
       "dataset": "df",
-      "type": "flashcard",
-      "prompt": "Number of rows per category \u2014 using the shortcut method instead of groupby.",
+      "type": "fill-blank",
+      "prompt": "Number of rows per category — using the shortcut method instead of groupby.",
       "answer": "df['category'].value_counts()",
       "why": "value_counts() is a shortcut for df.groupby(col).size().sort_values(ascending=False) on a single column.",
       "whenToUse": "Quick frequency count of one column, without needing a full groupby call.",
@@ -498,10 +645,16 @@
         "size"
       ],
       "example": "# Shoes    4\n# Bags     4",
-      "starterCode": "",
+      "starterCode": "df['category'].___()",
       "expectedOutput": "",
-      "tokens": [],
-      "distractors": []
+      "tokens": [
+        "value_counts"
+      ],
+      "distractors": [
+        "unique",
+        "nunique",
+        "count"
+      ]
     },
     {
       "id": "groupby_describe",
@@ -516,7 +669,7 @@
         "groupby_mean"
       ],
       "dataset": "df",
-      "type": "flashcard",
+      "type": "fill-blank",
       "prompt": "Full summary statistics (count, mean, std, min, max, quartiles) of revenue, per region.",
       "answer": "df.groupby('region')['revenue'].describe()",
       "why": "describe() runs a whole panel of summary stats per group in one call, useful for quick exploration.",
@@ -528,10 +681,16 @@
         "mean"
       ],
       "example": "#         count   mean    std   min    max\n# region\n# East       3   75.0   18.0  60.0   95.0\n# North      2   57.5   10.6  50.0   65.0\n# West       3   81.7   37.5  45.0  120.0",
-      "starterCode": "",
+      "starterCode": "df.groupby('region')['revenue'].___()",
       "expectedOutput": "",
-      "tokens": [],
-      "distractors": []
+      "tokens": [
+        "describe"
+      ],
+      "distractors": [
+        "info",
+        "agg",
+        "summary"
+      ]
     }
   ]
 }
