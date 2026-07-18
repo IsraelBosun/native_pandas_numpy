@@ -5,14 +5,26 @@ import { Dimensions, StyleSheet, View } from 'react-native';
 import Animated, { Easing, Keyframe } from 'react-native-reanimated';
 import { scheduleOnRN } from 'react-native-worklets';
 
+import { useThemeName } from '@/hooks/use-theme';
+
 const INITIAL_SCALE_FACTOR = Dimensions.get('screen').height / 90;
 const DURATION = 600;
 
+// Mirrors app.json's expo-splash-screen backgroundColor/image per theme, so
+// this JS-driven fade-out overlay matches the native splash with no flash.
+const SPLASH_BY_THEME = {
+  light: { backgroundColor: '#FFFFFF', source: require('@/assets/images/splash-icon.png') },
+  dark: { backgroundColor: '#0C111C', source: require('@/assets/images/splash-icon-dark.png') },
+};
+
 export function AnimatedSplashOverlay() {
+  const themeName = useThemeName();
   const [animate, setAnimate] = useState(false);
   const [visible, setVisible] = useState(true);
 
   if (!visible) return null;
+
+  const { backgroundColor, source } = SPLASH_BY_THEME[themeName];
 
   const splashKeyframe = new Keyframe({
     0: {
@@ -33,7 +45,7 @@ export function AnimatedSplashOverlay() {
     },
   });
 
-  const image = <Image style={styles.image} source={require('@/assets/images/expo-logo.png')} />;
+  const image = <Image style={styles.image} source={source} />;
 
   return animate ? (
     <Animated.View
@@ -43,7 +55,7 @@ export function AnimatedSplashOverlay() {
           scheduleOnRN(setVisible, false);
         }
       })}
-      style={styles.splashOverlay}>
+      style={[styles.splashOverlay, { backgroundColor }]}>
       {image}
     </Animated.View>
   ) : (
@@ -53,7 +65,7 @@ export function AnimatedSplashOverlay() {
           setAnimate(true);
         });
       }}
-      style={styles.splashOverlay}>
+      style={[styles.splashOverlay, { backgroundColor }]}>
       {image}
     </View>
   );
@@ -129,7 +141,7 @@ const styles = StyleSheet.create({
   },
   image: {
     width: 76,
-    height: 71,
+    height: 58,
   },
   background: {
     borderRadius: 40,
@@ -140,7 +152,6 @@ const styles = StyleSheet.create({
   },
   splashOverlay: {
     ...StyleSheet.absoluteFill,
-    backgroundColor: '#208AEF',
     alignItems: 'center',
     justifyContent: 'center',
     zIndex: 1000,
