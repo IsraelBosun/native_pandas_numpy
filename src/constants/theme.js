@@ -22,6 +22,8 @@ export const Colors = {
     success: '#1F9254',
     warning: '#D97706',
     danger: '#DC2626',
+    // Muted tint of `danger` for highlighted-cell surfaces (onboarding demo table).
+    dangerMuted: '#FBE7E7',
   },
   dark: {
     text: '#F3F5F9',
@@ -35,6 +37,7 @@ export const Colors = {
     success: '#34D399',
     warning: '#FBBF24',
     danger: '#F87171',
+    dangerMuted: '#3B1E20',
   },
 };
 
@@ -104,30 +107,24 @@ export const SyntaxColors = {
   },
 };
 
-export const Fonts = Platform.select({
-  ios: {
-    /** iOS `UIFontDescriptorSystemDesignDefault` */
-    sans: 'system-ui',
-    /** iOS `UIFontDescriptorSystemDesignSerif` */
-    serif: 'ui-serif',
-    /** iOS `UIFontDescriptorSystemDesignRounded` */
-    rounded: 'ui-rounded',
-    /** iOS `UIFontDescriptorSystemDesignMonospaced` */
-    mono: 'ui-monospace',
-  },
-  default: {
-    sans: 'normal',
-    serif: 'serif',
-    rounded: 'normal',
-    mono: 'monospace',
-  },
-  web: {
-    sans: 'var(--font-display)',
-    serif: 'var(--font-serif)',
-    rounded: 'var(--font-rounded)',
-    mono: 'var(--font-mono)',
-  },
-});
+// App-wide typeface: JetBrains Mono, loaded via useFonts() in the root layout
+// (see `Weight` below for which family maps to which numeric fontWeight —
+// custom TTFs don't support synthetic bold, so ThemedText picks a family per
+// weight instead of relying on the `fontWeight` style prop).
+export const Fonts = {
+  mono: 'JetBrainsMono_400Regular',
+  monoMedium: 'JetBrainsMono_500Medium',
+  monoSemiBold: 'JetBrainsMono_600SemiBold',
+  monoBold: 'JetBrainsMono_700Bold',
+};
+
+// Maps a design "weight" to the matching loaded font family.
+export function fontFamilyForWeight(weight) {
+  if (weight >= 700) return Fonts.monoBold;
+  if (weight >= 600) return Fonts.monoSemiBold;
+  if (weight >= 500) return Fonts.monoMedium;
+  return Fonts.mono;
+}
 
 export const Spacing = {
   half: 2,

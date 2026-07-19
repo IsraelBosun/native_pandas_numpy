@@ -36,7 +36,6 @@ const styles = StyleSheet.create({
   headline: {
     fontSize: 30,
     lineHeight: 36,
-    fontWeight: '800',
     letterSpacing: -0.5,
   },
 });

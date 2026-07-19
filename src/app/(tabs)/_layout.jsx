@@ -1,7 +1,7 @@
 import Feather from '@expo/vector-icons/Feather';
 import { Icon, Label, NativeTabs, VectorIcon } from 'expo-router/unstable-native-tabs';
 
-import { Colors } from '@/constants/theme';
+import { Colors, fontFamilyForWeight } from '@/constants/theme';
 import { useThemeName } from '@/hooks/use-theme';
 
 const TABS = [
@@ -22,8 +22,8 @@ export default function TabsLayout() {
       rippleColor={colors.actionMuted}
       iconColor={{ default: colors.textSecondary, selected: colors.action }}
       labelStyle={{
-        default: { color: colors.textSecondary },
-        selected: { color: colors.action, fontWeight: '700' },
+        default: { color: colors.textSecondary, fontFamily: fontFamilyForWeight(500) },
+        selected: { color: colors.action, fontFamily: fontFamilyForWeight(700) },
       }}>
       {TABS.map((tab) => (
         <NativeTabs.Trigger key={tab.name} name={tab.name}>

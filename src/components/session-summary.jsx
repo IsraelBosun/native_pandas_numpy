@@ -196,7 +196,6 @@ const styles = StyleSheet.create({
   statValue: {
     fontSize: 32,
     lineHeight: 38,
-    fontWeight: '800',
   },
   buttonWrap: {
     alignSelf: 'stretch',

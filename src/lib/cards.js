@@ -177,6 +177,22 @@ export async function getWeakestTopics({ limit = 3 } = {}) {
   return computeWeakestTopics(rows, contentById(), TOPICS, { limit });
 }
 
+export async function hasSeenOnboarding() {
+  const db = await getDb();
+  const row = await db.getFirstAsync(`SELECT value FROM app_meta WHERE key = 'onboarding_seen'`);
+  return !!row;
+}
+
+export async function markOnboardingSeen() {
+  const db = await getDb();
+  await db.runAsync(`INSERT OR REPLACE INTO app_meta (key, value) VALUES ('onboarding_seen', '1')`);
+}
+
+export async function resetOnboarding() {
+  const db = await getDb();
+  await db.runAsync(`DELETE FROM app_meta WHERE key = 'onboarding_seen'`);
+}
+
 export async function hasSeenLesson(topicId) {
   const db = await getDb();
   const row = await db.getFirstAsync(

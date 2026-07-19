@@ -5,7 +5,7 @@ import Animated, { FadeInDown } from 'react-native-reanimated';
 
 import { ScalePressable } from '@/components/scale-pressable';
 import { ThemedText } from '@/components/themed-text';
-import { Radius, Spacing } from '@/constants/theme';
+import { Radius, Spacing, fontFamilyForWeight } from '@/constants/theme';
 import { useGradient } from '@/hooks/use-theme';
 
 export function DueHeroCard({ count, onStartReview }) {
@@ -65,15 +65,15 @@ const styles = StyleSheet.create({
   },
   count: {
     color: '#FFFFFF',
+    fontFamily: fontFamilyForWeight(700),
     fontSize: 52,
-    fontWeight: '800',
     lineHeight: 56,
     letterSpacing: -1,
   },
   countUnit: {
     color: '#FFFFFF',
+    fontFamily: fontFamilyForWeight(600),
     fontSize: 18,
-    fontWeight: '600',
     opacity: 0.9,
   },
   button: {

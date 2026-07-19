@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState } from 'react';
 
-import { getFavoriteCards } from '@/lib/cards';
+import { getFavoriteCards, setFavorite } from '@/lib/cards';
 import { seededShuffle } from '@/lib/shuffle';
 
 // Same ephemeral self-check contract as useCramSession — never calls
@@ -29,6 +29,25 @@ export function useFavoritesSession() {
 
   const currentCard = queue[index];
 
+  // Optimistically patch the current queue item so the star UI reflects the
+  // change immediately, without waiting on a refetch.
+  const patchCurrentCard = useCallback(
+    (patch) => {
+      setQueue((prevQueue) => prevQueue.map((card, i) => (i === index ? { ...card, ...patch } : card)));
+    },
+    [index]
+  );
+
+  // Unstarring here doesn't remove the card from *this* session's queue (its
+  // position/total would get confusing mid-session) — it just persists, so
+  // the card is correctly gone next time the Starred queue is loaded fresh.
+  const toggleFavorite = useCallback(() => {
+    if (!currentCard) return;
+    const next = !currentCard.favorite;
+    patchCurrentCard({ favorite: next });
+    setFavorite(currentCard.id, next);
+  }, [currentCard, patchCurrentCard]);
+
   const reveal = useCallback(() => setRevealed(true), []);
 
   const grade = useCallback(
@@ -54,6 +73,7 @@ export function useFavoritesSession() {
     revealed,
     reveal,
     grade,
+    toggleFavorite,
     position: index + 1,
     total: queue.length,
     stats,

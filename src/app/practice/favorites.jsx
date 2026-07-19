@@ -36,7 +36,7 @@ export default function FavoritesPracticeScreen() {
     );
   }
 
-  return <PracticeSessionScreen session={session} modeLabel="Starred" />;
+  return <PracticeSessionScreen session={session} modeLabel="Starred" onToggleFavorite={session.toggleFavorite} />;
 }
 
 const styles = StyleSheet.create({

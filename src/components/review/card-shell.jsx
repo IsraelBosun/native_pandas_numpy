@@ -24,28 +24,32 @@ export function CardShell({ prompt, dataset, favorite, onToggleFavorite, note, o
         <ThemedText type="label" themeColor="textSecondary">
           Task
         </ThemedText>
-        {onToggleFavorite && (
+        {(onNoteChange || onToggleFavorite) && (
           <View style={styles.headerActions}>
-            <ScalePressable
-              hitSlop={8}
-              scaleTo={0.85}
-              onPress={() => {
-                setNoteOpen((prev) => !prev);
-                triggerHaptic('light');
-              }}>
-              <Feather
-                name="edit-3"
-                size={18}
-                color={noteOpen || note ? theme.action : theme.textSecondary}
-              />
-            </ScalePressable>
-            <ScalePressable hitSlop={8} scaleTo={0.85} onPress={onToggleFavorite} haptic="light">
-              <Ionicons
-                name={favorite ? 'star' : 'star-outline'}
-                size={20}
-                color={favorite ? theme.warning : theme.textSecondary}
-              />
-            </ScalePressable>
+            {onNoteChange && (
+              <ScalePressable
+                hitSlop={8}
+                scaleTo={0.85}
+                onPress={() => {
+                  setNoteOpen((prev) => !prev);
+                  triggerHaptic('light');
+                }}>
+                <Feather
+                  name="edit-3"
+                  size={18}
+                  color={noteOpen || note ? theme.action : theme.textSecondary}
+                />
+              </ScalePressable>
+            )}
+            {onToggleFavorite && (
+              <ScalePressable hitSlop={8} scaleTo={0.85} onPress={onToggleFavorite} haptic="light">
+                <Ionicons
+                  name={favorite ? 'star' : 'star-outline'}
+                  size={20}
+                  color={favorite ? theme.warning : theme.textSecondary}
+                />
+              </ScalePressable>
+            )}
           </View>
         )}
       </View>
@@ -91,8 +95,8 @@ const styles = StyleSheet.create({
     gap: Spacing.three,
   },
   prompt: {
-    fontSize: 18,
-    lineHeight: 26,
+    fontSize: 16,
+    lineHeight: 24,
   },
   noteInput: {
     minHeight: 44,

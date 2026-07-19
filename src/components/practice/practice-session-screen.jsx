@@ -14,8 +14,10 @@ import { TOPICS } from '@/lib/content';
 
 // Shared by Practice's "drill a topic" (cram) and "Starred" sessions — both
 // are off-schedule, self-checked queues that never call schedule()/
-// recordReview(), so neither wires favorite/note editing (that's Review's job).
-export function PracticeSessionScreen({ session, modeLabel }) {
+// recordReview(). Neither wires note editing (that's Review's job), but the
+// Starred session does wire onToggleFavorite so cards can be unstarred while
+// browsing them; cram simply doesn't pass it, so its cards show no star.
+export function PracticeSessionScreen({ session, modeLabel, onToggleFavorite }) {
   const router = useRouter();
   const theme = useTheme();
   const scrollRef = useRef(null);
@@ -57,6 +59,7 @@ export function PracticeSessionScreen({ session, modeLabel }) {
               card={currentCard}
               onReveal={session.reveal}
               onGrade={session.grade}
+              onToggleFavorite={onToggleFavorite}
             />
           </ScrollView>
 

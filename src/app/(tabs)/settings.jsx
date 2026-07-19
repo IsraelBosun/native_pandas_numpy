@@ -1,4 +1,5 @@
 import Feather from '@expo/vector-icons/Feather';
+import { useRouter } from 'expo-router';
 import { useEffect, useState } from 'react';
 import { Platform, ScrollView, StyleSheet, Switch, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -9,7 +10,7 @@ import { ThemedView } from '@/components/themed-view';
 import { BottomTabInset, MaxContentWidth, Radius, Spacing } from '@/constants/theme';
 import { useTheme } from '@/hooks/use-theme';
 import { useThemePreference } from '@/hooks/use-theme-preference';
-import { getNotificationsEnabled } from '@/lib/cards';
+import { getNotificationsEnabled, resetOnboarding } from '@/lib/cards';
 import { disableDailyReminder, enableDailyReminder } from '@/lib/notifications';
 
 const THEME_OPTIONS = [
@@ -31,6 +32,10 @@ export default function SettingsScreen() {
 
           <Section title="Notifications">
             <NotificationsToggle />
+          </Section>
+
+          <Section title="Help">
+            <ReplayOnboardingRow />
           </Section>
 
           <Section title="Account" subtitle="Coming soon">
@@ -143,10 +148,30 @@ function NotificationsToggle() {
   );
 }
 
-function SettingsRow({ icon, label, description, control, disabled }) {
+function ReplayOnboardingRow() {
   const theme = useTheme();
+  const router = useRouter();
+
+  async function handlePress() {
+    await resetOnboarding();
+    router.push('/onboarding');
+  }
 
   return (
+    <SettingsRow
+      icon="refresh-cw"
+      label="Replay onboarding"
+      description="See the intro screens again"
+      onPress={handlePress}
+      control={<Feather name="chevron-right" size={18} color={theme.textSecondary} />}
+    />
+  );
+}
+
+function SettingsRow({ icon, label, description, control, disabled, onPress }) {
+  const theme = useTheme();
+
+  const row = (
     <ThemedView
       type="backgroundElement"
       style={[styles.row, { borderColor: theme.border }, disabled && styles.rowDisabled]}>
@@ -165,6 +190,14 @@ function SettingsRow({ icon, label, description, control, disabled }) {
       </View>
       {control ?? (disabled && <SoonBadge />)}
     </ThemedView>
+  );
+
+  if (!onPress) return row;
+
+  return (
+    <ScalePressable onPress={onPress} haptic="light" scaleTo={0.98}>
+      {row}
+    </ScalePressable>
   );
 }
 
