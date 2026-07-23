@@ -6,6 +6,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { DueHeroCard } from '@/components/home/due-hero-card';
 import { GreetingHeader } from '@/components/home/greeting-header';
+import { SaveProgressCard } from '@/components/home/save-progress-card';
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
 import { TopicTile } from '@/components/topic-tile';
@@ -59,6 +60,8 @@ export default function HomeScreen() {
           <GreetingHeader streak={streak} />
 
           <DueHeroCard count={dueCards.length} onStartReview={handleStartReview} />
+
+          <SaveProgressCard />
 
           <View style={styles.topicsHeader}>
             <ThemedText type="label" themeColor="textSecondary">

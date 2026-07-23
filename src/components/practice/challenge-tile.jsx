@@ -7,11 +7,22 @@ import { ThemedView } from '@/components/themed-view';
 import { Radius, Spacing } from '@/constants/theme';
 import { useTheme, useTopicHues } from '@/hooks/use-theme';
 
-export function ChallengeTile({ title, subtitle, difficulty, minutes, stepCount, completed, onPress }) {
+export function ChallengeTile({
+  title,
+  subtitle,
+  difficulty,
+  minutes,
+  stepCount,
+  completed,
+  correctCount,
+  total,
+  onPress,
+}) {
   const theme = useTheme();
   const hues = useTopicHues();
   // Completed flips the chip to the green identity — a small trophy moment.
   const identity = completed ? hues.green : hues.violet;
+  const hasScore = completed && correctCount != null && total != null;
 
   return (
     <ScalePressable onPress={onPress} scaleTo={0.97}>
@@ -27,6 +38,11 @@ export function ChallengeTile({ title, subtitle, difficulty, minutes, stepCount,
           <ThemedText type="small" themeColor="textSecondary" style={styles.meta}>
             {difficulty} · ~{minutes} min · {stepCount} steps
           </ThemedText>
+          {hasScore && (
+            <ThemedText type="smallBold" style={[styles.score, { color: identity.fg }]}>
+              {correctCount}/{total} steps correct
+            </ThemedText>
+          )}
         </View>
         <Feather
           name={completed ? 'check-circle' : 'chevron-right'}
@@ -59,6 +75,9 @@ const styles = StyleSheet.create({
     gap: Spacing.one,
   },
   meta: {
+    marginTop: Spacing.one,
+  },
+  score: {
     marginTop: Spacing.one,
   },
 });

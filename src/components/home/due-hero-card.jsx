@@ -30,7 +30,7 @@ export function DueHeroCard({ count, onStartReview }) {
           <View style={styles.doneRow}>
             <Feather name="check-circle" size={18} color="#FFFFFF" />
             <ThemedText type="smallBold" style={styles.doneText}>
-              All caught up — come back tomorrow
+              All caught up, come back tomorrow
             </ThemedText>
           </View>
         ) : (

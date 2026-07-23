@@ -1,17 +1,19 @@
 import Feather from '@expo/vector-icons/Feather';
 import { useRouter } from 'expo-router';
 import { useEffect, useState } from 'react';
-import { Platform, ScrollView, StyleSheet, Switch, View } from 'react-native';
+import { ActivityIndicator, Alert, Platform, ScrollView, StyleSheet, Switch, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { ScalePressable } from '@/components/scale-pressable';
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
 import { BottomTabInset, MaxContentWidth, Radius, Spacing } from '@/constants/theme';
+import { useAuth } from '@/hooks/use-auth';
 import { useTheme } from '@/hooks/use-theme';
 import { useThemePreference } from '@/hooks/use-theme-preference';
 import { getNotificationsEnabled, resetOnboarding } from '@/lib/cards';
 import { disableDailyReminder, enableDailyReminder } from '@/lib/notifications';
+import { hasUnsyncedWork, syncNow } from '@/lib/sync';
 
 const THEME_OPTIONS = [
   { value: 'system', label: 'System', icon: 'smartphone' },
@@ -26,6 +28,8 @@ export default function SettingsScreen() {
         <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
           <ThemedText type="title">Settings</ThemedText>
 
+          <AccountSection />
+
           <Section title="Appearance">
             <ThemePicker />
           </Section>
@@ -36,10 +40,6 @@ export default function SettingsScreen() {
 
           <Section title="Help">
             <ReplayOnboardingRow />
-          </Section>
-
-          <Section title="Account" subtitle="Coming soon">
-            <SettingsRow icon="log-in" label="Log in" description="Sync progress across devices" disabled />
           </Section>
 
           <Section title="Community" subtitle="Coming soon">
@@ -53,6 +53,86 @@ export default function SettingsScreen() {
         </ScrollView>
       </SafeAreaView>
     </ThemedView>
+  );
+}
+
+// Accounts are optional (CLAUDE.md §9): signed out, the app is fully local and
+// this section's only job is to explain what signing up buys. Signed in, it's
+// where the sync actually lives.
+function AccountSection() {
+  const theme = useTheme();
+  const router = useRouter();
+  const auth = useAuth();
+  const [syncState, setSyncState] = useState('idle'); // idle | syncing | done | failed
+
+  if (!auth.available) {
+    return (
+      <Section title="Account" subtitle="Coming soon">
+        <SettingsRow icon="log-in" label="Log in" description="Sync progress across devices" disabled />
+      </Section>
+    );
+  }
+
+  if (!auth.signedIn) {
+    return (
+      <Section title="Account">
+        <SettingsRow
+          icon="cloud-off"
+          label="Save your progress"
+          description="Your streak and cards live only on this phone. Create a free account to back them up."
+          onPress={() => router.push('/auth/sign-in')}
+          control={<Feather name="chevron-right" size={18} color={theme.textSecondary} />}
+        />
+      </Section>
+    );
+  }
+
+  async function handleSync() {
+    setSyncState('syncing');
+    const ok = await syncNow({ pull: true });
+    setSyncState(ok ? 'done' : 'failed');
+  }
+
+  function handleLogOut() {
+    hasUnsyncedWork().then((pending) => {
+      Alert.alert(
+        'Log out?',
+        pending
+          ? "Some reviews on this device haven't reached the cloud yet. We'll try to upload them first, but if you're offline they'll be lost."
+          : 'Your progress stays safe in your account. This device goes back to a clean slate until you log in again.',
+        [
+          { text: 'Cancel', style: 'cancel' },
+          { text: 'Log out', style: 'destructive', onPress: () => auth.signOut() },
+        ]
+      );
+    });
+  }
+
+  const SYNC_DESCRIPTION = {
+    idle: 'Pull in anything studied on your other devices',
+    syncing: 'Syncing…',
+    done: 'Up to date',
+    failed: "Couldn't reach the server. Your progress is safe on this device",
+  };
+
+  return (
+    <Section title="Account">
+      <SettingsRow icon="user" label={auth.email ?? 'Signed in'} description="Progress is backed up" />
+      <SettingsRow
+        icon="refresh-cw"
+        label="Sync now"
+        description={SYNC_DESCRIPTION[syncState]}
+        onPress={handleSync}
+        control={syncState === 'syncing' ? <ActivityIndicator size="small" /> : null}
+      />
+      <SettingsRow
+        icon="log-out"
+        label="Log out"
+        description="Clears this device's local copy"
+        onPress={handleLogOut}
+        control={auth.busy ? <ActivityIndicator size="small" /> : null}
+      />
+    </Section>
   );
 }
 
@@ -115,7 +195,7 @@ function NotificationsToggle() {
         setHint(
           Platform.OS === 'web'
             ? "Reminders aren't available in the web preview."
-            : 'Permission denied — enable notifications for this app in system settings.'
+            : 'Permission denied. Enable notifications for this app in system settings.'
         );
       }
     } else {

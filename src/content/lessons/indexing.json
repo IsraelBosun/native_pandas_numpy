@@ -11,13 +11,13 @@
       "type": "example",
       "heading": "Position vs. label",
       "code": "df.iloc[:3]",
-      "output": "# first 3 rows, by position — labels don't matter here",
+      "output": "# first 3 rows, by position, labels don't matter here",
       "caption": "Compare to df.loc[:3], which is label-based and would include the row actually labeled 3."
     },
     {
       "type": "concept",
       "heading": "Boolean indexing",
-      "body": "df[condition] filters rows using a boolean Series — the same shape as a column, but True/False instead of data. It's the single most common way to filter a DataFrame."
+      "body": "df[condition] filters rows using a boolean Series, the same shape as a column, but True/False instead of data. It's the single most common way to filter a DataFrame."
     },
     {
       "type": "example",

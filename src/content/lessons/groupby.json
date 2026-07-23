@@ -5,14 +5,14 @@
     {
       "type": "concept",
       "heading": "Split, apply, combine",
-      "body": "df.groupby('col') splits rows into buckets by the values in col. You then apply an aggregation (.sum(), .mean(), .count()...) to each bucket, and pandas combines the results into one output — one row per unique value in col."
+      "body": "df.groupby('col') splits rows into buckets by the values in col. You then apply an aggregation (.sum(), .mean(), .count()...) to each bucket, and pandas combines the results into one output, one row per unique value in col."
     },
     {
       "type": "example",
       "heading": "One line, one answer",
       "code": "df.groupby('region')['revenue'].sum()",
       "output": "# East     225\n# North    115\n# West     245",
-      "caption": "Select the column you care about before aggregating — otherwise every numeric column gets summed, which is rarely what you want."
+      "caption": "Select the column you care about before aggregating, otherwise every numeric column gets summed, which is rarely what you want."
     },
     {
       "type": "concept",

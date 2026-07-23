@@ -5,19 +5,19 @@
     {
       "type": "concept",
       "heading": "Arrays, not lists",
-      "body": "A NumPy array looks like a Python list but supports fast, element-wise math with no explicit loop — pandas itself is built on top of NumPy arrays."
+      "body": "A NumPy array looks like a Python list but supports fast, element-wise math with no explicit loop, pandas itself is built on top of NumPy arrays."
     },
     {
       "type": "example",
       "heading": "Vectorized arithmetic",
       "code": "arr * 2",
       "output": "# array([ 20,  40,  60,  80, 100])",
-      "caption": "Every element is multiplied at once — no for-loop needed."
+      "caption": "Every element is multiplied at once, no for-loop needed."
     },
     {
       "type": "concept",
       "heading": "Boolean masking",
-      "body": "arr > 25 produces a same-shaped array of True/False, which you can then use to filter arr itself — the exact same idea as pandas boolean indexing."
+      "body": "arr > 25 produces a same-shaped array of True/False, which you can then use to filter arr itself, the exact same idea as pandas boolean indexing."
     },
     {
       "type": "example",

@@ -92,7 +92,7 @@
       "prompt": "Look before you touch. The order_date column prints values like 'Jan 05, 2024'. What is df['order_date'].dtype right now?",
       "answer": "object",
       "distractors": ["datetime64[ns]", "date"],
-      "why": "Text that looks like a date is still just text — object dtype. Until it's parsed, you can't sort by real time or use .dt accessors.",
+      "why": "Text that looks like a date is still just text, object dtype. Until it's parsed, you can't sort by real time or use .dt accessors.",
       "table": "step0"
     },
     {
@@ -102,7 +102,7 @@
       "starterCode": "df = df.___()",
       "tokens": ["drop_duplicates"],
       "distractors": ["dropna", "unique", "drop"],
-      "why": "drop_duplicates() keeps the first occurrence of each fully-identical row. unique() only works on a single column, and dropna() removes missing values — a different problem.",
+      "why": "drop_duplicates() keeps the first occurrence of each fully-identical row. unique() only works on a single column, and dropna() removes missing values, a different problem.",
       "table": "step0",
       "tableAfter": "step1",
       "codeLine": "df = df.drop_duplicates()"
@@ -125,7 +125,7 @@
       "prompt": "revenue is missing in 2 rows and units is missing in 1. We need monthly revenue totals. What's the right move?",
       "answer": "df = df.dropna(subset=['revenue'])",
       "distractors": ["df = df.dropna()", "df = df.fillna(0)"],
-      "why": "subset=['revenue'] drops only the rows that are useless for this question. Plain dropna() would also delete the Feb 02 row that's merely missing units — throwing away real revenue. fillna(0) invents numbers and pollutes every other column too.",
+      "why": "subset=['revenue'] drops only the rows that are useless for this question. Plain dropna() would also delete the Feb 02 row that's merely missing units, throwing away real revenue. fillna(0) invents numbers and pollutes every other column too.",
       "table": "step2",
       "tableAfter": "step3",
       "codeLine": "df = df.dropna(subset=['revenue'])"
@@ -137,7 +137,7 @@
       "starterCode": "df['month'] = df['order_date'].dt.___",
       "tokens": ["month"],
       "distractors": ["month()", "to_month", "strftime"],
-      "why": ".dt.month extracts the month number from each datetime. It's a property, not a method — no parentheses.",
+      "why": ".dt.month extracts the month number from each datetime. It's a property, not a method, no parentheses.",
       "table": "step3",
       "tableAfter": "step4",
       "codeLine": "df['month'] = df['order_date'].dt.month"

@@ -1,8 +1,10 @@
 import { buildAchievements, evaluateAchievements } from './achievements';
 import { getDb } from './db';
 import { getAllCards, TOPICS } from './content';
+import { DEVICE_LOCAL_META_KEYS } from './merge';
 import { schedule, previewIntervals } from './scheduler';
 import { todayISO, addDays } from './date';
+import { seedIfNeeded } from './seed';
 import { bucketReviewsByDate, computeRetentionSeries, computeWeakestTopics } from './stats';
 import { bumpStreak, displayStreak } from './streak';
 
@@ -239,11 +241,53 @@ export async function getCompletedChallenges() {
   return rows.map((row) => row.key.slice('challenge_done:'.length));
 }
 
-export async function markChallengeComplete(challengeId) {
+// Legacy completions stored the bare flag '1' with no metrics; parse those as
+// "completed, score unknown" (null counts) so old data still reads as done.
+function parseChallengeResult(value) {
+  if (value == null) return null;
+  if (value === '1') return { correctCount: null, total: null, completedAt: null };
+  try {
+    const parsed = JSON.parse(value);
+    return {
+      correctCount: parsed.correctCount ?? null,
+      total: parsed.total ?? null,
+      completedAt: parsed.completedAt ?? null,
+    };
+  } catch {
+    return { correctCount: null, total: null, completedAt: null };
+  }
+}
+
+export async function getChallengeResult(challengeId) {
   const db = await getDb();
-  await db.runAsync(
-    `INSERT OR REPLACE INTO app_meta (key, value) VALUES (?, '1')`,
+  const row = await db.getFirstAsync(
+    `SELECT value FROM app_meta WHERE key = ?`,
     `challenge_done:${challengeId}`
+  );
+  return row ? parseChallengeResult(row.value) : null;
+}
+
+export async function getChallengeResults() {
+  const db = await getDb();
+  const rows = await db.getAllAsync(`SELECT key, value FROM app_meta WHERE key LIKE 'challenge_done:%'`);
+  const results = {};
+  for (const row of rows) {
+    results[row.key.slice('challenge_done:'.length)] = parseChallengeResult(row.value);
+  }
+  return results;
+}
+
+export async function markChallengeComplete(challengeId, stats = {}) {
+  const db = await getDb();
+  const value = JSON.stringify({
+    correctCount: stats.correctCount ?? null,
+    total: stats.total ?? null,
+    completedAt: stats.completedAt ?? todayISO(),
+  });
+  await db.runAsync(
+    `INSERT OR REPLACE INTO app_meta (key, value) VALUES (?, ?)`,
+    `challenge_done:${challengeId}`,
+    value
   );
 }
 
@@ -348,4 +392,91 @@ export async function setScheduledReminderId(id) {
   } else {
     await db.runAsync(`DELETE FROM app_meta WHERE key = 'reminder_notification_id'`);
   }
+}
+
+export async function getTotalReviewCount() {
+  const db = await getDb();
+  const row = await db.getFirstAsync(`SELECT COUNT(*) AS n FROM review_log`);
+  return row.n;
+}
+
+// The Home "back up your progress" prompt is a nudge, not a nag — once
+// dismissed it stays dismissed.
+export async function isSavePromptDismissed() {
+  const db = await getDb();
+  const row = await db.getFirstAsync(`SELECT value FROM app_meta WHERE key = 'save_prompt_dismissed'`);
+  return !!row;
+}
+
+export async function dismissSavePrompt() {
+  const db = await getDb();
+  await db.runAsync(
+    `INSERT OR REPLACE INTO app_meta (key, value) VALUES ('save_prompt_dismissed', '1')`
+  );
+}
+
+// --- Account & device bookkeeping ------------------------------------------
+
+// Stable id for this install, minted on first use. It only has to be unique
+// among one account's own devices, so a timestamp plus two random chunks is
+// ample — this is provenance, not a secret.
+export async function getDeviceId() {
+  const db = await getDb();
+  const row = await db.getFirstAsync(`SELECT value FROM app_meta WHERE key = 'device_id'`);
+  if (row?.value) return row.value;
+
+  const id = `${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 10)}-${Math.random()
+    .toString(36)
+    .slice(2, 10)}`;
+  await db.runAsync(`INSERT OR REPLACE INTO app_meta (key, value) VALUES ('device_id', ?)`, id);
+  return id;
+}
+
+// The Supabase user whose progress this local database currently holds, or
+// null while the app has never been signed in. Sync compares it against the
+// live session to tell "same person coming back" from "someone else logging
+// in on this phone".
+export async function getSyncedUserId() {
+  const db = await getDb();
+  const row = await db.getFirstAsync(`SELECT value FROM app_meta WHERE key = 'sync_user_id'`);
+  return row?.value ?? null;
+}
+
+export async function setSyncedUserId(userId) {
+  const db = await getDb();
+  if (userId) {
+    await db.runAsync(
+      `INSERT OR REPLACE INTO app_meta (key, value) VALUES ('sync_user_id', ?)`,
+      userId
+    );
+  } else {
+    await db.runAsync(`DELETE FROM app_meta WHERE key = 'sync_user_id'`);
+  }
+}
+
+// Returns this device to a never-studied state and reseeds a fresh due queue.
+// Device-local keys (schema version, device id, theme, reminder settings)
+// survive — they describe the phone, not the person. Used when a different
+// account signs in here, and on log out.
+export async function clearLocalProgress() {
+  const db = await getDb();
+  // onboarding_seen is synced progress, but re-running the intro on a phone
+  // that has already been through it would just be irritating.
+  //
+  // device_id deliberately goes: a wiped device is a new device as far as the
+  // cloud is concerned, so the next pull re-imports every review log rather
+  // than skipping the ones this install had already pushed.
+  const dropped = new Set(['sync_user_id', 'device_id']);
+  const keptKeys = [...DEVICE_LOCAL_META_KEYS, 'onboarding_seen'].filter(
+    (key) => !dropped.has(key)
+  );
+  const placeholders = keptKeys.map(() => '?').join(', ');
+
+  await db.withTransactionAsync(async () => {
+    await db.runAsync(`DELETE FROM card_state`);
+    await db.runAsync(`DELETE FROM review_log`);
+    await db.runAsync(`DELETE FROM app_meta WHERE key NOT IN (${placeholders})`, ...keptKeys);
+  });
+
+  await seedIfNeeded();
 }

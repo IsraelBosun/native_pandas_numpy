@@ -5,14 +5,14 @@
     {
       "type": "concept",
       "heading": "Real dates, not text",
-      "body": "to_datetime() converts strings into actual datetime64 values. Only then does the .dt accessor (year, month, day_name...) and chronological comparison work correctly — text that merely looks like a date doesn't behave like one."
+      "body": "to_datetime() converts strings into actual datetime64 values. Only then does the .dt accessor (year, month, day_name...) and chronological comparison work correctly, text that merely looks like a date doesn't behave like one."
     },
     {
       "type": "example",
       "heading": "Pulling out components",
       "code": "ts['date'].dt.year\nts['date'].dt.day_name()",
       "output": "# year: 2024, 2024, ...\n# day_name: 'Monday', 'Tuesday', ...",
-      "caption": "The .dt accessor mirrors .str for text — it's the gateway to every date component."
+      "caption": "The .dt accessor mirrors .str for text, it's the gateway to every date component."
     },
     {
       "type": "concept",

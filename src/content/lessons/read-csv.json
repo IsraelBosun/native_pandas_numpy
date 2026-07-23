@@ -5,14 +5,14 @@
     {
       "type": "concept",
       "heading": "From a file to a DataFrame",
-      "body": "pd.read_csv(path) is the standard way real data enters pandas. By default it infers a header row, guesses each column's dtype, and assigns a plain integer index — often not exactly what you want."
+      "body": "pd.read_csv(path) is the standard way real data enters pandas. By default it infers a header row, guesses each column's dtype, and assigns a plain integer index, often not exactly what you want."
     },
     {
       "type": "example",
       "heading": "The basic load",
       "code": "pd.read_csv('sales.csv')",
       "output": "#    order_date region category  revenue  units\n# 0  2024-01-05   West    Shoes      120     12",
-      "caption": "Always check .dtypes and .head() right after loading — inference can surprise you."
+      "caption": "Always check .dtypes and .head() right after loading, inference can surprise you."
     },
     {
       "type": "concept",

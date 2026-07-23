@@ -17,7 +17,7 @@
     {
       "type": "concept",
       "heading": "Dtypes and assignment matter too",
-      "body": "category dtype and smaller numeric types (int32, downcast) cut memory for repetitive or over-sized columns. df.loc[condition, 'col'] = value is the safe way to assign conditionally — chained bracket assignment can silently do nothing or trigger a SettingWithCopyWarning."
+      "body": "category dtype and smaller numeric types (int32, downcast) cut memory for repetitive or over-sized columns. df.loc[condition, 'col'] = value is the safe way to assign conditionally, chained bracket assignment can silently do nothing or trigger a SettingWithCopyWarning."
     },
     {
       "type": "example",

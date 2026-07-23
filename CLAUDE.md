@@ -181,10 +181,13 @@ CREATE TABLE card_state (
 );
 CREATE TABLE review_log (          -- append-only; powers stats + dynamic difficulty
   id INTEGER PRIMARY KEY AUTOINCREMENT, card_id TEXT NOT NULL,
-  grade INTEGER NOT NULL, reviewed_at TEXT NOT NULL, interval INTEGER NOT NULL
+  grade INTEGER NOT NULL, reviewed_at TEXT NOT NULL, interval INTEGER NOT NULL,
+  device_id TEXT, origin_id INTEGER,   -- NULL/NULL = written here; set = pulled
+  synced INTEGER NOT NULL DEFAULT 0    -- 1 once it has reached the cloud
 );
 CREATE TABLE app_meta (key TEXT PRIMARY KEY, value TEXT);
 -- app_meta: schema_version, streak_count, last_study_date, seeded_version, achievements
+-- Device-local app_meta keys (never synced) are listed in lib/merge.js.
 ```
 
 **Join:** `lib/cards.js` merges content + `card_state` by id. "Due today" =
@@ -253,20 +256,31 @@ core loop works.
 
 ---
 
-## 9. Future: Supabase sync (design now, build later)
+## 9. Accounts & Supabase sync (built)
 
-v1 is 100% local. Keep it drop-in ready:
-- **All persistence hides behind `lib/cards.js`/`db.js`** (`getDueCards()`,
-  `recordReview()`, …). When Supabase lands, only these change — not screens.
-- `card_state` + `review_log` map directly to future Supabase tables (string
-  ids, ISO datetimes, no device-specific data). Plan for a `user_id` later.
-- Sync model: local SQLite is source of truth offline; Supabase is a sync
-  target. Append-only `review_log` → easy conflict resolution (last-write-wins
-  on `card_state`, union on `review_log`).
-- Content stays bundled JSON even after Supabase; only *progress* syncs.
+**Accounts are optional and must stay that way.** Signed out, the app is 100%
+local and never touches the network — no anonymous auth, no silent account
+creation. Signing up is *encouraged* (Home nudge after 10 reviews, Settings →
+Account) and only ever adds backup/restore. Never gate content, streaks, or
+review behind an account.
 
-Don't add Supabase/auth/network until the local loop is complete and the
-scheduler is tested.
+- **Local SQLite is always the source of truth**; Supabase is a sync target.
+- **All persistence still hides behind `lib/cards.js`/`db.js`** — screens never
+  touch SQL or Supabase.
+- `lib/auth.js` wraps `supabase.auth` (email + password) and returns
+  `{ error: 'sentence for the user' }` rather than throwing.
+- `hooks/use-auth.js` owns the session *and* the local-data consequences of
+  changing it: sign-in merges, sign-out pushes then wipes the device.
+- `lib/sync.js` pushes `card_state` (last-write-wins), `review_log` (append-only,
+  keyed `user_id + device_id + client_id`) and syncable `app_meta`. It pulls on
+  first adoption of an account and on an explicit "Sync now".
+- `lib/merge.js` is the **pure, tested** conflict policy — no DB, no network,
+  same discipline as `scheduler.js`. Change merge rules there, not in sync.js.
+- Content stays bundled JSON; only *progress* syncs.
+- Cloud schema lives in `scripts/supabase_schema.sql`; each change gets a
+  numbered `scripts/supabase_migration_NNN_*.sql`. RLS on `auth.uid()` is the
+  entire security model — the anon key ships in the binary by design.
+- **Never put a secret behind `EXPO_PUBLIC_`.** It is compiled into the bundle.
 
 ---
 
@@ -282,7 +296,72 @@ scheduler is tested.
 8. Remaining decks + card types (fill-blank, multiple-choice).
 9. Practice (incl. workflow challenges), Stats, Reference, global search.
 10. Post-MVP: favorites, notes, achievements, dynamic difficulty tuning.
-11. Only then: Supabase (§9).
+11. Supabase sync + optional accounts (§9). ✅ done
 
 **MVP line:** one verified GroupBy deck + a lesson + flashcard Review + Home
 with streak is a real, shippable loop. Ship that before expanding.
+
+---
+
+## 11. Where we left off (2026-07-23)
+
+Multi-user accounts are **written and tested but not yet cut over.** The code is
+merged; the Supabase project is still on the old single-account schema. Delete
+this section once the checklist below is done.
+
+**Code state.** 89 tests pass (`npx vitest run`). Not yet run on a device — the
+auth round-trip and merge-on-login need a live Supabase project, which is
+blocked on the migration below.
+
+- `ensureSignedIn()` and the bundled `EXPO_PUBLIC_SUPABASE_EMAIL`/`_PASSWORD`
+  are **gone**. Signed out, `syncNow()` is inert.
+- Entry points into `/auth/sign-in` are exactly two: the Home nudge
+  (`components/home/save-progress-card.jsx`, after 10 reviews, dismissible) and
+  Settings → Account. Nothing on first launch, by design.
+- We capture **email + password only.** The password never touches our SQLite or
+  our tables — Supabase hashes it in `auth.users`. Locally we keep only the
+  user's UUID, as `app_meta.sync_user_id`.
+- Local schema is at **v2** (`lib/db.js`): `review_log` gained `device_id`,
+  `origin_id`, `synced`. Migration runs on next launch.
+
+**Known gap, not a bug:** a returning user on a fresh install has to find
+Settings to log in — the Home nudge needs 10 reviews, which they don't have.
+Fix is a "Already have an account? Log in" line on the last onboarding step.
+
+### The cutover checklist (user-side, in order)
+
+1. **Pick a migration by opening the app and checking Stats.**
+   - Review count is there → the phone holds the history → run
+     `scripts/supabase_migration_002_multiuser.sql`. It backs the rows up to
+     `review_log_backup_002`, deletes them, and the phone re-pushes everything
+     on first login.
+   - Stats empty / fresh install → the cloud is the last copy → run
+     `scripts/supabase_migration_002b_multiuser_preserve.sql` instead. It tags
+     the old rows `device_id = 'legacy'` and keeps them.
+   - **Run one or the other, never both.** 002b is wrong when the phone still
+     has the data: the device imports any row whose `device_id` isn't its own,
+     so it would import a duplicate of every review it already has.
+2. **Rotate the password** on the old shared sync account (Supabase → Auth →
+   Users). It shipped in the bundle. Afterwards it's just a normal account — log
+   into it from the app.
+3. **Decide email confirmation** (Supabase → Auth → Providers → Email). The app
+   handles either.
+4. **Required for password reset (now built end to end):** allow-list the
+   recovery redirect in Supabase → Auth → URL Configuration → Redirect URLs.
+   Add `nativepandas://auth/reset-password` (and `nativepandas://*` to be safe).
+   Flow: Settings/Sign-in → "Forgot your password?" emails a link →
+   `nativepandas://auth/reset-password#access_token…` opens the app →
+   `src/app/auth/reset-password.jsx` installs the recovery session
+   (`lib/auth.beginRecovery`) and calls `updateUser({ password })`, then merges
+   via `adoptAccount()`. Parser is `lib/recovery-link.js` (pure + tested). Needs
+   a dev/standalone build — custom schemes don't resolve in Expo Go.
+5. **Verify, then clean up:** log in, confirm Stats shows the review count, then
+   `drop table public.review_log_backup_002;`.
+
+Both migrations only touch `review_log`. Streak, due dates, ease, stars, notes,
+lesson progress and achievements live in `card_state`/`app_meta` and are never
+at risk from either one.
+
+Unrelated in-flight work is also uncommitted in the tree: `src/app/practice/race/`,
+`src/components/race/`, `src/hooks/use-race-*.js`, `src/lib/race/`,
+`assets/sounds/*.wav`. Not part of the accounts change.

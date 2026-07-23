@@ -12,12 +12,12 @@
       "heading": "Which rows are incomplete?",
       "code": "df[df['revenue'].isna()]",
       "output": "# rows where revenue is NaN",
-      "caption": "You can't compare to NaN with == — it never matches, even against itself. isna() is the only reliable check."
+      "caption": "You can't compare to NaN with ==, it never matches, even against itself. isna() is the only reliable check."
     },
     {
       "type": "concept",
       "heading": "Drop it, or fill it",
-      "body": "dropna() removes rows with gaps (how='any' by default — any missing column disqualifies the row). fillna() keeps every row and replaces the gaps with a value: a constant, the column mean, or the nearest known neighbor (ffill/bfill)."
+      "body": "dropna() removes rows with gaps (how='any' by default, any missing column disqualifies the row). fillna() keeps every row and replaces the gaps with a value: a constant, the column mean, or the nearest known neighbor (ffill/bfill)."
     },
     {
       "type": "example",

@@ -12,12 +12,12 @@
       "heading": "Custom labels",
       "code": "pd.Series([10, 20, 30], index=['a', 'b', 'c'])",
       "output": "# a    10\n# b    20\n# c    30\n# dtype: int64",
-      "caption": "The index doesn't have to be numbers — it can be anything meaningful."
+      "caption": "The index doesn't have to be numbers, it can be anything meaningful."
     },
     {
       "type": "concept",
       "heading": "Aligned arithmetic, and per-element transforms",
-      "body": "Arithmetic between two Series lines up by index first, then computes — not just by position. map()/apply() transform every element with a lookup or a function; unique()/value_counts() summarize what's actually in a column."
+      "body": "Arithmetic between two Series lines up by index first, then computes, not just by position. map()/apply() transform every element with a lookup or a function; unique()/value_counts() summarize what's actually in a column."
     },
     {
       "type": "example",

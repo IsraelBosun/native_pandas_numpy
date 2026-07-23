@@ -31,7 +31,7 @@ const SLIDES = [
     badge: '01 · learn',
     hue: 'blue',
     heading: 'Learn the\nreal API',
-    body: "Short, visual lessons teach you pandas & NumPy the way you'll actually use them — no fluff.",
+    body: "Short, visual lessons teach you pandas & NumPy the way you'll actually use them, no fluff.",
     demo: {
       headCode: "df.groupby('region')['revenue'].sum()",
       table: {

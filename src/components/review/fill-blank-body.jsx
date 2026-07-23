@@ -109,7 +109,7 @@ export function FillBlankBody({ card, onReveal }) {
       ) : (
         <Animated.View style={styles.feedback} entering={FadeInDown.duration(250)}>
           <ThemedText type="smallBold" style={{ color: mistakes > 0 ? theme.warning : theme.success }}>
-            {mistakes > 0 ? `Filled it — ${mistakes} slip${mistakes > 1 ? 's' : ''} along the way` : 'Correct'}
+            {mistakes > 0 ? `Filled it, ${mistakes} slip${mistakes > 1 ? 's' : ''} along the way` : 'Correct'}
           </ThemedText>
           <ThemedText themeColor="textSecondary">{card.why}</ThemedText>
         </Animated.View>

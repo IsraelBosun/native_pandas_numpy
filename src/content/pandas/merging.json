@@ -97,8 +97,8 @@
       "prompt": "Merge df and region_managers keeping every row from both sides, and add a column showing which side each row came from.",
       "answer": "df.merge(region_managers, on='region', how='outer', indicator=True)",
       "why": "indicator=True adds a _merge column labeled 'left_only', 'right_only', or 'both'.",
-      "whenToUse": "Debugging a merge — seeing exactly which rows failed to match.",
-      "commonMistake": "Forgetting how='outer' — indicator=True alone won't surface unmatched rows under an inner join.",
+      "whenToUse": "Debugging a merge, seeing exactly which rows failed to match.",
+      "commonMistake": "Forgetting how='outer', indicator=True alone won't surface unmatched rows under an inner join.",
       "relatedMethods": [
         "merge",
         "concat"
@@ -136,7 +136,7 @@
       "answer": "pd.concat([df.iloc[:2], df.iloc[2:]])",
       "why": "concat() stacks DataFrames along an axis (rows by default) rather than joining on a key.",
       "whenToUse": "Combining chunks of data with identical columns, e.g. multiple CSVs.",
-      "commonMistake": "Reaching for merge() when there's no join key at all — concat() is the right tool for simple stacking.",
+      "commonMistake": "Reaching for merge() when there's no join key at all, concat() is the right tool for simple stacking.",
       "relatedMethods": [
         "concat",
         "merge"
@@ -256,7 +256,7 @@
       "relatedMethods": [
         "merge"
       ],
-      "example": "# succeeds silently — raises MergeError instead if the assumption is violated",
+      "example": "# succeeds silently, raises MergeError instead if the assumption is violated",
       "starterCode": "df.merge(region_managers, on='region', validate='___')",
       "expectedOutput": "",
       "tokens": [
@@ -360,7 +360,7 @@
         "merge",
         "query"
       ],
-      "example": "# both North rows — no manager listed for North",
+      "example": "# both North rows, no manager listed for North",
       "starterCode": "df.merge(region_managers, on='region', how='left', indicator=True).query(\"_merge == '___'\")",
       "expectedOutput": "",
       "tokens": [
@@ -391,7 +391,7 @@
       "answer": "df.join(region_managers.set_index('region'), on='region')",
       "why": "join() combines DataFrames by index by default; passing on='region' tells it which df column to match against the other DataFrame's index.",
       "whenToUse": "You already have (or can easily set) the right-hand DataFrame indexed by the join key.",
-      "commonMistake": "Calling join() without first indexing the other DataFrame by the key column — join() matches on index, not arbitrary columns, on both sides.",
+      "commonMistake": "Calling join() without first indexing the other DataFrame by the key column, join() matches on index, not arbitrary columns, on both sides.",
       "relatedMethods": [
         "join",
         "merge",
@@ -427,7 +427,7 @@
       "answer": "df.merge(region_managers, on='region', how='outer')",
       "why": "how='outer' keeps all rows from both DataFrames, filling non-matches with NaN on whichever side is missing.",
       "whenToUse": "You need the full union of both DataFrames' keys, not just matches or one side's rows.",
-      "commonMistake": "Confusing 'outer' with 'full' — pandas uses 'outer', not SQL's 'full outer join' spelling.",
+      "commonMistake": "Confusing 'outer' with 'full', pandas uses 'outer', not SQL's 'full outer join' spelling.",
       "relatedMethods": [
         "merge"
       ],
@@ -462,7 +462,7 @@
       "answer": "pd.concat([df, df])",
       "why": "concat() stacks DataFrames by simply appending rows; merge() always tries to join on key columns, which isn't what 'stack rows together' means.",
       "whenToUse": "Combining chunks of data with identical columns, e.g. multiple CSVs.",
-      "commonMistake": "Reaching for merge() out of habit when there's no join key at all — concat() is the right tool for pure stacking.",
+      "commonMistake": "Reaching for merge() out of habit when there's no join key at all, concat() is the right tool for pure stacking.",
       "relatedMethods": [
         "concat",
         "merge"
@@ -498,7 +498,7 @@
       "answer": "df.merge(region_targets, left_on='region', right_on='area')",
       "why": "left_on/right_on let you join two DataFrames whose key columns have different names.",
       "whenToUse": "The two DataFrames' join keys don't share a common column name.",
-      "commonMistake": "Trying on='region' when the right DataFrame doesn't have a column by that exact name — pandas raises a KeyError.",
+      "commonMistake": "Trying on='region' when the right DataFrame doesn't have a column by that exact name, pandas raises a KeyError.",
       "relatedMethods": [
         "merge",
         "rename"

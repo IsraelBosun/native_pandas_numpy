@@ -5,7 +5,7 @@
     {
       "type": "concept",
       "heading": "merge() joins on a key",
-      "body": "df.merge(other, on='column') combines two DataFrames by matching rows where the join column has the same value — the same idea as a SQL JOIN."
+      "body": "df.merge(other, on='column') combines two DataFrames by matching rows where the join column has the same value, the same idea as a SQL JOIN."
     },
     {
       "type": "example",

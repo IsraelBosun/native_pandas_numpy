@@ -5,7 +5,7 @@
     {
       "type": "concept",
       "heading": "sort_values vs. sort_index",
-      "body": "sort_values() orders rows by the data in one or more columns. sort_index() orders rows by their index labels instead — useful for restoring the original order after a filter or a previous sort."
+      "body": "sort_values() orders rows by the data in one or more columns. sort_index() orders rows by their index labels instead, useful for restoring the original order after a filter or a previous sort."
     },
     {
       "type": "example",

@@ -12,7 +12,7 @@
       "heading": "Revenue by region and category",
       "code": "pd.pivot_table(df, values='revenue', index='region', columns='category', aggfunc='sum')",
       "output": "# category  Bags  Shoes\n# region\n# East        60    165\n# West       125    120",
-      "caption": "The default aggfunc is 'mean', not 'sum' — always set it explicitly if you want totals."
+      "caption": "The default aggfunc is 'mean', not 'sum', always set it explicitly if you want totals."
     },
     {
       "type": "concept",

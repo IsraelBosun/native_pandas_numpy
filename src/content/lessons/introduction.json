@@ -5,7 +5,7 @@
     {
       "type": "concept",
       "heading": "What pandas is",
-      "body": "pandas is a Python library for working with tabular data — rows and columns, like a spreadsheet. Everything starts with `import pandas as pd`, a convention used everywhere so code stays instantly recognizable."
+      "body": "pandas is a Python library for working with tabular data, rows and columns, like a spreadsheet. Everything starts with `import pandas as pd`, a convention used everywhere so code stays instantly recognizable."
     },
     {
       "type": "example",
@@ -23,7 +23,7 @@
       "type": "example",
       "heading": "First look at a DataFrame",
       "code": "df.shape\ndf.head(3)\ndf.info()",
-      "output": "# (8, 4) — 8 rows, 4 columns\n# plus the first 3 rows and a dtype/null summary",
+      "output": "# (8, 4), 8 rows, 4 columns\n# plus the first 3 rows and a dtype/null summary",
       "caption": "You'll practice shape, head/tail, info, describe, dtypes, columns, and index in the cards that follow."
     }
   ]

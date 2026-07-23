@@ -42,7 +42,7 @@ export default function PracticeScreen() {
               Workflow challenges
             </ThemedText>
             <ThemedText type="small" themeColor="textSecondary">
-              Multi-step real-world pipelines — watch the table change as you work.
+              Multi-step real-world pipelines. Watch the table change as you work.
             </ThemedText>
             {challenges.map((challenge) => (
               <ChallengeTile
@@ -83,7 +83,7 @@ export default function PracticeScreen() {
               Drill a topic
             </ThemedText>
             <ThemedText type="small" themeColor="textSecondary">
-              Any topic, off-schedule — this never touches your review dates.
+              Any topic, off-schedule. This never touches your review dates.
             </ThemedText>
             <View style={styles.topicsGrid}>
               {topics.map((topic, index) => (
@@ -95,6 +95,28 @@ export default function PracticeScreen() {
                   icon={topic.icon}
                   index={index}
                   onPress={() => router.push(`/practice/${topic.id}`)}
+                />
+              ))}
+            </View>
+          </View>
+
+          <View style={styles.section}>
+            <ThemedText type="label" themeColor="textSecondary">
+              Race mode
+            </ThemedText>
+            <ThemedText type="small" themeColor="textSecondary">
+              Dodge traffic, answer pop quizzes. Also off-schedule, also ungraded.
+            </ThemedText>
+            <View style={styles.topicsGrid}>
+              {topics.map((topic, index) => (
+                <TopicTile
+                  key={topic.id}
+                  label={topic.label}
+                  mastery={topic.mastery}
+                  hue={topic.hue}
+                  icon={topic.icon}
+                  index={index}
+                  onPress={() => router.push(`/practice/race/${topic.id}`)}
                 />
               ))}
             </View>

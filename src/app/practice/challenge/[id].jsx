@@ -1,6 +1,6 @@
 import Feather from '@expo/vector-icons/Feather';
 import { useLocalSearchParams, useRouter } from 'expo-router';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { Pressable, ScrollView, StyleSheet, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
@@ -13,7 +13,7 @@ import { ThemedView } from '@/components/themed-view';
 import { Spacing } from '@/constants/theme';
 import { useChallengeSession } from '@/hooks/use-challenge-session';
 import { useTheme } from '@/hooks/use-theme';
-import { markChallengeComplete } from '@/lib/cards';
+import { getChallengeResult, markChallengeComplete } from '@/lib/cards';
 import { getChallenge } from '@/lib/challenges';
 
 const MAX_TABLE_ROWS = 12;
@@ -25,9 +25,28 @@ export default function ChallengeScreen() {
   const challenge = getChallenge(id);
   const session = useChallengeSession(challenge);
 
+  // undefined = still loading the saved result; null = never completed;
+  // object = the metrics from the last completion, replayed on re-open.
+  const [savedResult, setSavedResult] = useState(undefined);
+  const [redoing, setRedoing] = useState(false);
+
   useEffect(() => {
-    if (session.phase === 'complete') markChallengeComplete(challenge.id);
-  }, [session.phase, challenge?.id]);
+    let active = true;
+    getChallengeResult(id).then((result) => {
+      if (active) setSavedResult(result);
+    });
+    return () => {
+      active = false;
+    };
+  }, [id]);
+
+  useEffect(() => {
+    if (session.phase === 'complete') {
+      const stats = { correctCount: session.correctCount, total: session.total };
+      markChallengeComplete(challenge.id, stats);
+      setSavedResult({ ...stats, completedAt: null });
+    }
+  }, [session.phase, challenge?.id, session.correctCount, session.total]);
 
   if (!challenge) {
     return (
@@ -36,6 +55,20 @@ export default function ChallengeScreen() {
       </ThemedView>
     );
   }
+
+  if (savedResult === undefined) {
+    // Hold the intro back until we know whether this challenge is already done,
+    // so a completed one opens straight to its summary without a flash.
+    return (
+      <ThemedView style={styles.container}>
+        <SafeAreaView style={styles.safeArea} />
+      </ThemedView>
+    );
+  }
+
+  // A previously completed challenge re-opens to its saved summary; the live
+  // session runs only on a first play or after the user taps Redo.
+  const showSaved = savedResult && !redoing && session.phase !== 'complete';
 
   return (
     <ThemedView style={styles.container}>
@@ -47,7 +80,7 @@ export default function ChallengeScreen() {
           <View style={styles.progressWrap}>
             <ProgressBar
               progress={
-                session.phase === 'complete'
+                showSaved || session.phase === 'complete'
                   ? 1
                   : session.phase === 'intro'
                     ? 0
@@ -58,8 +91,21 @@ export default function ChallengeScreen() {
           </View>
         </View>
 
-        {session.phase === 'intro' && <Intro challenge={challenge} onStart={session.start} theme={theme} />}
-        {session.phase === 'steps' && (
+        {showSaved && (
+          <Complete
+            challenge={challenge}
+            correctCount={savedResult.correctCount}
+            total={savedResult.total}
+            completedAt={savedResult.completedAt}
+            onDone={() => router.back()}
+            onRedo={() => setRedoing(true)}
+            theme={theme}
+          />
+        )}
+        {!showSaved && session.phase === 'intro' && (
+          <Intro challenge={challenge} onStart={session.start} theme={theme} />
+        )}
+        {!showSaved && session.phase === 'steps' && (
           <>
             <ThemedText themeColor="textSecondary" type="small" style={styles.counter}>
               Step {session.stepIndex + 1}/{session.total}
@@ -77,7 +123,7 @@ export default function ChallengeScreen() {
             </ScrollView>
           </>
         )}
-        {session.phase === 'complete' && (
+        {!showSaved && session.phase === 'complete' && (
           <Complete
             challenge={challenge}
             correctCount={session.correctCount}
@@ -112,13 +158,14 @@ function Intro({ challenge, onStart, theme }) {
   );
 }
 
-function Complete({ challenge, correctCount, total, onDone, theme }) {
+function Complete({ challenge, correctCount, total, completedAt, onDone, onRedo, theme }) {
   const pipeline = challenge.steps
     .map((step) => step.codeLine)
     .filter(Boolean)
     .join('\n');
   const lastStep = challenge.steps[challenge.steps.length - 1];
   const finalTable = challenge.tableStates[lastStep.tableAfter];
+  const hasScore = correctCount != null && total != null;
 
   return (
     <>
@@ -126,8 +173,15 @@ function Complete({ challenge, correctCount, total, onDone, theme }) {
         <Feather name="check-circle" size={40} color={theme.success} style={styles.completeIcon} />
         <ThemedText type="title">Pipeline complete</ThemedText>
         <ThemedText themeColor="textSecondary">
-          {correctCount} of {total} steps correct on the first try.
+          {hasScore
+            ? `${correctCount} of ${total} steps correct on the first try.`
+            : 'You completed this pipeline.'}
         </ThemedText>
+        {completedAt && (
+          <ThemedText type="small" themeColor="textSecondary">
+            Completed {completedAt}
+          </ThemedText>
+        )}
 
         <ThemedText type="label" themeColor="textSecondary" style={styles.sectionLabel}>
           The pipeline you built
@@ -142,6 +196,7 @@ function Complete({ challenge, correctCount, total, onDone, theme }) {
           maxRows={MAX_TABLE_ROWS}
         />
       </ScrollView>
+      {onRedo && <SecondaryButton label="Redo challenge" onPress={onRedo} theme={theme} />}
       <PrimaryButton label="Done" onPress={onDone} theme={theme} />
     </>
   );
@@ -157,6 +212,22 @@ function PrimaryButton({ label, onPress, theme }) {
         pressed && styles.pressed,
       ]}>
       <ThemedText type="smallBold" style={styles.primaryButtonText}>
+        {label}
+      </ThemedText>
+    </Pressable>
+  );
+}
+
+function SecondaryButton({ label, onPress, theme }) {
+  return (
+    <Pressable
+      onPress={onPress}
+      style={({ pressed }) => [
+        styles.secondaryButton,
+        { borderColor: theme.border },
+        pressed && styles.pressed,
+      ]}>
+      <ThemedText type="smallBold" style={{ color: theme.action }}>
         {label}
       </ThemedText>
     </Pressable>
@@ -209,6 +280,12 @@ const styles = StyleSheet.create({
   },
   primaryButtonText: {
     color: '#FFFFFF',
+  },
+  secondaryButton: {
+    alignItems: 'center',
+    paddingVertical: Spacing.three,
+    borderRadius: Spacing.three,
+    borderWidth: 1,
   },
   pressed: {
     opacity: 0.85,

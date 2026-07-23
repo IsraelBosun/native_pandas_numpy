@@ -12,7 +12,7 @@
       "heading": "A moving average",
       "code": "ts['revenue'].rolling(3).mean()",
       "output": "# 0          NaN\n# 1          NaN\n# 2    98.333333",
-      "caption": "The first window_size - 1 rows are NaN — there's no full window yet."
+      "caption": "The first window_size - 1 rows are NaN, there's no full window yet."
     },
     {
       "type": "concept",

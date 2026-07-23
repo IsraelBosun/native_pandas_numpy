@@ -71,7 +71,7 @@ export function ChallengeStep({ step, tableStates, datasetName, onContinue }) {
       {answered && (
         <Animated.View entering={FadeInDown.duration(250)} style={styles.outcome}>
           <ThemedText type="smallBold" style={{ color: isCorrect ? theme.success : theme.danger }}>
-            {isCorrect ? 'Correct' : `Not quite — correct answer: ${correctValue}`}
+            {isCorrect ? 'Correct' : `Not quite. Correct answer: ${correctValue}`}
           </ThemedText>
           <ThemedText themeColor="textSecondary">{step.why}</ThemedText>
 

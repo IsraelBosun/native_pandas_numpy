@@ -5,7 +5,7 @@
     {
       "type": "concept",
       "heading": "Selecting columns",
-      "body": "df['col'] returns one column as a Series. df[['col1', 'col2']] — a list inside the brackets — returns a DataFrame, even for a single column. The brackets vs. double-brackets distinction decides your result's shape."
+      "body": "df['col'] returns one column as a Series. df[['col1', 'col2']], a list inside the brackets, returns a DataFrame, even for a single column. The brackets vs. double-brackets distinction decides your result's shape."
     },
     {
       "type": "example",

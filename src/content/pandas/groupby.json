@@ -270,7 +270,7 @@
       ],
       "dataset": "df",
       "type": "fill-blank",
-      "prompt": "Number of rows per region — including rows where revenue might be missing.",
+      "prompt": "Number of rows per region, including rows where revenue might be missing.",
       "answer": "df.groupby('region').size()",
       "why": "size() counts rows per group regardless of nulls; count() only counts non-null values in a chosen column.",
       "whenToUse": "You want raw row counts, not counts of a specific non-null column.",
@@ -429,7 +429,7 @@
         "groupby",
         "transform"
       ],
-      "example": "# rows for West and East only — North (total 115) is dropped",
+      "example": "# rows for West and East only, North (total 115) is dropped",
       "starterCode": "df.groupby('region').___(lambda g: g['revenue'].sum() > 150)",
       "expectedOutput": "",
       "tokens": [
@@ -634,7 +634,7 @@
       ],
       "dataset": "df",
       "type": "fill-blank",
-      "prompt": "Number of rows per category — using the shortcut method instead of groupby.",
+      "prompt": "Number of rows per category, using the shortcut method instead of groupby.",
       "answer": "df['category'].value_counts()",
       "why": "value_counts() is a shortcut for df.groupby(col).size().sort_values(ascending=False) on a single column.",
       "whenToUse": "Quick frequency count of one column, without needing a full groupby call.",

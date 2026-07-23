@@ -8,6 +8,8 @@ const SOURCES = {
   correct: require('../../assets/sounds/correct.wav'),
   wrong: require('../../assets/sounds/wrong.wav'),
   combo: require('../../assets/sounds/combo.wav'),
+  boost: require('../../assets/sounds/boost.wav'),
+  crash: require('../../assets/sounds/crash.wav'),
 };
 
 let players = null;

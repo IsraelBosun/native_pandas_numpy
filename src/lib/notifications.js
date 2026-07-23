@@ -1,4 +1,3 @@
-import * as Notifications from 'expo-notifications';
 import { Platform } from 'react-native';
 
 import {
@@ -14,8 +13,18 @@ const CHANNEL_ID = 'daily-reminder';
 
 export { getNotificationsEnabled };
 
+// Loaded on demand, never at module scope: importing expo-notifications pulls
+// in its device-push auto-registration side effect, which throws on Expo Go
+// (remote push was removed there in SDK 53). Deferring it keeps app startup —
+// and expo-router's route scan, which imports every screen — clean; local
+// scheduled reminders still work once the user actually turns them on.
+function loadNotifications() {
+  return require('expo-notifications');
+}
+
 async function ensureChannel() {
   if (Platform.OS !== 'android') return;
+  const Notifications = loadNotifications();
   await Notifications.setNotificationChannelAsync(CHANNEL_ID, {
     name: 'Daily reminder',
     importance: Notifications.AndroidImportance.DEFAULT,
@@ -25,6 +34,7 @@ async function ensureChannel() {
 async function cancelExistingReminder() {
   const id = await getScheduledReminderId();
   if (id) {
+    const Notifications = loadNotifications();
     await Notifications.cancelScheduledNotificationAsync(id).catch(() => {});
     await setScheduledReminderId(null);
   }
@@ -37,6 +47,7 @@ async function cancelExistingReminder() {
 export async function enableDailyReminder() {
   if (Platform.OS === 'web') return false;
 
+  const Notifications = loadNotifications();
   const { status } = await Notifications.requestPermissionsAsync();
   if (status !== 'granted') {
     await persistEnabled(false);
@@ -49,7 +60,7 @@ export async function enableDailyReminder() {
   const id = await Notifications.scheduleNotificationAsync({
     content: {
       title: 'Time to review',
-      body: "You've got pandas cards waiting — a few minutes keeps your streak alive.",
+      body: "You've got pandas cards waiting. A few minutes keeps your streak alive.",
     },
     trigger: {
       type: Notifications.SchedulableTriggerInputTypes.DAILY,

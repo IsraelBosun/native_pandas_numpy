@@ -14,13 +14,13 @@
       "type": "fill-blank",
       "prompt": "Import pandas using its standard alias.",
       "answer": "import pandas as pd",
-      "why": "Every pandas tutorial, doc page, and codebase uses the pd alias — it's a universal convention, not just a shortcut.",
+      "why": "Every pandas tutorial, doc page, and codebase uses the pd alias, it's a universal convention, not just a shortcut.",
       "whenToUse": "The first line of any script or notebook that touches pandas.",
-      "commonMistake": "Importing as a different alias — it works, but makes your code harder for others (and Stack Overflow answers) to follow.",
+      "commonMistake": "Importing as a different alias, it works, but makes your code harder for others (and Stack Overflow answers) to follow.",
       "relatedMethods": [
         "import"
       ],
-      "example": "# no output — makes pd.DataFrame, pd.Series, etc. available",
+      "example": "# no output, makes pd.DataFrame, pd.Series, etc. available",
       "starterCode": "import pandas as ___",
       "expectedOutput": "",
       "tokens": [
@@ -45,11 +45,11 @@
         "intro_import"
       ],
       "type": "fill-blank",
-      "prompt": "Create a Series — a single labeled column of data — from a list of numbers.",
+      "prompt": "Create a Series, a single labeled column of data, from a list of numbers.",
       "answer": "pd.Series([10, 20, 30])",
       "why": "A Series is pandas' 1D building block: values plus an index. A DataFrame is just a collection of Series sharing one index.",
       "whenToUse": "Representing a single sequence of values that needs labels, not just a plain Python list.",
-      "commonMistake": "Expecting a Series to print like a list — it always shows its index alongside each value.",
+      "commonMistake": "Expecting a Series to print like a list, it always shows its index alongside each value.",
       "relatedMethods": [
         "Series",
         "DataFrame"
@@ -81,9 +81,9 @@
       "type": "fill-blank",
       "prompt": "Create a DataFrame from a dict of equal-length lists, one list per column.",
       "answer": "pd.DataFrame({'region': ['West', 'East'], 'revenue': [120, 95]})",
-      "why": "Each dict key becomes a column name, and each list becomes that column's values — the most common way to build a small DataFrame by hand.",
+      "why": "Each dict key becomes a column name, and each list becomes that column's values, the most common way to build a small DataFrame by hand.",
       "whenToUse": "Constructing sample data, or assembling results you've computed in plain Python into a table.",
-      "commonMistake": "Passing lists of different lengths — pandas raises a ValueError instead of padding the shorter one.",
+      "commonMistake": "Passing lists of different lengths, pandas raises a ValueError instead of padding the shorter one.",
       "relatedMethods": [
         "DataFrame",
         "Series"
@@ -116,9 +116,9 @@
       "type": "fill-blank",
       "prompt": "Check how many rows and columns df has.",
       "answer": "df.shape",
-      "why": "shape returns a (rows, columns) tuple in one call — the fastest way to sanity-check a DataFrame's size.",
+      "why": "shape returns a (rows, columns) tuple in one call, the fastest way to sanity-check a DataFrame's size.",
       "whenToUse": "Right after loading or filtering data, to confirm you got what you expected.",
-      "commonMistake": "Calling it like a method (df.shape()) — shape is an attribute, not a method, so it has no parentheses.",
+      "commonMistake": "Calling it like a method (df.shape()), shape is an attribute, not a method, so it has no parentheses.",
       "relatedMethods": [
         "shape",
         "len",
@@ -188,9 +188,9 @@
       "type": "fill-blank",
       "prompt": "Preview the last 2 rows of df.",
       "answer": "df.tail(2)",
-      "why": "tail() mirrors head() for the end of the DataFrame — useful for checking that a sort or append landed correctly.",
+      "why": "tail() mirrors head() for the end of the DataFrame, useful for checking that a sort or append landed correctly.",
       "whenToUse": "Confirming the end of a DataFrame after sorting, appending, or a time-ordered load.",
-      "commonMistake": "Assuming tail() reverses row order — it doesn't, it just shows the last n rows in their existing order.",
+      "commonMistake": "Assuming tail() reverses row order, it doesn't, it just shows the last n rows in their existing order.",
       "relatedMethods": [
         "tail",
         "head"
@@ -225,13 +225,13 @@
       "answer": "df.info()",
       "why": "info() is the single fastest way to spot missing values and wrong dtypes (like numbers stored as text) in one glance.",
       "whenToUse": "Right after loading unfamiliar data, before you trust any column's contents.",
-      "commonMistake": "Confusing info() with describe() — info() is about structure (dtypes, nulls), describe() is about numeric statistics.",
+      "commonMistake": "Confusing info() with describe(), info() is about structure (dtypes, nulls), describe() is about numeric statistics.",
       "relatedMethods": [
         "info",
         "dtypes",
         "describe"
       ],
-      "example": "# RangeIndex: 8 entries, 0 to 7\n# region, category, revenue, units — 8 non-null each",
+      "example": "# RangeIndex: 8 entries, 0 to 7\n# region, category, revenue, units, 8 non-null each",
       "starterCode": "df.___()",
       "expectedOutput": "",
       "tokens": [
@@ -259,7 +259,7 @@
       "type": "fill-blank",
       "prompt": "Get summary statistics (count, mean, std, min, quartiles, max) for df's numeric columns.",
       "answer": "df.describe()",
-      "why": "describe() gives you a quick statistical fingerprint of every numeric column — a fast way to spot outliers or skew.",
+      "why": "describe() gives you a quick statistical fingerprint of every numeric column, a fast way to spot outliers or skew.",
       "whenToUse": "Getting an at-a-glance feel for a numeric column's distribution.",
       "commonMistake": "Forgetting describe() silently skips non-numeric columns by default (unless you pass include='all').",
       "relatedMethods": [
@@ -294,9 +294,9 @@
       "type": "fill-blank",
       "prompt": "Check the data type of every column in df.",
       "answer": "df.dtypes",
-      "why": "dtypes reveals when numbers were loaded as text (object) — a frequent cause of silently-wrong math and comparisons.",
+      "why": "dtypes reveals when numbers were loaded as text (object), a frequent cause of silently-wrong math and comparisons.",
       "whenToUse": "Right after loading data, especially from CSV, before doing any arithmetic on a column.",
-      "commonMistake": "Assuming a column that looks numeric is actually numeric — CSV loads default text-looking numbers to object if anything in the column doesn't parse cleanly.",
+      "commonMistake": "Assuming a column that looks numeric is actually numeric, CSV loads default text-looking numbers to object if anything in the column doesn't parse cleanly.",
       "relatedMethods": [
         "dtypes",
         "astype",
@@ -330,9 +330,9 @@
       "type": "fill-blank",
       "prompt": "Get the column names of df.",
       "answer": "df.columns",
-      "why": "columns returns an Index of labels — useful for checking exact spelling/casing before referencing a column elsewhere.",
+      "why": "columns returns an Index of labels, useful for checking exact spelling/casing before referencing a column elsewhere.",
       "whenToUse": "Confirming what a column is actually called before selecting or renaming it.",
-      "commonMistake": "Treating df.columns like a plain list — it's an Index object, though most list operations (list(df.columns)) still work on it.",
+      "commonMistake": "Treating df.columns like a plain list, it's an Index object, though most list operations (list(df.columns)) still work on it.",
       "relatedMethods": [
         "columns",
         "index",
@@ -366,9 +366,9 @@
       "type": "fill-blank",
       "prompt": "Get df's row index (its row labels).",
       "answer": "df.index",
-      "why": "Every DataFrame has a row index, even if you never set one — by default it's a simple 0..n RangeIndex.",
+      "why": "Every DataFrame has a row index, even if you never set one, by default it's a simple 0..n RangeIndex.",
       "whenToUse": "Checking whether a DataFrame has a meaningful custom index (like dates) or just the default integer one.",
-      "commonMistake": "Confusing the index with a regular column — it's a separate axis, not one of df.columns.",
+      "commonMistake": "Confusing the index with a regular column, it's a separate axis, not one of df.columns.",
       "relatedMethods": [
         "index",
         "set_index",
@@ -402,9 +402,9 @@
       "type": "fill-blank",
       "prompt": "Count how many rows df has using a plain Python built-in, not a pandas-specific method. Fill in the blank.",
       "answer": "len(df)",
-      "why": "len() on a DataFrame counts its rows, same as it would count items in a list — one of the few plain-Python builtins that works directly on pandas objects.",
+      "why": "len() on a DataFrame counts its rows, same as it would count items in a list, one of the few plain-Python builtins that works directly on pandas objects.",
       "whenToUse": "A quick row count when you don't need the column count too (unlike shape).",
-      "commonMistake": "Expecting len(df) to count columns — it always counts rows, matching len() on the row index.",
+      "commonMistake": "Expecting len(df) to count columns, it always counts rows, matching len() on the row index.",
       "relatedMethods": [
         "shape",
         "size"
@@ -437,9 +437,9 @@
       "type": "fill-blank",
       "prompt": "Check whether df has zero rows.",
       "answer": "df.empty",
-      "why": "empty is a quick boolean check — useful after a filter that might return nothing, before you try to use the result.",
+      "why": "empty is a quick boolean check, useful after a filter that might return nothing, before you try to use the result.",
       "whenToUse": "Guarding code that would error or behave oddly on a zero-row DataFrame, e.g. after a filter with no matches.",
-      "commonMistake": "Calling it as a method (df.empty()) — like shape, it's an attribute, not a method.",
+      "commonMistake": "Calling it as a method (df.empty()), like shape, it's an attribute, not a method.",
       "relatedMethods": [
         "empty",
         "shape",
@@ -475,7 +475,7 @@
       "answer": "pd.Series([1, 2, 3])",
       "why": "Series is the 1D constructor; DataFrame is 2D even when built from a single-key dict or a single-column list of lists.",
       "whenToUse": "Deciding which constructor to reach for based on whether you need one labeled column or a full table.",
-      "commonMistake": "Assuming pd.DataFrame({'a': [1, 2, 3]}) returns a Series because it only has one column — it's still a DataFrame.",
+      "commonMistake": "Assuming pd.DataFrame({'a': [1, 2, 3]}) returns a Series because it only has one column, it's still a DataFrame.",
       "relatedMethods": [
         "Series",
         "DataFrame"

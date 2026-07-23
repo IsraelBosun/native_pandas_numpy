@@ -22,15 +22,20 @@ create table public.card_state (
 
 create table public.review_log (
   user_id uuid not null default auth.uid() references auth.users (id) on delete cascade,
-  -- The row's autoincrement id in the device's SQLite. Using it as part of
-  -- the primary key makes pushes idempotent: re-sending the same rows after
-  -- a flaky connection can never create duplicates.
+  -- Which install wrote the row (app_meta.device_id in the device's SQLite).
+  -- client_id is only unique *within* an install — two phones on one account
+  -- both start their autoincrement at 1 — so provenance has to be part of the
+  -- key or the second device's history silently collides with the first's.
+  device_id text not null,
+  -- The row's autoincrement id in that device's SQLite. Using it in the
+  -- primary key makes pushes idempotent: re-sending the same rows after a
+  -- flaky connection can never create duplicates.
   client_id bigint not null,
   card_id text not null,
   grade integer not null,
   reviewed_at text not null,
   interval integer not null,
-  primary key (user_id, client_id)
+  primary key (user_id, device_id, client_id)
 );
 
 create table public.app_meta (
@@ -45,7 +50,9 @@ alter table public.card_state enable row level security;
 alter table public.review_log enable row level security;
 alter table public.app_meta enable row level security;
 
--- Each signed-in (anonymous) user can only read/write their own rows.
+-- Each signed-in user can only read/write their own rows. This is the whole
+-- security model: the anon key ships inside the app binary and is meant to be
+-- public, so these policies are what keep one learner out of another's data.
 create policy "own rows" on public.card_state
   for all to authenticated
   using ((select auth.uid()) = user_id)
