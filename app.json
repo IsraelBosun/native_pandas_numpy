@@ -44,7 +44,8 @@
       "expo-sqlite",
       "expo-audio",
       "expo-notifications",
-      "expo-font"
+      "expo-font",
+      "expo-asset"
     ],
     "experiments": {
       "reactCompiler": true
