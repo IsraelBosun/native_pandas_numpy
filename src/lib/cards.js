@@ -7,6 +7,7 @@ import { todayISO, addDays } from './date';
 import { seedIfNeeded } from './seed';
 import { bucketReviewsByDate, computeRetentionSeries, computeWeakestTopics } from './stats';
 import { bumpStreak, displayStreak } from './streak';
+import { lifetimeXp } from './xp';
 
 const ACHIEVEMENT_KEY_PREFIX = 'achievement:';
 
@@ -289,6 +290,15 @@ export async function markChallengeComplete(challengeId, stats = {}) {
     `challenge_done:${challengeId}`,
     value
   );
+}
+
+// Lifetime XP for display (Settings/Leaderboard header). Derived from every
+// grade in review_log, matching the server-side formula in public.leaderboard()
+// so what the phone shows lines up with where the account ranks.
+export async function getLifetimeXp() {
+  const db = await getDb();
+  const rows = await db.getAllAsync(`SELECT grade FROM review_log`);
+  return lifetimeXp(rows);
 }
 
 export async function getStreak(today = todayISO()) {

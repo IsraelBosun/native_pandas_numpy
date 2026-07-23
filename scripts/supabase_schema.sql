@@ -81,3 +81,60 @@ create trigger card_state_updated_at before update on public.card_state
 
 create trigger app_meta_updated_at before update on public.app_meta
   for each row execute function public.set_updated_at();
+
+-- Public identity + opt-in leaderboard (added in migration 003). Unlike the
+-- tables above, a `profiles` row is meant to be seen by other users — but only
+-- through public.leaderboard(), never by reading the table directly. The score
+-- is derived from review_log server-side so the public anon key can't spoof it.
+create extension if not exists citext;
+
+create table public.profiles (
+  user_id uuid primary key default auth.uid() references auth.users (id) on delete cascade,
+  -- citext => case-insensitive uniqueness; check mirrors src/lib/username.js.
+  username citext unique
+    constraint username_format check (username ~ '^[A-Za-z0-9_]{3,20}$'),
+  show_on_leaderboard boolean not null default false,
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now()
+);
+
+alter table public.profiles enable row level security;
+
+create policy "own rows" on public.profiles
+  for all to authenticated
+  using ((select auth.uid()) = user_id)
+  with check ((select auth.uid()) = user_id);
+
+create trigger profiles_updated_at before update on public.profiles
+  for each row execute function public.set_updated_at();
+
+-- XP mapping identical to src/lib/xp.js. Security-definer so it can aggregate
+-- across users, but it only ever returns opted-in rows.
+create or replace function public.leaderboard(row_limit integer default 100)
+returns table (
+  username citext,
+  xp bigint,
+  reviews bigint,
+  is_me boolean
+)
+language sql
+security definer
+set search_path = public
+stable
+as $$
+  select
+    p.username,
+    coalesce(sum(case r.grade when 3 then 5 when 4 then 10 when 5 then 15 else 0 end), 0) as xp,
+    count(r.user_id) as reviews,
+    p.user_id = auth.uid() as is_me
+  from public.profiles p
+  left join public.review_log r on r.user_id = p.user_id
+  where p.show_on_leaderboard = true
+    and p.username is not null
+  group by p.user_id, p.username
+  order by xp desc, reviews desc, p.username asc
+  limit greatest(1, least(row_limit, 500));
+$$;
+
+revoke all on function public.leaderboard(integer) from public;
+grant execute on function public.leaderboard(integer) to authenticated;

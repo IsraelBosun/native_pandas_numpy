@@ -42,17 +42,47 @@ export default function SettingsScreen() {
             <ReplayOnboardingRow />
           </Section>
 
-          <Section title="Community" subtitle="Coming soon">
-            <SettingsRow
-              icon="award"
-              label="Opt in to leaderboard"
-              description="Compare your XP with other learners"
-              disabled
-            />
-          </Section>
+          <CommunitySection />
         </ScrollView>
       </SafeAreaView>
     </ThemedView>
+  );
+}
+
+// The leaderboard is opt-in and account-gated (usernames live in the cloud).
+// Signed out, this only points at the account flow; it never gates studying.
+function CommunitySection() {
+  const theme = useTheme();
+  const router = useRouter();
+  const auth = useAuth();
+
+  if (!auth.available) {
+    return (
+      <Section title="Community" subtitle="Coming soon">
+        <SettingsRow
+          icon="award"
+          label="Leaderboard"
+          description="Compare your XP with other learners"
+          disabled
+        />
+      </Section>
+    );
+  }
+
+  return (
+    <Section title="Community">
+      <SettingsRow
+        icon="award"
+        label="Leaderboard"
+        description={
+          auth.signedIn
+            ? 'Pick a username and compare your XP'
+            : 'Create an account to compare your XP'
+        }
+        onPress={() => router.push('/leaderboard')}
+        control={<Feather name="chevron-right" size={18} color={theme.textSecondary} />}
+      />
+    </Section>
   );
 }
 
