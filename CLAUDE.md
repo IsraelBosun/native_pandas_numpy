@@ -49,6 +49,13 @@ Every feature must serve at least one, or it doesn't belong in v1:
 seems to need one, stop and flag it. Supabase sync is designed-for but built
 later (§9).
 
+**Quirk:** `expo-audio` merges `FOREGROUND_SERVICE`, `FOREGROUND_SERVICE_MEDIA_PLAYBACK`
+and (by default) `RECORD_AUDIO` into the Android manifest even though we only play
+short SFX — Play Console then demands a foreground-service justification we can't
+give. `app.json` strips them via `android.blockedPermissions` + the plugin's
+`recordAudioAndroid: false`; keep it that way, and re-check the AAB's permissions
+in Play Console after any audio-dependency bump.
+
 ---
 
 ## 4. Structure
