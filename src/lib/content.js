@@ -41,7 +41,13 @@ import seabornLesson from '@/content/lessons/seaborn-basics.json';
 // `hue` keys into TopicHues (constants/theme.js) and `icon` is a Feather name —
 // visual identity only, so each topic is recognisable at a glance. Hues repeat
 // across topics and never carry state meaning (that's the semantic Colors).
-export const TOPICS = [
+//
+// `hidden: true` keeps a finished deck out of the shipped app without deleting
+// anything. Everything user-facing — tiles, seeding, the review queue, search,
+// reference, achievements — reads the exported TOPICS, so hiding here hides it
+// everywhere. Progress already on a device is left alone: getDueCards() skips
+// state rows whose content isn't loaded, so unhiding restores it untouched.
+const ALL_TOPICS = [
   { id: 'introduction', label: 'Introduction', subject: 'pandas', hue: 'blue', icon: 'compass' },
   { id: 'dataframe', label: 'DataFrame', subject: 'pandas', hue: 'violet', icon: 'grid' },
   { id: 'series', label: 'Series', subject: 'pandas', hue: 'teal', icon: 'list' },
@@ -56,7 +62,7 @@ export const TOPICS = [
   { id: 'datetime', label: 'DateTime', subject: 'pandas', hue: 'teal', icon: 'clock' },
   { id: 'window-functions', label: 'Window functions', subject: 'pandas', hue: 'indigo', icon: 'activity' },
   { id: 'performance', label: 'Performance', subject: 'pandas', hue: 'amber', icon: 'zap' },
-  { id: 'numpy-basics', label: 'NumPy', subject: 'numpy', hue: 'pink', icon: 'cpu' },
+  { id: 'numpy-basics', label: 'NumPy', subject: 'numpy', hue: 'pink', icon: 'cpu', hidden: true },
   // Own subjects, so each is its own course with its own tile and its own
   // "Wizard" achievement (achievements.js generates one per distinct subject).
   { id: 'seaborn-basics', label: 'Seaborn', subject: 'seaborn', hue: 'teal', icon: 'grid' },
@@ -68,6 +74,8 @@ export const TOPICS = [
     icon: 'sliders',
   },
 ];
+
+export const TOPICS = ALL_TOPICS.filter((topic) => !topic.hidden);
 
 const DECKS = {
   dataframe: dataframeDeck,
