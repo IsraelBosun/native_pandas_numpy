@@ -1,0 +1,74 @@
+{
+  "topic": "plotting",
+  "version": "1.0.0",
+  "steps": [
+    {
+      "type": "concept",
+      "heading": "One call, one chart",
+      "body": "Every Series and DataFrame carries .plot(). It hands the data to matplotlib for you, so you almost never import matplotlib yourself. By default it draws a line and plots against the index — so whatever sits in the index becomes your x-axis."
+    },
+    {
+      "type": "example",
+      "heading": "The default is a line",
+      "code": "ts.set_index('date')['revenue'].plot()",
+      "caption": "Dates in the index, revenue on the y-axis. Setting the index is what makes the x-axis a timeline instead of 0, 1, 2…",
+      "chart": {
+        "kind": "line",
+        "title": "Daily revenue",
+        "xLabel": "date",
+        "yLabel": "revenue",
+        "categories": [
+          "Jan 1", "Jan 2", "Jan 3", "Jan 4", "Jan 5",
+          "Jan 6", "Jan 7", "Jan 8", "Jan 9", "Jan 10",
+          "Jan 11", "Jan 12", "Jan 13", "Jan 14"
+        ],
+        "series": [
+          { "name": "revenue", "values": [120, 95, 80, 60, 45, 70, 50, 65, 90, 110, 75, 55, 85, 100] }
+        ]
+      }
+    },
+    {
+      "type": "concept",
+      "heading": "kind= picks the form",
+      "body": "Pass kind='bar', 'barh', 'hist', 'scatter' — or use the accessor spelling .plot.bar(), which is the same call. Let the data's job pick the form: bar for comparing categories, line for change over time, hist for the shape of a distribution, scatter for two numeric columns against each other."
+    },
+    {
+      "type": "example",
+      "heading": "Aggregate first, then plot",
+      "code": "df.groupby('region')['revenue'].sum().plot(kind='bar')",
+      "caption": "A groupby result is already one value per category — exactly the shape a bar chart wants. This is the most common plotting line you will write.",
+      "chart": {
+        "kind": "bar",
+        "title": "Revenue per region",
+        "xLabel": "region",
+        "yLabel": "revenue",
+        "categories": ["East", "North", "West"],
+        "series": [{ "name": "revenue", "values": [225, 115, 245] }]
+      }
+    },
+    {
+      "type": "concept",
+      "heading": "Sort before you rank",
+      "body": "groupby returns groups in key order, not value order, so a bar chart of it comes out alphabetical. If the point is a ranking, sort_values() before plotting — otherwise the reader has to do the comparing you were supposed to do for them."
+    },
+    {
+      "type": "example",
+      "heading": "Same data, readable order",
+      "code": "df.groupby('region')['revenue'].sum().sort_values(ascending=False).plot(kind='bar', title='Revenue by region', ylabel='revenue')",
+      "caption": "title= and ylabel= are passed straight through to matplotlib. pandas labels the x-axis from the index name for free, but leaves the y-axis to you.",
+      "chart": {
+        "kind": "bar",
+        "title": "Revenue by region",
+        "xLabel": "region",
+        "yLabel": "revenue",
+        "categories": ["West", "East", "North"],
+        "series": [{ "name": "revenue", "values": [245, 225, 115] }]
+      }
+    },
+    {
+      "type": "concept",
+      "heading": "One column per series",
+      "body": "Plot a whole DataFrame and every column becomes its own series. That is powerful and easy to misuse: two columns on very different scales — revenue near 200, units near 20 — share one y-axis, and the smaller one flattens to nothing. When the scales don't match, draw two charts. The cards ahead drill all of this against the sample table."
+    }
+  ]
+}

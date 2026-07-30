@@ -3,7 +3,7 @@
  * https://docs.expo.dev/guides/color-schemes/
  */
 
-import { Colors, Gradients, TopicHues } from '@/constants/theme';
+import { ChartColors, ChartSequential, Colors, Gradients, TopicHues } from '@/constants/theme';
 import { useColorScheme } from '@/hooks/use-color-scheme';
 import { useThemePreference } from '@/hooks/use-theme-preference';
 
@@ -25,4 +25,14 @@ export function useTopicHues() {
 
 export function useGradient(name) {
   return Gradients[name][useThemeName()];
+}
+
+// Mode-resolved chart series palette, assigned by slot index and never cycled.
+export function useChartColors() {
+  return ChartColors[useThemeName()];
+}
+
+// Mode-resolved sequential ramp for heatmaps; index 0 is the lowest value.
+export function useChartSequential() {
+  return ChartSequential[useThemeName()];
 }

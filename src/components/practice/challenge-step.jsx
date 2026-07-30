@@ -2,6 +2,7 @@ import { useMemo, useState } from 'react';
 import { Pressable, StyleSheet, View } from 'react-native';
 import Animated, { FadeInDown } from 'react-native-reanimated';
 
+import { ChartView } from '@/components/chart-view';
 import { CodeBlock } from '@/components/code-block';
 import { DataTable } from '@/components/review/data-table';
 import { ThemedText } from '@/components/themed-text';
@@ -74,6 +75,16 @@ export function ChallengeStep({ step, tableStates, datasetName, onContinue }) {
             {isCorrect ? 'Correct' : `Not quite. Correct answer: ${correctValue}`}
           </ThemedText>
           <ThemedText themeColor="textSecondary">{step.why}</ThemedText>
+
+          {/* A charting step's output is the chart, not a new table state. */}
+          {step.chart && (
+            <>
+              <ThemedText type="label" themeColor="textSecondary" style={styles.afterLabel}>
+                After this step
+              </ThemedText>
+              <ChartView chart={step.chart} />
+            </>
+          )}
 
           {after && (
             <>

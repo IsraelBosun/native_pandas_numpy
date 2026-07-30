@@ -9,11 +9,13 @@ import Animated, {
   withTiming,
 } from 'react-native-reanimated';
 
+import { ChartView } from '@/components/chart-view';
 import { CodeBlock } from '@/components/code-block';
 import { ScalePressable, triggerHaptic } from '@/components/scale-pressable';
 import { ThemedText } from '@/components/themed-text';
 import { Radius, Spacing } from '@/constants/theme';
 import { useTheme } from '@/hooks/use-theme';
+import { chartPosition } from '@/lib/chart';
 import { seededShuffle } from '@/lib/shuffle';
 import { playSound } from '@/lib/sound';
 
@@ -112,6 +114,9 @@ export function FillBlankBody({ card, onReveal }) {
             {mistakes > 0 ? `Filled it, ${mistakes} slip${mistakes > 1 ? 's' : ''} along the way` : 'Correct'}
           </ThemedText>
           <ThemedText themeColor="textSecondary">{card.why}</ThemedText>
+          {/* The chart the completed call actually produces — seeing the
+              output is the point of a plotting card. */}
+          {card.chart && chartPosition(card.chart) === 'answer' && <ChartView chart={card.chart} />}
         </Animated.View>
       )}
     </>

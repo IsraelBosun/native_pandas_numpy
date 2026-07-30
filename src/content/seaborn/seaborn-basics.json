@@ -1,0 +1,651 @@
+{
+  "version": "1.0.0",
+  "cards": [
+    {
+      "id": "sns_import",
+      "topic": "seaborn-basics",
+      "subtopic": "basics",
+      "tags": ["seaborn", "import"],
+      "difficulty": "easy",
+      "prerequisites": [],
+      "dataset": "df",
+      "type": "fill-blank",
+      "prompt": "Import seaborn under the alias everyone uses.",
+      "answer": "import seaborn as sns",
+      "why": "sns is the universal alias — every tutorial, answer and code review assumes it, so matching the convention makes your code instantly readable to others.",
+      "whenToUse": "The first line of any seaborn work.",
+      "commonMistake": "Importing as sb or seaborn, which works but reads as unfamiliar to anyone else.",
+      "relatedMethods": ["seaborn"],
+      "example": "# import seaborn as sns",
+      "starterCode": "import seaborn as ___",
+      "expectedOutput": "",
+      "tokens": ["sns"],
+      "distractors": ["sb", "sea", "sn"]
+    },
+    {
+      "id": "sns_barplot_mean",
+      "topic": "seaborn-basics",
+      "subtopic": "categories",
+      "tags": ["seaborn", "barplot", "aggregation"],
+      "difficulty": "medium",
+      "prerequisites": ["sns_import"],
+      "dataset": "df",
+      "type": "fill-blank",
+      "prompt": "Chart average revenue per region with seaborn, without the error bars.",
+      "answer": "sns.barplot(data=df, x='region', y='revenue', errorbar=None)",
+      "why": "This is the seaborn surprise: barplot aggregates for you, and its default is the mean — not the sum. It also draws a 95% confidence interval on every bar unless you pass errorbar=None.",
+      "whenToUse": "Comparing a typical value across categories, when you want seaborn to do the grouping.",
+      "commonMistake": "Reading the bars as totals. barplot means 'mean' by default, and the little line on each bar is a confidence interval, not a data range.",
+      "relatedMethods": ["barplot", "estimator", "countplot"],
+      "example": "# <Axes: xlabel='region', ylabel='revenue'>",
+      "starterCode": "sns.barplot(data=df, x='region', y='revenue', errorbar=___)",
+      "expectedOutput": "",
+      "tokens": ["None"],
+      "distractors": ["False", "0", "'off'"],
+      "chart": {
+        "kind": "bar",
+        "title": "Average revenue per region",
+        "xLabel": "region",
+        "yLabel": "mean revenue",
+        "categories": ["West", "East", "North"],
+        "series": [{ "name": "revenue", "values": [81.67, 75, 57.5] }]
+      }
+    },
+    {
+      "id": "sns_barplot_sum",
+      "topic": "seaborn-basics",
+      "subtopic": "categories",
+      "tags": ["seaborn", "barplot", "aggregation"],
+      "difficulty": "medium",
+      "prerequisites": ["sns_barplot_mean"],
+      "dataset": "df",
+      "type": "fill-blank",
+      "prompt": "Chart total revenue per region with seaborn.",
+      "answer": "sns.barplot(data=df, x='region', y='revenue', estimator='sum', errorbar=None)",
+      "why": "estimator= swaps the aggregation seaborn applies inside each category, so one keyword turns a chart of averages into a chart of totals.",
+      "whenToUse": "Total volume per category, straight from the raw rows — no groupby needed.",
+      "commonMistake": "Grouping with pandas first and then also letting seaborn aggregate, which averages values that were already summed.",
+      "relatedMethods": ["barplot", "estimator", "groupby"],
+      "example": "# <Axes: xlabel='region', ylabel='revenue'>",
+      "starterCode": "sns.barplot(data=df, x='region', y='revenue', ___='sum', errorbar=None)",
+      "expectedOutput": "",
+      "tokens": ["estimator"],
+      "distractors": ["aggfunc", "agg", "func"],
+      "chart": {
+        "kind": "bar",
+        "title": "Total revenue per region",
+        "xLabel": "region",
+        "yLabel": "revenue",
+        "categories": ["West", "East", "North"],
+        "series": [{ "name": "revenue", "values": [245, 225, 115] }]
+      }
+    },
+    {
+      "id": "sns_countplot",
+      "topic": "seaborn-basics",
+      "subtopic": "categories",
+      "tags": ["seaborn", "countplot"],
+      "difficulty": "easy",
+      "prerequisites": ["sns_import"],
+      "dataset": "df",
+      "type": "fill-blank",
+      "prompt": "Chart how many rows there are per region.",
+      "answer": "sns.countplot(data=df, x='region')",
+      "why": "countplot is barplot with the aggregation fixed to 'count how many rows', so it takes no y at all — the height *is* the row count.",
+      "whenToUse": "Showing how a categorical column is distributed.",
+      "commonMistake": "Passing y='revenue' to countplot and expecting a total; countplot counts rows and ignores the idea of a measured value.",
+      "relatedMethods": ["countplot", "barplot", "value_counts"],
+      "example": "# <Axes: xlabel='region', ylabel='count'>",
+      "starterCode": "sns.___(data=df, x='region')",
+      "expectedOutput": "",
+      "tokens": ["countplot"],
+      "distractors": ["barplot", "histplot", "valueplot"],
+      "chart": {
+        "kind": "bar",
+        "title": "Rows per region",
+        "xLabel": "region",
+        "yLabel": "count",
+        "categories": ["West", "East", "North"],
+        "series": [{ "name": "count", "values": [3, 3, 2] }]
+      }
+    },
+    {
+      "id": "sns_data_kwarg",
+      "topic": "seaborn-basics",
+      "subtopic": "basics",
+      "tags": ["seaborn", "api"],
+      "difficulty": "easy",
+      "prerequisites": ["sns_countplot"],
+      "dataset": "df",
+      "type": "fill-blank",
+      "prompt": "Count rows per category. Name the keyword that takes the whole DataFrame.",
+      "answer": "sns.countplot(data=df, x='category')",
+      "why": "Seaborn's core idea: hand it the whole frame once as data=, then refer to columns by *name* as strings. That is why x='category' works where pandas would need df['category'].",
+      "whenToUse": "Every seaborn call — it is the shape of the entire library.",
+      "commonMistake": "Passing the Series itself (x=df['category']) out of pandas habit. It works, but you lose the automatic axis labels and the ability to name other columns for hue.",
+      "relatedMethods": ["countplot", "barplot"],
+      "example": "# <Axes: xlabel='category', ylabel='count'>",
+      "starterCode": "sns.countplot(___=df, x='category')",
+      "expectedOutput": "",
+      "tokens": ["data"],
+      "distractors": ["df", "frame", "table"],
+      "chart": {
+        "kind": "bar",
+        "title": "Rows per category",
+        "xLabel": "category",
+        "yLabel": "count",
+        "categories": ["Shoes", "Bags"],
+        "series": [{ "name": "count", "values": [4, 4] }]
+      }
+    },
+    {
+      "id": "sns_barplot_hue",
+      "topic": "seaborn-basics",
+      "subtopic": "grouping",
+      "tags": ["seaborn", "barplot", "hue"],
+      "difficulty": "medium",
+      "prerequisites": ["sns_barplot_sum"],
+      "dataset": "df",
+      "type": "fill-blank",
+      "prompt": "Total revenue per region, split into a bar per category.",
+      "answer": "sns.barplot(data=df, x='region', y='revenue', hue='category', estimator='sum', errorbar=None)",
+      "why": "hue= is seaborn's whole answer to a second dimension: name another column and it splits every category into one coloured bar per value, with a legend built for you.",
+      "whenToUse": "Comparing a metric across two categorical dimensions at once.",
+      "commonMistake": "Pivoting the frame by hand first. With hue= the long, raw frame is already the right shape.",
+      "relatedMethods": ["barplot", "hue", "pivot_table"],
+      "example": "# <Axes: xlabel='region', ylabel='revenue'>",
+      "starterCode": "sns.barplot(data=df, x='region', y='revenue', ___='category', estimator='sum', errorbar=None)",
+      "expectedOutput": "",
+      "tokens": ["hue"],
+      "distractors": ["color", "group", "split"],
+      "chart": {
+        "kind": "bar",
+        "title": "Revenue by region and category",
+        "xLabel": "region",
+        "yLabel": "revenue",
+        "categories": ["West", "East", "North"],
+        "series": [
+          { "name": "Shoes", "values": [120, 165, 50] },
+          { "name": "Bags", "values": [125, 60, 65] }
+        ]
+      }
+    },
+    {
+      "id": "sns_barh",
+      "topic": "seaborn-basics",
+      "subtopic": "categories",
+      "tags": ["seaborn", "barplot", "orientation"],
+      "difficulty": "medium",
+      "prerequisites": ["sns_barplot_sum"],
+      "dataset": "df",
+      "type": "fill-blank",
+      "prompt": "Total revenue per region as horizontal bars.",
+      "answer": "sns.barplot(data=df, x='revenue', y='region', estimator='sum', errorbar=None, orient='h')",
+      "why": "Seaborn infers orientation from which axis holds the categories, so swapping x and y is usually enough; orient='h' states it outright when the guess would be ambiguous.",
+      "whenToUse": "Long category names that would collide under vertical bars.",
+      "commonMistake": "Swapping x and y but leaving the mental model vertical — with horizontal bars the *value* axis is x.",
+      "relatedMethods": ["barplot", "orient"],
+      "example": "# <Axes: xlabel='revenue', ylabel='region'>",
+      "starterCode": "sns.barplot(data=df, x='revenue', y='region', estimator='sum', errorbar=None, ___='h')",
+      "expectedOutput": "",
+      "tokens": ["orient"],
+      "distractors": ["direction", "axis", "horizontal"],
+      "chart": {
+        "kind": "barh",
+        "title": "Revenue per region",
+        "xLabel": "revenue",
+        "yLabel": "region",
+        "categories": ["West", "East", "North"],
+        "series": [{ "name": "revenue", "values": [245, 225, 115] }]
+      }
+    },
+    {
+      "id": "sns_boxplot",
+      "topic": "seaborn-basics",
+      "subtopic": "distribution",
+      "tags": ["seaborn", "boxplot", "distribution"],
+      "difficulty": "medium",
+      "prerequisites": ["sns_import"],
+      "dataset": "df",
+      "type": "fill-blank",
+      "prompt": "Show the spread of revenue within each category, not just the average.",
+      "answer": "sns.boxplot(data=df, x='category', y='revenue')",
+      "why": "A bar chart collapses a whole group to one number. A box shows five: the median rule, the box spanning the middle half of the data, and whiskers out to the range.",
+      "whenToUse": "When 'how spread out is it' matters as much as 'how big is it'.",
+      "commonMistake": "Reading the box as the full range. The box is the middle 50%; the whiskers carry the rest.",
+      "relatedMethods": ["boxplot", "violinplot", "describe"],
+      "example": "# <Axes: xlabel='category', ylabel='revenue'>",
+      "starterCode": "sns.___(data=df, x='category', y='revenue')",
+      "expectedOutput": "",
+      "tokens": ["boxplot"],
+      "distractors": ["barplot", "histplot", "scatterplot"],
+      "chart": {
+        "kind": "box",
+        "title": "Revenue spread per category",
+        "xLabel": "category",
+        "yLabel": "revenue",
+        "categories": ["Shoes", "Bags"],
+        "boxes": [
+          { "low": 50, "q1": 65, "median": 82.5, "q3": 101.25, "high": 120 },
+          { "low": 45, "q1": 56.25, "median": 62.5, "q3": 68.75, "high": 80 }
+        ]
+      }
+    },
+    {
+      "id": "sns_violinplot",
+      "topic": "seaborn-basics",
+      "subtopic": "distribution",
+      "tags": ["seaborn", "violinplot", "distribution"],
+      "difficulty": "hard",
+      "prerequisites": ["sns_boxplot"],
+      "dataset": "df",
+      "type": "fill-blank",
+      "prompt": "Show the shape of the revenue distribution in each category, not just its quartiles.",
+      "answer": "sns.violinplot(data=df, x='category', y='revenue')",
+      "why": "A violin is a box plot with the density drawn on: where the shape is wide, values cluster. It reveals two humps where a box plot would show one bland middle.",
+      "whenToUse": "Checking whether a group is actually one cluster or several.",
+      "commonMistake": "Trusting the smooth shape on tiny samples. The curve is an estimate, and with a handful of rows it invents detail the data can't support.",
+      "relatedMethods": ["violinplot", "boxplot", "kdeplot"],
+      "example": "# <Axes: xlabel='category', ylabel='revenue'>",
+      "starterCode": "sns.___(data=df, x='category', y='revenue')",
+      "expectedOutput": "",
+      "tokens": ["violinplot"],
+      "distractors": ["boxplot", "kdeplot", "densityplot"],
+      "chart": {
+        "kind": "violin",
+        "title": "Revenue density per category",
+        "xLabel": "category",
+        "yLabel": "revenue",
+        "categories": ["Shoes", "Bags"],
+        "violins": [
+          {
+            "low": 50,
+            "q1": 65,
+            "median": 82.5,
+            "q3": 101.25,
+            "high": 120,
+            "widths": [
+              0.1455, 0.228, 0.3339, 0.4578, 0.5898, 0.717, 0.8271, 0.9277,
+              0.9755, 0.9972, 1.0, 1.0, 0.9962, 0.9789, 0.9492, 0.906,
+              0.8465, 0.7457, 0.645, 0.5321, 0.4157, 0.3058, 0.2109, 0.1359
+            ]
+          },
+          {
+            "low": 45,
+            "q1": 56.25,
+            "median": 62.5,
+            "q3": 68.75,
+            "high": 80,
+            "widths": [
+              0.125, 0.1937, 0.28, 0.3796, 0.4862, 0.5936, 0.697, 0.8154,
+              0.8963, 0.9582, 0.9938, 1.0, 1.0, 0.9938, 0.9582, 0.8963,
+              0.8154, 0.697, 0.5936, 0.4862, 0.3796, 0.28, 0.1937, 0.125
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": "sns_heatmap",
+      "topic": "seaborn-basics",
+      "subtopic": "grid",
+      "tags": ["seaborn", "heatmap", "pivot"],
+      "difficulty": "hard",
+      "prerequisites": ["sns_barplot_hue"],
+      "dataset": "df",
+      "type": "fill-blank",
+      "prompt": "Show revenue for every region-and-category combination as a coloured grid, with the numbers written in.",
+      "answer": "sns.heatmap(df.pivot_table(index='region', columns='category', values='revenue', aggfunc='sum'), annot=True)",
+      "why": "heatmap takes a table that is already the shape of the grid — index becomes the rows, columns become the columns — so the pivot does the work and heatmap only colours it.",
+      "whenToUse": "Two categorical dimensions crossed, where you want the whole pattern at a glance.",
+      "commonMistake": "Passing the long, unpivoted frame. heatmap can't reshape; it colours the table you hand it.",
+      "relatedMethods": ["heatmap", "pivot_table", "corr"],
+      "example": "# <Axes: xlabel='category', ylabel='region'>",
+      "starterCode": "sns.heatmap(df.pivot_table(index='region', columns='category', values='revenue', aggfunc='sum'), ___=True)",
+      "expectedOutput": "",
+      "tokens": ["annot"],
+      "distractors": ["labels", "values", "text"],
+      "chart": {
+        "kind": "heatmap",
+        "title": "Revenue by region and category",
+        "xLabel": "category",
+        "yLabel": "region",
+        "rows": ["East", "North", "West"],
+        "columns": ["Bags", "Shoes"],
+        "values": [
+          [60, 165],
+          [65, 50],
+          [125, 120]
+        ]
+      }
+    },
+    {
+      "id": "sns_scatter",
+      "topic": "seaborn-basics",
+      "subtopic": "relationship",
+      "tags": ["seaborn", "scatterplot"],
+      "difficulty": "easy",
+      "prerequisites": ["sns_import"],
+      "dataset": "df",
+      "type": "fill-blank",
+      "prompt": "Chart revenue against units to see whether they move together.",
+      "answer": "sns.scatterplot(data=df, x='units', y='revenue')",
+      "why": "Two numeric columns, one point per row — this is the plot that answers 'are these related?' before you reach for a correlation number.",
+      "whenToUse": "First look at the relationship between two measurements.",
+      "commonMistake": "Using lineplot for unordered data, which connects points that have no sequence and invents a trend.",
+      "relatedMethods": ["scatterplot", "regplot", "relplot"],
+      "example": "# <Axes: xlabel='units', ylabel='revenue'>",
+      "starterCode": "sns.___(data=df, x='units', y='revenue')",
+      "expectedOutput": "",
+      "tokens": ["scatterplot"],
+      "distractors": ["lineplot", "pointplot", "stripplot"],
+      "chart": {
+        "kind": "scatter",
+        "title": "Revenue against units",
+        "xLabel": "units",
+        "yLabel": "revenue",
+        "points": [
+          [12, 120],
+          [9, 95],
+          [8, 80],
+          [6, 60],
+          [5, 45],
+          [7, 70],
+          [5, 50],
+          [6, 65]
+        ]
+      }
+    },
+    {
+      "id": "sns_scatter_hue",
+      "topic": "seaborn-basics",
+      "subtopic": "grouping",
+      "tags": ["seaborn", "scatterplot", "hue"],
+      "difficulty": "medium",
+      "prerequisites": ["sns_scatter"],
+      "dataset": "df",
+      "type": "fill-blank",
+      "prompt": "Same scatter, but colour each point by its category.",
+      "answer": "sns.scatterplot(data=df, x='units', y='revenue', hue='category')",
+      "why": "hue= works the same way on every seaborn plot: name a column and it becomes colour, with a legend. One keyword turns a two-variable chart into a three-variable one.",
+      "whenToUse": "Checking whether a relationship holds inside every group or only overall.",
+      "commonMistake": "Using hue for a column with many distinct values, which produces a legend nobody can read. Past a handful of groups, facet instead.",
+      "relatedMethods": ["scatterplot", "hue", "relplot"],
+      "example": "# <Axes: xlabel='units', ylabel='revenue'>",
+      "starterCode": "sns.scatterplot(data=df, x='units', y='revenue', ___='category')",
+      "expectedOutput": "",
+      "tokens": ["hue"],
+      "distractors": ["style", "size", "color"],
+      "chart": {
+        "kind": "scatter",
+        "title": "Revenue against units, by category",
+        "xLabel": "units",
+        "yLabel": "revenue",
+        "points": [
+          [12, 120],
+          [9, 95],
+          [8, 80],
+          [6, 60],
+          [5, 45],
+          [7, 70],
+          [5, 50],
+          [6, 65]
+        ],
+        "groups": ["Shoes", "Shoes", "Bags", "Bags", "Bags", "Shoes", "Shoes", "Bags"]
+      }
+    },
+    {
+      "id": "sns_regplot",
+      "topic": "seaborn-basics",
+      "subtopic": "relationship",
+      "tags": ["seaborn", "regplot", "regression"],
+      "difficulty": "medium",
+      "prerequisites": ["sns_scatter"],
+      "dataset": "df",
+      "type": "fill-blank",
+      "prompt": "Scatter revenue against units and draw the best-fit line through it.",
+      "answer": "sns.regplot(data=df, x='units', y='revenue')",
+      "why": "regplot is scatterplot plus a fitted line and its confidence band — seaborn runs the regression for you, so you see the trend and how sure it is in one call.",
+      "whenToUse": "Showing a trend, not just the cloud of points.",
+      "commonMistake": "Treating the line as proof of a relationship. regplot will happily fit a line through noise; the confidence band is the part that tells you whether to believe it.",
+      "relatedMethods": ["regplot", "lmplot", "scatterplot"],
+      "example": "# <Axes: xlabel='units', ylabel='revenue'>",
+      "starterCode": "sns.___(data=df, x='units', y='revenue')",
+      "expectedOutput": "",
+      "tokens": ["regplot"],
+      "distractors": ["scatterplot", "lineplot", "residplot"],
+      "chart": {
+        "kind": "scatter",
+        "title": "Revenue against units, with fit",
+        "xLabel": "units",
+        "yLabel": "revenue",
+        "points": [
+          [12, 120],
+          [9, 95],
+          [8, 80],
+          [6, 60],
+          [5, 45],
+          [7, 70],
+          [5, 50],
+          [6, 65]
+        ],
+        "fit": [
+          [5, 49.84],
+          [12, 122.28]
+        ]
+      }
+    },
+    {
+      "id": "sns_lineplot",
+      "topic": "seaborn-basics",
+      "subtopic": "time",
+      "tags": ["seaborn", "lineplot", "time"],
+      "difficulty": "easy",
+      "prerequisites": ["sns_import"],
+      "dataset": "ts",
+      "type": "fill-blank",
+      "prompt": "Chart revenue over time with seaborn.",
+      "answer": "sns.lineplot(data=ts, x='date', y='revenue')",
+      "why": "Unlike pandas, seaborn takes the x column by name — no set_index() first. It sorts by x for you, so an out-of-order frame still draws a sensible timeline.",
+      "whenToUse": "A time series held in ordinary columns.",
+      "commonMistake": "Setting the index first out of pandas habit, then finding x='date' no longer resolves because date is no longer a column.",
+      "relatedMethods": ["lineplot", "relplot", "plot"],
+      "example": "# <Axes: xlabel='date', ylabel='revenue'>",
+      "starterCode": "sns.___(data=ts, x='date', y='revenue')",
+      "expectedOutput": "",
+      "tokens": ["lineplot"],
+      "distractors": ["scatterplot", "barplot", "histplot"],
+      "chart": {
+        "kind": "line",
+        "title": "Daily revenue",
+        "xLabel": "date",
+        "yLabel": "revenue",
+        "categories": [
+          "Jan 1", "Jan 2", "Jan 3", "Jan 4", "Jan 5",
+          "Jan 6", "Jan 7", "Jan 8", "Jan 9", "Jan 10",
+          "Jan 11", "Jan 12", "Jan 13", "Jan 14"
+        ],
+        "series": [
+          { "name": "revenue", "values": [120, 95, 80, 60, 45, 70, 50, 65, 90, 110, 75, 55, 85, 100] }
+        ]
+      }
+    },
+    {
+      "id": "sns_catplot_col",
+      "topic": "seaborn-basics",
+      "subtopic": "faceting",
+      "tags": ["seaborn", "catplot", "faceting"],
+      "difficulty": "hard",
+      "prerequisites": ["sns_barplot_hue"],
+      "dataset": "df",
+      "type": "multiple-choice",
+      "prompt": "Which call draws one small bar chart per region, side by side?",
+      "answer": "sns.catplot(data=df, x='category', y='revenue', col='region', kind='bar', estimator='sum', errorbar=None)",
+      "why": "col= splits the data into one panel per value — small multiples. Every panel shares a scale, which is what makes them comparable; that is the whole point of faceting over one crowded chart.",
+      "whenToUse": "More groups than hue= can colour readably.",
+      "commonMistake": "Reaching for catplot's axes-level cousins (barplot, boxplot). Only the figure-level functions — catplot, relplot, displot — can facet.",
+      "relatedMethods": ["catplot", "relplot", "FacetGrid"],
+      "example": "# <seaborn.axisgrid.FacetGrid>",
+      "starterCode": "",
+      "expectedOutput": "",
+      "tokens": [],
+      "distractors": [
+        "sns.catplot(data=df, x='category', y='revenue', row='region', kind='bar', estimator='sum', errorbar=None)",
+        "sns.catplot(data=df, x='category', y='revenue', hue='region', kind='bar', estimator='sum', errorbar=None)",
+        "sns.catplot(data=df, x='region', y='revenue', col='category', kind='bar', estimator='sum', errorbar=None)"
+      ],
+      "chart": {
+        "kind": "panels",
+        "title": "Revenue per category, by region",
+        "columns": 3,
+        "panels": [
+          {
+            "title": "West",
+            "kind": "bar",
+            "categories": ["Shoes", "Bags"],
+            "series": [{ "name": "revenue", "values": [120, 125] }]
+          },
+          {
+            "title": "East",
+            "kind": "bar",
+            "categories": ["Shoes", "Bags"],
+            "series": [{ "name": "revenue", "values": [165, 60] }]
+          },
+          {
+            "title": "North",
+            "kind": "bar",
+            "categories": ["Shoes", "Bags"],
+            "series": [{ "name": "revenue", "values": [50, 65] }]
+          }
+        ]
+      }
+    },
+    {
+      "id": "sns_read_box",
+      "topic": "seaborn-basics",
+      "subtopic": "reading-charts",
+      "tags": ["seaborn", "boxplot", "reading-charts"],
+      "difficulty": "medium",
+      "prerequisites": ["sns_boxplot"],
+      "dataset": "df",
+      "type": "multiple-choice",
+      "prompt": "Which call drew this chart?",
+      "answer": "sns.boxplot(data=df, x='region', y='revenue')",
+      "why": "Three boxes means three categories on the x-axis, and region is the column with three values. The rule inside each box is the median, and the box itself spans the middle half of that region's revenue.",
+      "whenToUse": "Reading a distribution chart back to the code that made it.",
+      "commonMistake": "Counting the boxes without checking which column has that many values — the number of boxes tells you which column is on x.",
+      "relatedMethods": ["boxplot", "violinplot"],
+      "example": "# <Axes: xlabel='region', ylabel='revenue'>",
+      "starterCode": "",
+      "expectedOutput": "",
+      "tokens": [],
+      "distractors": [
+        "sns.boxplot(data=df, x='category', y='revenue')",
+        "sns.violinplot(data=df, x='region', y='revenue')",
+        "sns.boxplot(data=df, x='region', y='units')"
+      ],
+      "chart": {
+        "kind": "box",
+        "position": "prompt",
+        "title": "",
+        "xLabel": "region",
+        "yLabel": "revenue",
+        "categories": ["West", "East", "North"],
+        "boxes": [
+          { "low": 45, "q1": 62.5, "median": 80, "q3": 100, "high": 120 },
+          { "low": 60, "q1": 65, "median": 70, "q3": 82.5, "high": 95 },
+          { "low": 50, "q1": 53.75, "median": 57.5, "q3": 61.25, "high": 65 }
+        ]
+      }
+    },
+    {
+      "id": "sns_read_heatmap",
+      "topic": "seaborn-basics",
+      "subtopic": "reading-charts",
+      "tags": ["seaborn", "heatmap", "reading-charts"],
+      "difficulty": "hard",
+      "prerequisites": ["sns_heatmap"],
+      "dataset": "df",
+      "type": "multiple-choice",
+      "prompt": "Which call drew this grid?",
+      "answer": "sns.heatmap(df.pivot_table(index='region', columns='category', values='revenue', aggfunc='sum'), annot=True)",
+      "why": "Regions run down the side and categories across the top, so region was the pivot's index and category its columns. Swap them in the pivot and the grid transposes.",
+      "whenToUse": "Working out which way round someone pivoted before plotting.",
+      "commonMistake": "Ignoring which labels sit on which axis. In a heatmap the pivot's index is always the rows.",
+      "relatedMethods": ["heatmap", "pivot_table"],
+      "example": "# <Axes: xlabel='category', ylabel='region'>",
+      "starterCode": "",
+      "expectedOutput": "",
+      "tokens": [],
+      "distractors": [
+        "sns.heatmap(df.pivot_table(index='category', columns='region', values='revenue', aggfunc='sum'), annot=True)",
+        "sns.heatmap(df.pivot_table(index='region', columns='category', values='units', aggfunc='sum'), annot=True)",
+        "sns.heatmap(df.pivot_table(index='region', columns='category', values='revenue', aggfunc='mean'), annot=True)"
+      ],
+      "chart": {
+        "kind": "heatmap",
+        "position": "prompt",
+        "title": "",
+        "xLabel": "category",
+        "yLabel": "region",
+        "rows": ["East", "North", "West"],
+        "columns": ["Bags", "Shoes"],
+        "values": [
+          [60, 165],
+          [65, 50],
+          [125, 120]
+        ]
+      }
+    },
+    {
+      "id": "sns_read_facets",
+      "topic": "seaborn-basics",
+      "subtopic": "reading-charts",
+      "tags": ["seaborn", "catplot", "faceting", "reading-charts"],
+      "difficulty": "hard",
+      "prerequisites": ["sns_catplot_col"],
+      "dataset": "df",
+      "type": "multiple-choice",
+      "prompt": "Which call drew these panels?",
+      "answer": "sns.catplot(data=df, x='category', y='revenue', col='region', kind='bar', estimator='sum', errorbar=None)",
+      "why": "One panel per region, each holding a bar per category — so region is the facet and category is the x-axis. The panels also share one y-scale, which is why North's bars look genuinely short rather than filling their panel.",
+      "whenToUse": "Telling a facet grid apart from a single chart with hue.",
+      "commonMistake": "Mixing up which column facets and which sits on x. Count the panels: that is the faceting column's value count.",
+      "relatedMethods": ["catplot", "FacetGrid", "relplot"],
+      "example": "# <seaborn.axisgrid.FacetGrid>",
+      "starterCode": "",
+      "expectedOutput": "",
+      "tokens": [],
+      "distractors": [
+        "sns.catplot(data=df, x='region', y='revenue', col='category', kind='bar', estimator='sum', errorbar=None)",
+        "sns.catplot(data=df, x='category', y='revenue', col='region', kind='box')",
+        "sns.barplot(data=df, x='category', y='revenue', hue='region', estimator='sum', errorbar=None)"
+      ],
+      "chart": {
+        "kind": "panels",
+        "position": "prompt",
+        "columns": 3,
+        "panels": [
+          {
+            "title": "West",
+            "kind": "bar",
+            "categories": ["Shoes", "Bags"],
+            "series": [{ "name": "revenue", "values": [120, 125] }]
+          },
+          {
+            "title": "East",
+            "kind": "bar",
+            "categories": ["Shoes", "Bags"],
+            "series": [{ "name": "revenue", "values": [165, 60] }]
+          },
+          {
+            "title": "North",
+            "kind": "bar",
+            "categories": ["Shoes", "Bags"],
+            "series": [{ "name": "revenue", "values": [50, 65] }]
+          }
+        ]
+      }
+    }
+  ]
+}

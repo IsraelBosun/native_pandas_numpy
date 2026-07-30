@@ -1,0 +1,123 @@
+{
+  "topic": "seaborn-basics",
+  "version": "1.0.0",
+  "steps": [
+    {
+      "type": "concept",
+      "heading": "Hand it the frame, name the columns",
+      "body": "Seaborn sits on top of matplotlib and takes a different deal: give it the whole DataFrame once as data=, then refer to columns by name as strings. That is why x='region' works where pandas would need df['region'] — and it is what lets you name another column for hue or faceting without reshaping anything."
+    },
+    {
+      "type": "example",
+      "heading": "One call, one chart",
+      "code": "sns.barplot(data=df, x='region', y='revenue', estimator='sum', errorbar=None)",
+      "caption": "Seaborn aggregates for you. Watch the default though: barplot shows the mean, not the sum, and draws a confidence interval on every bar unless you pass errorbar=None.",
+      "chart": {
+        "kind": "bar",
+        "title": "Total revenue per region",
+        "xLabel": "region",
+        "yLabel": "revenue",
+        "categories": ["West", "East", "North"],
+        "series": [{ "name": "revenue", "values": [245, 225, 115] }]
+      }
+    },
+    {
+      "type": "concept",
+      "heading": "hue= is the whole trick",
+      "body": "Nearly every seaborn function takes hue=. Name a second categorical column and it splits the plot into one colour per value and builds the legend. The same keyword works on bars, scatters, lines and boxes — learn it once and it pays off everywhere."
+    },
+    {
+      "type": "example",
+      "heading": "A second dimension, for free",
+      "code": "sns.barplot(data=df, x='region', y='revenue', hue='category', estimator='sum', errorbar=None)",
+      "caption": "No pivot, no reshaping. The long, raw frame was already the right shape.",
+      "chart": {
+        "kind": "bar",
+        "title": "Revenue by region and category",
+        "xLabel": "region",
+        "yLabel": "revenue",
+        "categories": ["West", "East", "North"],
+        "series": [
+          { "name": "Shoes", "values": [120, 165, 50] },
+          { "name": "Bags", "values": [125, 60, 65] }
+        ]
+      }
+    },
+    {
+      "type": "concept",
+      "heading": "The plots pandas doesn't have",
+      "body": "This is the real reason to reach for seaborn. Box plots and violins show how a group is spread out, not just its average. Heatmaps colour a whole pivoted table. regplot fits a trend line and shows how confident it is. Each is one line here and a small project in raw matplotlib."
+    },
+    {
+      "type": "example",
+      "heading": "Spread, not just average",
+      "code": "sns.boxplot(data=df, x='category', y='revenue')",
+      "caption": "The rule is the median, the box holds the middle half of the data, and the whiskers reach the rest. A bar chart would have collapsed each of these to a single number.",
+      "chart": {
+        "kind": "box",
+        "title": "Revenue spread per category",
+        "xLabel": "category",
+        "yLabel": "revenue",
+        "categories": ["Shoes", "Bags"],
+        "boxes": [
+          { "low": 50, "q1": 65, "median": 82.5, "q3": 101.25, "high": 120 },
+          { "low": 45, "q1": 56.25, "median": 62.5, "q3": 68.75, "high": 80 }
+        ]
+      }
+    },
+    {
+      "type": "example",
+      "heading": "A whole table at a glance",
+      "code": "sns.heatmap(df.pivot_table(index='region', columns='category', values='revenue', aggfunc='sum'), annot=True)",
+      "caption": "heatmap can't reshape — it colours the table you hand it, so the pivot does the real work. annot=True writes the numbers in, which is what keeps it readable.",
+      "chart": {
+        "kind": "heatmap",
+        "title": "Revenue by region and category",
+        "xLabel": "category",
+        "yLabel": "region",
+        "rows": ["East", "North", "West"],
+        "columns": ["Bags", "Shoes"],
+        "values": [
+          [60, 165],
+          [65, 50],
+          [125, 120]
+        ]
+      }
+    },
+    {
+      "type": "concept",
+      "heading": "When hue runs out, facet",
+      "body": "Past a handful of groups, colour stops working — nobody can read a twelve-item legend. The figure-level functions (catplot, relplot, displot) take col= and draw one small panel per value instead. They share a scale across panels, which is what makes them comparable; that shared scale is the point, not a detail."
+    },
+    {
+      "type": "example",
+      "heading": "One panel per group",
+      "code": "sns.catplot(data=df, x='category', y='revenue', col='region', kind='bar', estimator='sum', errorbar=None)",
+      "caption": "Only the figure-level functions can facet — barplot and boxplot cannot. Notice North's bars really are short: every panel is measured against the same axis.",
+      "chart": {
+        "kind": "panels",
+        "columns": 3,
+        "panels": [
+          {
+            "title": "West",
+            "kind": "bar",
+            "categories": ["Shoes", "Bags"],
+            "series": [{ "name": "revenue", "values": [120, 125] }]
+          },
+          {
+            "title": "East",
+            "kind": "bar",
+            "categories": ["Shoes", "Bags"],
+            "series": [{ "name": "revenue", "values": [165, 60] }]
+          },
+          {
+            "title": "North",
+            "kind": "bar",
+            "categories": ["Shoes", "Bags"],
+            "series": [{ "name": "revenue", "values": [50, 65] }]
+          }
+        ]
+      }
+    }
+  ]
+}

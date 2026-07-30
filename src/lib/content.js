@@ -7,11 +7,14 @@ import mergingDeck from '@/content/pandas/merging.json';
 import missingValuesDeck from '@/content/pandas/missing-values.json';
 import performanceDeck from '@/content/pandas/performance.json';
 import pivotDeck from '@/content/pandas/pivot.json';
+import plottingDeck from '@/content/pandas/plotting.json';
 import readCsvDeck from '@/content/pandas/read-csv.json';
 import seriesDeck from '@/content/pandas/series.json';
 import sortingDeck from '@/content/pandas/sorting.json';
 import windowFunctionsDeck from '@/content/pandas/window-functions.json';
 import numpyDeck from '@/content/numpy/numpy-basics.json';
+import matplotlibDeck from '@/content/matplotlib/matplotlib-basics.json';
+import seabornDeck from '@/content/seaborn/seaborn-basics.json';
 
 import dataframeLesson from '@/content/lessons/dataframe.json';
 import datetimeLesson from '@/content/lessons/datetime.json';
@@ -22,11 +25,14 @@ import mergingLesson from '@/content/lessons/merging.json';
 import missingValuesLesson from '@/content/lessons/missing-values.json';
 import performanceLesson from '@/content/lessons/performance.json';
 import pivotLesson from '@/content/lessons/pivot.json';
+import plottingLesson from '@/content/lessons/plotting.json';
 import readCsvLesson from '@/content/lessons/read-csv.json';
 import seriesLesson from '@/content/lessons/series.json';
 import sortingLesson from '@/content/lessons/sorting.json';
 import windowFunctionsLesson from '@/content/lessons/window-functions.json';
 import numpyLesson from '@/content/lessons/numpy-basics.json';
+import matplotlibLesson from '@/content/lessons/matplotlib-basics.json';
+import seabornLesson from '@/content/lessons/seaborn-basics.json';
 
 // Metro can't dynamically scan /content, so this is the one place that lists
 // every deck/lesson by name. Adding a new topic means one new import + one
@@ -46,10 +52,21 @@ export const TOPICS = [
   { id: 'groupby', label: 'GroupBy', subject: 'pandas', hue: 'green', icon: 'layers' },
   { id: 'merging', label: 'Merging', subject: 'pandas', hue: 'blue', icon: 'git-merge' },
   { id: 'pivot', label: 'Pivot', subject: 'pandas', hue: 'violet', icon: 'rotate-cw' },
+  { id: 'plotting', label: 'Plotting', subject: 'pandas', hue: 'pink', icon: 'bar-chart-2' },
   { id: 'datetime', label: 'DateTime', subject: 'pandas', hue: 'teal', icon: 'clock' },
   { id: 'window-functions', label: 'Window functions', subject: 'pandas', hue: 'indigo', icon: 'activity' },
   { id: 'performance', label: 'Performance', subject: 'pandas', hue: 'amber', icon: 'zap' },
   { id: 'numpy-basics', label: 'NumPy', subject: 'numpy', hue: 'pink', icon: 'cpu' },
+  // Own subjects, so each is its own course with its own tile and its own
+  // "Wizard" achievement (achievements.js generates one per distinct subject).
+  { id: 'seaborn-basics', label: 'Seaborn', subject: 'seaborn', hue: 'teal', icon: 'grid' },
+  {
+    id: 'matplotlib-basics',
+    label: 'Matplotlib',
+    subject: 'matplotlib',
+    hue: 'orange',
+    icon: 'sliders',
+  },
 ];
 
 const DECKS = {
@@ -62,11 +79,14 @@ const DECKS = {
   'missing-values': missingValuesDeck,
   performance: performanceDeck,
   pivot: pivotDeck,
+  plotting: plottingDeck,
   'read-csv': readCsvDeck,
   series: seriesDeck,
   sorting: sortingDeck,
   'window-functions': windowFunctionsDeck,
   'numpy-basics': numpyDeck,
+  'seaborn-basics': seabornDeck,
+  'matplotlib-basics': matplotlibDeck,
 };
 
 const LESSONS = {
@@ -79,11 +99,14 @@ const LESSONS = {
   'missing-values': missingValuesLesson,
   performance: performanceLesson,
   pivot: pivotLesson,
+  plotting: plottingLesson,
   'read-csv': readCsvLesson,
   series: seriesLesson,
   sorting: sortingLesson,
   'window-functions': windowFunctionsLesson,
   'numpy-basics': numpyLesson,
+  'seaborn-basics': seabornLesson,
+  'matplotlib-basics': matplotlibLesson,
 };
 
 export function getDeck(topicId) {

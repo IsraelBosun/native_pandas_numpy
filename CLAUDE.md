@@ -7,9 +7,12 @@ Guidance for Claude Code (and any AI agent) working in this repo.
 ## 1. What this is
 
 A **mobile learning platform for mastering programming APIs through spaced
-repetition.** v1 ships with **pandas and NumPy**. The learning engine stays
-generic so new courses (SQL, Polars, Git, Docker, scikit-learn, statistics…)
-can be added later **without changing the engine** — a course is just content.
+repetition.** v1 ships with **pandas, NumPy, seaborn and matplotlib**. The
+learning engine stays generic so new courses (SQL, Polars, Git, Docker,
+scikit-learn, statistics…) can be added later **without changing the engine** —
+a course is just content. Adding seaborn and matplotlib took one import and one
+`TOPICS` entry each in `lib/content.js`, and no engine change at all; that is the
+bar any new course should clear.
 
 Mental model: *Mimo/Programiz meets Anki.* A short lesson introduces a concept,
 then active recall (SM-2 flashcards) drills it into long-term memory.
@@ -70,6 +73,7 @@ in Play Console after any audio-dependency bump.
   reference.js       Searchable MDN-style method reference
 /lib
   scheduler.js       SM-2 — PURE functions, no DB, no React
+  chart.js           Chart geometry + layout — PURE, course-agnostic (§5b)
   db.js              SQLite open + schema + guarded migrations
   cards.js           Join content JSON with SQLite state; all data access here
   search.js          Global search index
@@ -77,6 +81,10 @@ in Play Console after any audio-dependency bump.
 /content
   /pandas  *.json    One deck per topic (versioned)
   /numpy   *.json
+  /seaborn *.json    Own course/tile — data= + column names, hue=, box/violin/
+                     heatmap/regplot, and faceting with catplot/relplot
+  /matplotlib *.json Own course/tile — figure & axes, ax.bar/plot/scatter/hist,
+                     set_* labelling, plt.subplots grids and sharey
   /challenges *.json Workflow challenges: multi-step pipelines with precomputed
                      table states; verified vs real pandas by
                      scripts/verify_challenges.py (run it after any edit)
@@ -87,7 +95,8 @@ in Play Console after any audio-dependency bump.
 **Rules:** `scheduler.js` is pure (state + grade + `today` in → new state out).
 Screens never touch SQLite — they go through `lib/cards.js`. Never hardcode
 colors/spacing/fonts; import from `theme.js`. Nothing in `/lib` knows about
-pandas.
+pandas. `chart.js` owns all chart geometry so `components/chart-view.jsx` stays
+a dumb painter — put layout maths there, not in the component.
 
 ---
 
@@ -142,6 +151,86 @@ reps 0, interval 1.
 
 ---
 
+## 5b. Charts (`lib/chart.js` + `components/chart-view.jsx`)
+
+Charts are **precomputed output, never a plotting runtime.** A card or lesson
+step ships the numbers a real pandas/matplotlib call produced; the app only
+draws them. Same rule as the sample tables — the app never executes pandas.
+
+```json
+"chart": {
+  "kind": "bar",            // see the nine kinds below
+  "position": "answer",     // "prompt" only for "which call drew this?" cards
+  "title": "Revenue per region", "xLabel": "region", "yLabel": "revenue",
+  "categories": ["East", "North", "West"],
+  "series": [{ "name": "revenue", "values": [225, 115, 245] }],
+  "points": [[12, 120]]     // scatter only, instead of categories/series
+}
+```
+`null` in `values` is a declared gap (a rolling mean's leading NaNs) and must
+line up with a real NaN. Charts default to the **answer side** so they can't
+give the answer away before recall.
+
+**The nine kinds.** `bar | barh | line | scatter | hist` use `categories` +
+`series` (or `points`); the four added for seaborn/matplotlib carry their own
+shape instead:
+
+| kind | payload | notes |
+|---|---|---|
+| `box` | `boxes: [{low,q1,median,q3,high,outliers}]` | one per category; `median` is required or the entry is dropped |
+| `violin` | `violins: [{…same, widths}]` | `widths` is 24 (`VIOLIN_BANDS`) normalised half-widths, low→high, peak = 1 |
+| `heatmap` | `rows`, `columns`, `values` (row-major grid) | fills from `ChartSequential`, and every cell is annotated so value never depends on colour alone |
+| `panels` | `panels: [ …chart specs ]`, `columns`, `shareDomain` | small multiples; a panel is a full spec, so a malformed one drops out rather than taking the grid down |
+
+Only `bar`/`barh`/`line`/`hist` force zero into the domain — they are filled from
+a baseline, so a truncated axis would misstate the value. `box`/`violin`/
+`scatter` must **not** be zero-anchored (it squashes every box against the top).
+
+`shareDomain` defaults to **true** and is the whole point of faceting: panels on
+different scales are not comparable. `chart_extract.py` checks the claim against
+the real axes' `ylim`, so `shareDomain: true` on a figure drawn without
+`sharey=True` fails verification.
+
+Scatter may also carry `fit` (two endpoints, for `regplot`) and `groups` (one
+label per point, for `hue=`) — `groups` assigns a palette slot by first
+appearance so a colour always means the same group.
+
+**Verification is not optional.** `scripts/verify_content.py` and
+`verify_challenges.py` run the card's real `answer`, read the numbers back out
+of the matplotlib artists (`scripts/chart_extract.py`), and diff them against
+the spec. Never ship a chart image — a PNG can't be diffed, doesn't theme, and
+doesn't scale on a phone.
+
+**Rendering.** Plain Views, no `react-native-svg` — every mark is a box, and a
+line segment is a 2px box rotated about its left edge. A violin is a stack of 24
+boxes. This is deliberate: it keeps charts free of a native dependency, so no
+rebuild is needed. Geometry lives in the pure, tested `lib/chart.js`; the
+component only paints.
+
+**Ask `preferredHeight(spec, base)` for the height, don't assume `base`.** A
+panel grid stacks whole plots, each with its own caption and tick row, so it grows
+to give every facet the same readable plot area instead of dividing one card
+height by the row count. Anything a panel draws outside its `plotHeight` — the
+caption lane, the x-tick lane — has to be reserved in `layoutPanels`, because the
+panel boxes are absolutely positioned and unreserved space lands on top of the
+row below. `LAYOUT.xTickLane`/`panelTitleLane` mirror `chart-view.jsx`'s styles;
+change them together.
+
+**Series colors** come from `ChartColors` in `theme.js`, assigned by slot and
+never cycled; heatmap fills come from `ChartSequential` (one hue, monotone
+lightness, its own steps per mode — not an automatic flip). Both modes pass the
+categorical and ordinal colour checks — re-run `validate_palette.js` (see the
+comment there) before changing any value. At most a few series per chart; past 4,
+facet instead of extending the palette.
+
+**Look at it before calling it done.** The tests and `verify_content.py` check
+numbers and geometry, not whether a label collides. Dump the layouts and paint
+them (a Node dump of `layoutChart` + matplotlib as a dumb canvas works, no device
+needed) and check both modes. Every layout bug this feature shipped with — a
+grouped bar's label pointing at the wrong bar, half-clipped edge markers, a barh
+tip label 4px over the edge, a panel row's ticks landing on the row below — was
+found by looking, not by a test.
+
 ## 6. Data model
 
 Two layers that never mix.
@@ -176,6 +265,8 @@ A card:
 }
 ```
 `distractors` required for multiple-choice; `tokens` for fill-blank; else empty.
+A card may also carry an optional `chart` (§5b) — the precomputed output of its
+`answer`, for cards whose result is a plot rather than a table.
 `difficulty` is only the **author's initial estimate** — see §8.
 
 **Progress (SQLite).** The only thing that changes as users study:
@@ -208,10 +299,16 @@ state (new packs add cards without wiping progress).
 
 - **Learning path (progressive, not locked).** Default order:
   Introduction → DataFrame → Series → Read CSV → Selecting → Filtering →
-  Sorting → Missing values → GroupBy → Merge → Pivot → DateTime →
-  Window functions → Performance. This is the *suggested* sequence and what a
-  new user is guided through; topics are **not hard-locked** (users can jump to
-  weak spots). `prerequisites` drive *suggestion*, not gating.
+  Sorting → Missing values → GroupBy → Merge → Pivot → Plotting → DateTime →
+  Window functions → Performance, then NumPy, Seaborn and Matplotlib. This is the
+  *suggested* sequence and what a new user is guided through; topics are **not
+  hard-locked** (users can jump to weak spots). `prerequisites` drive
+  *suggestion*, not gating.
+- **A course is a `subject`, a tile is a topic.** `TOPICS` in `lib/content.js` is
+  flat — one tile per topic, in path order, no grouping code. The `subject` field
+  exists only so `achievements.js` can generate one "X Wizard" per distinct
+  subject, which is why seaborn and matplotlib are their own subjects rather than
+  extra pandas topics.
 - **Lesson (`lesson/[id].js`)** — 30–90s visual intro to a concept before its
   cards. Concise, example-driven.
 - **Home** — "what do I do right now": greeting, streak, big **cards-due**
@@ -225,7 +322,8 @@ state (new packs add cards without wiping progress).
   **cram mode** reshuffles WITHOUT writing SM-2 dates (never calls `schedule()`).
   Also hosts **workflow challenges**: multi-step real pandas pipelines (e.g.
   read CSV → drop duplicates → parse dates → groupby → aggregate → sort →
-  export) that test whole workflows, not single methods.
+  chart) that test whole workflows, not single methods. A step carrying a
+  `chart` draws instead of reshaping, so it leaves the table state untouched.
 - **Stats** — calendar heatmap, retention line, weakest topics (lowest avg
   `ef`), achievements.
 - **Reference** — MDN-style per method: purpose, syntax, parameters, returns,
@@ -304,6 +402,10 @@ review behind an account.
 9. Practice (incl. workflow challenges), Stats, Reference, global search.
 10. Post-MVP: favorites, notes, achievements, dynamic difficulty tuning.
 11. Supabase sync + optional accounts (§9). ✅ done
+12. Charts (§5b) + the pandas Plotting topic and the seaborn and matplotlib
+    courses. ✅ done — 262 cards across 18 decks, 53 carrying a verified chart
+    spec. `python scripts/verify_content.py` re-checks every one against real
+    pandas/seaborn/matplotlib.
 
 **MVP line:** one verified GroupBy deck + a lesson + flashcard Review + Home
 with streak is a real, shippable loop. Ship that before expanding.
@@ -369,6 +471,7 @@ Both migrations only touch `review_log`. Streak, due dates, ease, stars, notes,
 lesson progress and achievements live in `card_state`/`app_meta` and are never
 at risk from either one.
 
-Unrelated in-flight work is also uncommitted in the tree: `src/app/practice/race/`,
-`src/components/race/`, `src/hooks/use-race-*.js`, `src/lib/race/`,
-`assets/sounds/*.wav`. Not part of the accounts change.
+Race mode has since been committed (`5f156f8`). The charting work of §5b — the
+Plotting topic and the seaborn and matplotlib courses — is in the tree and
+verified but not part of the accounts change either; the cutover checklist above
+is unaffected by it.

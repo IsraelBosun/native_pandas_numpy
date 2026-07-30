@@ -1,5 +1,6 @@
 import { StyleSheet, View } from 'react-native';
 
+import { ChartView } from '@/components/chart-view';
 import { CodeBlock } from '@/components/code-block';
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
@@ -19,6 +20,8 @@ export function LessonStep({ step }) {
               {step.output}
             </ThemedText>
           ) : null}
+          {/* A plotting example's output is the chart, not printed text. */}
+          {step.chart ? <ChartView chart={step.chart} /> : null}
         </ThemedView>
         {step.caption ? <ThemedText themeColor="textSecondary">{step.caption}</ThemedText> : null}
       </View>

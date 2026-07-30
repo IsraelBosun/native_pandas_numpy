@@ -68,6 +68,37 @@ export const TopicHues = {
   },
 };
 
+// Series colors for rendered charts (components/chart-view.jsx). Separate from
+// TopicHues because those are tuned for icons and text on a dark surface and sit
+// too light to work as chart fills — each mode's steps are chosen for *its* own
+// surface (backgroundElement), never flipped automatically from the other.
+//
+// Slots are assigned in this fixed order and never cycled; the order is the
+// colorblind-safety mechanism. Both rows pass the categorical checks (lightness
+// band, chroma floor, protan/deutan/tritan separation, normal-vision floor,
+// contrast vs surface) — re-run the validator before changing any value:
+//   node scripts/validate_palette.js "<hex,hex,…>" --mode light --surface "#FFFFFF"
+//   node scripts/validate_palette.js "<hex,hex,…>" --mode dark  --surface "#161D2B"
+// Charts here carry at most a few series; past 4, facet instead of extending this.
+export const ChartColors = {
+  light: ['#2F6FED', '#C2410C', '#0D9488', '#7C3AED'],
+  dark: ['#3B82F6', '#EA580C', '#0D9488', '#8B5CF6'],
+};
+
+// Sequential ramp for heatmap cells, where colour encodes magnitude rather than
+// identity. One hue, monotone lightness, index 0 = the lowest value. Light mode
+// runs light→dark; dark mode runs dark→light so high values stay the bright end
+// — a deliberate choice per mode, not an automatic flip of the other.
+//
+// Validated with the ordinal checks (monotone L, adjacent ΔL ≥ 0.06, the step
+// nearest the surface clears 2:1, single hue). Re-run before changing a value:
+//   node scripts/validate_palette.js "<hex,…>" --ordinal --mode light --surface "#FFFFFF"
+//   node scripts/validate_palette.js "<hex,…>" --ordinal --mode dark  --surface "#161D2B"
+export const ChartSequential = {
+  light: ['#88B8FA', '#3B82F6', '#2563EB', '#1E40AF'],
+  dark: ['#2B5E93', '#2563EB', '#60A5FA', '#93C5FD'],
+};
+
 // One gradient per screen, max — currently only the Home hero card.
 export const Gradients = {
   hero: {

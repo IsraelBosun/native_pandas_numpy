@@ -1,5 +1,6 @@
 import { Pressable, StyleSheet, View } from 'react-native';
 
+import { ChartView } from '@/components/chart-view';
 import { CodeBlock } from '@/components/code-block';
 import { ThemedText } from '@/components/themed-text';
 import { Collapsible } from '@/components/ui/collapsible';
@@ -25,6 +26,15 @@ export function ReferenceEntry({ entry, onMethodPress }) {
               Example
             </ThemedText>
             <CodeBlock code={entry.example} copyable />
+          </View>
+        ) : null}
+
+        {entry.chart ? (
+          <View style={styles.field}>
+            <ThemedText type="label" themeColor="textSecondary">
+              Output
+            </ThemedText>
+            <ChartView chart={entry.chart} />
           </View>
         ) : null}
 

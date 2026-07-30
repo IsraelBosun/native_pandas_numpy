@@ -7,6 +7,7 @@ export function ReviewCard({ card, onReveal, onGrade, onToggleFavorite, onNoteCh
     <CardShell
       prompt={card.prompt}
       dataset={card.dataset}
+      chart={card.chart}
       favorite={card.favorite}
       onToggleFavorite={onToggleFavorite}
       note={card.note}

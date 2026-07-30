@@ -6,6 +6,10 @@ and assert the resulting frame matches the step's `tableAfter` state. Also
 checks step `table` references point at the state the pipeline is actually
 in when the step is shown.
 
+A step carrying a `chart` spec is a charting step: it draws rather than
+reshaping, so its output is compared against what matplotlib actually plotted
+and the pipeline's table state carries on unchanged.
+
 Run: python scripts/verify_challenges.py
 """
 
@@ -15,6 +19,8 @@ from pathlib import Path
 
 import numpy as np
 import pandas as pd
+
+from chart_extract import close_all, compare, extract
 
 CHALLENGES_DIR = Path(__file__).resolve().parent.parent / "src" / "content" / "challenges"
 
@@ -71,6 +77,17 @@ def verify_challenge(path):
         exec(code, namespace)  # noqa: S102 - trusted repo content, that's the point
         result_var = step.get("resultVar", "df")
         result = namespace[result_var]
+
+        if step.get("chart"):
+            # A charting step draws; it doesn't advance the table state.
+            try:
+                compare(step["chart"], extract(result, step["chart"]["kind"]))
+            except Exception as exc:  # noqa: BLE001 - this is a content linter
+                errors.append(f"{step['id']}: chart doesn't match what `{code}` drew: {exc}")
+            finally:
+                close_all()
+            continue
+
         if isinstance(result, pd.Series):
             result = result.reset_index()
 

@@ -15,6 +15,7 @@ export function cardToEntry(card) {
     why: card.why,
     commonMistake: card.commonMistake,
     example: card.example,
+    chart: card.chart,
     relatedMethods: card.relatedMethods,
   };
 }

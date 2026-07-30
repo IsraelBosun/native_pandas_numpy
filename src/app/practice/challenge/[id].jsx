@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import { Pressable, ScrollView, StyleSheet, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
+import { ChartView } from '@/components/chart-view';
 import { CodeBlock } from '@/components/code-block';
 import { ChallengeStep } from '@/components/practice/challenge-step';
 import { ProgressBar } from '@/components/progress-bar';
@@ -163,8 +164,12 @@ function Complete({ challenge, correctCount, total, completedAt, onDone, onRedo,
     .map((step) => step.codeLine)
     .filter(Boolean)
     .join('\n');
-  const lastStep = challenge.steps[challenge.steps.length - 1];
-  const finalTable = challenge.tableStates[lastStep.tableAfter];
+  // A pipeline can end in a chart rather than a table, so the result section
+  // shows the final chart if there is one, and otherwise the last table state
+  // any step produced — which is no longer necessarily the last step's.
+  const finalChart = [...challenge.steps].reverse().find((step) => step.chart)?.chart;
+  const lastTableStep = [...challenge.steps].reverse().find((step) => step.tableAfter);
+  const finalTable = lastTableStep && challenge.tableStates[lastTableStep.tableAfter];
   const hasScore = correctCount != null && total != null;
 
   return (
@@ -191,10 +196,13 @@ function Complete({ challenge, correctCount, total, completedAt, onDone, onRedo,
         <ThemedText type="label" themeColor="textSecondary" style={styles.sectionLabel}>
           Result
         </ThemedText>
-        <DataTable
-          tables={[{ name: lastStep.resultVar ?? challenge.datasetName, table: finalTable }]}
-          maxRows={MAX_TABLE_ROWS}
-        />
+        {finalTable && (
+          <DataTable
+            tables={[{ name: lastTableStep.resultVar ?? challenge.datasetName, table: finalTable }]}
+            maxRows={MAX_TABLE_ROWS}
+          />
+        )}
+        {finalChart && <ChartView chart={finalChart} />}
       </ScrollView>
       {onRedo && <SecondaryButton label="Redo challenge" onPress={onRedo} theme={theme} />}
       <PrimaryButton label="Done" onPress={onDone} theme={theme} />

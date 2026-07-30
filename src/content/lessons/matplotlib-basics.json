@@ -1,0 +1,82 @@
+{
+  "topic": "matplotlib-basics",
+  "version": "1.0.0",
+  "steps": [
+    {
+      "type": "concept",
+      "heading": "Figure, axes, and why it matters",
+      "body": "A figure is the whole canvas. An axes is one plot area inside it — the thing with an x-axis, a y-axis and your data on it. Every pandas and seaborn chart you have drawn so far quietly created both. Learning matplotlib is really learning to make them yourself, so you can put several plots in one figure and control each one."
+    },
+    {
+      "type": "example",
+      "heading": "The line that starts everything",
+      "code": "fig, ax = plt.subplots()\ndf.groupby('region')['revenue'].sum().plot(kind='bar', ax=ax)",
+      "caption": "plt.subplots() returns a pair — the figure and the axes. Passing ax= tells pandas to draw onto your axes instead of making its own. This is the bridge between the two libraries.",
+      "chart": {
+        "kind": "bar",
+        "title": "Revenue per region",
+        "xLabel": "region",
+        "yLabel": "revenue",
+        "categories": ["East", "North", "West"],
+        "series": [{ "name": "revenue", "values": [225, 115, 245] }]
+      }
+    },
+    {
+      "type": "concept",
+      "heading": "Drawing directly, and labelling by hand",
+      "body": "The axes has its own drawing methods — ax.bar, ax.plot, ax.scatter, ax.hist — and they take plain sequences rather than a DataFrame. Nothing is labelled for you: pandas names the x-axis from the index, but matplotlib has no column names to work from, so set_title, set_xlabel and set_ylabel are all yours."
+    },
+    {
+      "type": "example",
+      "heading": "Everything is a setter",
+      "code": "fig, ax = plt.subplots()\nax.bar(['East', 'North', 'West'], [225, 115, 245])\nax.set_title('Revenue per region')\nax.set_ylabel('revenue')",
+      "caption": "The pattern is regular: set_ plus the thing you want. Once you know set_title you can guess set_xlabel, set_ylim, set_xticks.",
+      "chart": {
+        "kind": "bar",
+        "title": "Revenue per region",
+        "xLabel": "region",
+        "yLabel": "revenue",
+        "categories": ["East", "North", "West"],
+        "series": [{ "name": "revenue", "values": [225, 115, 245] }]
+      }
+    },
+    {
+      "type": "concept",
+      "heading": "Several plots in one figure",
+      "body": "plt.subplots(rows, cols) hands back an array of axes instead of one, and you draw on each. For a 2D grid, .flat lets you loop over every panel in a single pass rather than nesting two loops."
+    },
+    {
+      "type": "example",
+      "heading": "Share the scale, or mislead the reader",
+      "code": "fig, axes = plt.subplots(1, 2, sharey=True)\naxes[0].bar(['Bags', 'Shoes'], [125, 120])\naxes[1].bar(['Bags', 'Shoes'], [60, 165])",
+      "caption": "This is the one that bites. By default every panel scales itself, so a small group's bars can look as tall as a big group's. sharey=True puts them on one axis — without it, side-by-side panels are not comparable.",
+      "chart": {
+        "kind": "panels",
+        "columns": 2,
+        "shareDomain": true,
+        "panels": [
+          {
+            "kind": "bar",
+            "categories": ["Bags", "Shoes"],
+            "series": [{ "name": "revenue", "values": [125, 120] }]
+          },
+          {
+            "kind": "bar",
+            "categories": ["Bags", "Shoes"],
+            "series": [{ "name": "revenue", "values": [60, 165] }]
+          }
+        ]
+      }
+    },
+    {
+      "type": "concept",
+      "heading": "Two styles, and why to prefer one",
+      "body": "plt.plot() draws onto a figure matplotlib creates and remembers as 'current', and plt.gca() hands that axes back. It is handy in a notebook. In anything longer, use fig, ax = plt.subplots() and call methods on ax — the explicit style never leaves you guessing which plot a command landed on."
+    },
+    {
+      "type": "concept",
+      "heading": "Saving, and what comes next",
+      "body": "fig.savefig('revenue.png') writes the figure to a file — pass dpi= for a sharper image and bbox_inches='tight' to crop the whitespace. In a notebook the figure displays by itself; in a script you need plt.show(). The cards ahead drill the figure-and-axes model, drawing straight onto an axes, labelling, and multi-panel figures."
+    }
+  ]
+}

@@ -1,159 +1,500 @@
 {
-  "version": "1.0.0",
-  "id": "clean_sales_log",
-  "title": "Clean the sales log",
-  "subtitle": "Dedupe, parse dates, handle gaps, total by month",
-  "difficulty": "easy",
-  "minutes": 3,
-  "goal": "A raw sales export is a mess: duplicated rows, dates stored as text, missing values. Clean it up and produce total revenue per month.",
-  "datasetName": "df",
-  "tableStates": {
-    "step0": {
-      "kind": "table",
-      "columns": ["order_date", "region", "product", "revenue", "units"],
-      "rows": [
-        ["Jan 05, 2024", "West", "Shoes", 120, 12],
-        ["Jan 06, 2024", "East", "Shoes", 95, 9],
-        ["Jan 06, 2024", "East", "Shoes", 95, 9],
-        ["Jan 12, 2024", "West", "Bags", null, 8],
-        ["Jan 18, 2024", "North", "Shoes", 50, 5],
-        ["Feb 02, 2024", "West", "Bags", 80, null],
-        ["Feb 03, 2024", "East", "Bags", 60, 6],
-        ["Feb 03, 2024", "East", "Bags", 60, 6],
-        ["Feb 10, 2024", "North", "Bags", null, 4],
-        ["Feb 14, 2024", "West", "Shoes", 110, 11]
-      ]
-    },
-    "step1": {
-      "kind": "table",
-      "columns": ["order_date", "region", "product", "revenue", "units"],
-      "rows": [
-        ["Jan 05, 2024", "West", "Shoes", 120, 12],
-        ["Jan 06, 2024", "East", "Shoes", 95, 9],
-        ["Jan 12, 2024", "West", "Bags", null, 8],
-        ["Jan 18, 2024", "North", "Shoes", 50, 5],
-        ["Feb 02, 2024", "West", "Bags", 80, null],
-        ["Feb 03, 2024", "East", "Bags", 60, 6],
-        ["Feb 10, 2024", "North", "Bags", null, 4],
-        ["Feb 14, 2024", "West", "Shoes", 110, 11]
-      ]
-    },
-    "step2": {
-      "kind": "table",
-      "columns": ["order_date", "region", "product", "revenue", "units"],
-      "rows": [
-        ["2024-01-05", "West", "Shoes", 120, 12],
-        ["2024-01-06", "East", "Shoes", 95, 9],
-        ["2024-01-12", "West", "Bags", null, 8],
-        ["2024-01-18", "North", "Shoes", 50, 5],
-        ["2024-02-02", "West", "Bags", 80, null],
-        ["2024-02-03", "East", "Bags", 60, 6],
-        ["2024-02-10", "North", "Bags", null, 4],
-        ["2024-02-14", "West", "Shoes", 110, 11]
-      ]
-    },
-    "step3": {
-      "kind": "table",
-      "columns": ["order_date", "region", "product", "revenue", "units"],
-      "rows": [
-        ["2024-01-05", "West", "Shoes", 120, 12],
-        ["2024-01-06", "East", "Shoes", 95, 9],
-        ["2024-01-18", "North", "Shoes", 50, 5],
-        ["2024-02-02", "West", "Bags", 80, null],
-        ["2024-02-03", "East", "Bags", 60, 6],
-        ["2024-02-14", "West", "Shoes", 110, 11]
-      ]
-    },
-    "step4": {
-      "kind": "table",
-      "columns": ["order_date", "region", "product", "revenue", "units", "month"],
-      "rows": [
-        ["2024-01-05", "West", "Shoes", 120, 12, 1],
-        ["2024-01-06", "East", "Shoes", 95, 9, 1],
-        ["2024-01-18", "North", "Shoes", 50, 5, 1],
-        ["2024-02-02", "West", "Bags", 80, null, 2],
-        ["2024-02-03", "East", "Bags", 60, 6, 2],
-        ["2024-02-14", "West", "Shoes", 110, 11, 2]
-      ]
-    },
-    "step5": {
-      "kind": "table",
-      "columns": ["month", "revenue"],
-      "rows": [
-        [1, 265],
-        [2, 250]
-      ]
-    }
+ "version": "1.0.0",
+ "id": "clean_sales_log",
+ "title": "Clean the sales log",
+ "subtitle": "Dedupe, parse dates, handle gaps, total by month",
+ "difficulty": "easy",
+ "minutes": 3,
+ "goal": "A raw sales export is a mess: duplicated rows, dates stored as text, missing values. Clean it up and produce total revenue per month.",
+ "datasetName": "df",
+ "tableStates": {
+  "step0": {
+   "kind": "table",
+   "columns": [
+    "order_date",
+    "region",
+    "product",
+    "revenue",
+    "units"
+   ],
+   "rows": [
+    [
+     "Jan 05, 2024",
+     "West",
+     "Shoes",
+     120,
+     12
+    ],
+    [
+     "Jan 06, 2024",
+     "East",
+     "Shoes",
+     95,
+     9
+    ],
+    [
+     "Jan 06, 2024",
+     "East",
+     "Shoes",
+     95,
+     9
+    ],
+    [
+     "Jan 12, 2024",
+     "West",
+     "Bags",
+     null,
+     8
+    ],
+    [
+     "Jan 18, 2024",
+     "North",
+     "Shoes",
+     50,
+     5
+    ],
+    [
+     "Feb 02, 2024",
+     "West",
+     "Bags",
+     80,
+     null
+    ],
+    [
+     "Feb 03, 2024",
+     "East",
+     "Bags",
+     60,
+     6
+    ],
+    [
+     "Feb 03, 2024",
+     "East",
+     "Bags",
+     60,
+     6
+    ],
+    [
+     "Feb 10, 2024",
+     "North",
+     "Bags",
+     null,
+     4
+    ],
+    [
+     "Feb 14, 2024",
+     "West",
+     "Shoes",
+     110,
+     11
+    ]
+   ]
   },
-  "steps": [
-    {
-      "id": "inspect",
-      "type": "multiple-choice",
-      "prompt": "Look before you touch. The order_date column prints values like 'Jan 05, 2024'. What is df['order_date'].dtype right now?",
-      "answer": "object",
-      "distractors": ["datetime64[ns]", "date"],
-      "why": "Text that looks like a date is still just text, object dtype. Until it's parsed, you can't sort by real time or use .dt accessors.",
-      "table": "step0"
-    },
-    {
-      "id": "dedupe",
-      "type": "fill-blank",
-      "prompt": "The export ran twice, so some rows appear twice. Remove exact duplicate rows.",
-      "starterCode": "df = df.___()",
-      "tokens": ["drop_duplicates"],
-      "distractors": ["dropna", "unique", "drop"],
-      "why": "drop_duplicates() keeps the first occurrence of each fully-identical row. unique() only works on a single column, and dropna() removes missing values, a different problem.",
-      "table": "step0",
-      "tableAfter": "step1",
-      "codeLine": "df = df.drop_duplicates()"
-    },
-    {
-      "id": "parse_dates",
-      "type": "fill-blank",
-      "prompt": "Turn the text dates into real datetimes so pandas understands time.",
-      "starterCode": "df['order_date'] = pd.___(df['order_date'])",
-      "tokens": ["to_datetime"],
-      "distractors": ["datetime", "parse_dates", "astype"],
-      "why": "pd.to_datetime parses the strings into datetime64 values. parse_dates only exists as a read_csv argument, and astype('datetime64') is stricter and less forgiving about formats.",
-      "table": "step1",
-      "tableAfter": "step2",
-      "codeLine": "df['order_date'] = pd.to_datetime(df['order_date'])"
-    },
-    {
-      "id": "missing",
-      "type": "multiple-choice",
-      "prompt": "revenue is missing in 2 rows and units is missing in 1. We need monthly revenue totals. What's the right move?",
-      "answer": "df = df.dropna(subset=['revenue'])",
-      "distractors": ["df = df.dropna()", "df = df.fillna(0)"],
-      "why": "subset=['revenue'] drops only the rows that are useless for this question. Plain dropna() would also delete the Feb 02 row that's merely missing units, throwing away real revenue. fillna(0) invents numbers and pollutes every other column too.",
-      "table": "step2",
-      "tableAfter": "step3",
-      "codeLine": "df = df.dropna(subset=['revenue'])"
-    },
-    {
-      "id": "month_column",
-      "type": "fill-blank",
-      "prompt": "Add a month column to group by.",
-      "starterCode": "df['month'] = df['order_date'].dt.___",
-      "tokens": ["month"],
-      "distractors": ["month()", "to_month", "strftime"],
-      "why": ".dt.month extracts the month number from each datetime. It's a property, not a method, no parentheses.",
-      "table": "step3",
-      "tableAfter": "step4",
-      "codeLine": "df['month'] = df['order_date'].dt.month"
-    },
-    {
-      "id": "aggregate",
-      "type": "fill-blank",
-      "prompt": "Finish it: total revenue per month.",
-      "starterCode": "monthly = df.groupby('month')['revenue'].___()",
-      "tokens": ["sum"],
-      "distractors": ["total", "count", "add"],
-      "why": "Select the revenue column before aggregating so the result is a clean one-column answer. count() would tally rows, not money.",
-      "table": "step4",
-      "tableAfter": "step5",
-      "codeLine": "monthly = df.groupby('month')['revenue'].sum()",
-      "resultVar": "monthly"
-    }
-  ]
+  "step1": {
+   "kind": "table",
+   "columns": [
+    "order_date",
+    "region",
+    "product",
+    "revenue",
+    "units"
+   ],
+   "rows": [
+    [
+     "Jan 05, 2024",
+     "West",
+     "Shoes",
+     120,
+     12
+    ],
+    [
+     "Jan 06, 2024",
+     "East",
+     "Shoes",
+     95,
+     9
+    ],
+    [
+     "Jan 12, 2024",
+     "West",
+     "Bags",
+     null,
+     8
+    ],
+    [
+     "Jan 18, 2024",
+     "North",
+     "Shoes",
+     50,
+     5
+    ],
+    [
+     "Feb 02, 2024",
+     "West",
+     "Bags",
+     80,
+     null
+    ],
+    [
+     "Feb 03, 2024",
+     "East",
+     "Bags",
+     60,
+     6
+    ],
+    [
+     "Feb 10, 2024",
+     "North",
+     "Bags",
+     null,
+     4
+    ],
+    [
+     "Feb 14, 2024",
+     "West",
+     "Shoes",
+     110,
+     11
+    ]
+   ]
+  },
+  "step2": {
+   "kind": "table",
+   "columns": [
+    "order_date",
+    "region",
+    "product",
+    "revenue",
+    "units"
+   ],
+   "rows": [
+    [
+     "2024-01-05",
+     "West",
+     "Shoes",
+     120,
+     12
+    ],
+    [
+     "2024-01-06",
+     "East",
+     "Shoes",
+     95,
+     9
+    ],
+    [
+     "2024-01-12",
+     "West",
+     "Bags",
+     null,
+     8
+    ],
+    [
+     "2024-01-18",
+     "North",
+     "Shoes",
+     50,
+     5
+    ],
+    [
+     "2024-02-02",
+     "West",
+     "Bags",
+     80,
+     null
+    ],
+    [
+     "2024-02-03",
+     "East",
+     "Bags",
+     60,
+     6
+    ],
+    [
+     "2024-02-10",
+     "North",
+     "Bags",
+     null,
+     4
+    ],
+    [
+     "2024-02-14",
+     "West",
+     "Shoes",
+     110,
+     11
+    ]
+   ]
+  },
+  "step3": {
+   "kind": "table",
+   "columns": [
+    "order_date",
+    "region",
+    "product",
+    "revenue",
+    "units"
+   ],
+   "rows": [
+    [
+     "2024-01-05",
+     "West",
+     "Shoes",
+     120,
+     12
+    ],
+    [
+     "2024-01-06",
+     "East",
+     "Shoes",
+     95,
+     9
+    ],
+    [
+     "2024-01-18",
+     "North",
+     "Shoes",
+     50,
+     5
+    ],
+    [
+     "2024-02-02",
+     "West",
+     "Bags",
+     80,
+     null
+    ],
+    [
+     "2024-02-03",
+     "East",
+     "Bags",
+     60,
+     6
+    ],
+    [
+     "2024-02-14",
+     "West",
+     "Shoes",
+     110,
+     11
+    ]
+   ]
+  },
+  "step4": {
+   "kind": "table",
+   "columns": [
+    "order_date",
+    "region",
+    "product",
+    "revenue",
+    "units",
+    "month"
+   ],
+   "rows": [
+    [
+     "2024-01-05",
+     "West",
+     "Shoes",
+     120,
+     12,
+     1
+    ],
+    [
+     "2024-01-06",
+     "East",
+     "Shoes",
+     95,
+     9,
+     1
+    ],
+    [
+     "2024-01-18",
+     "North",
+     "Shoes",
+     50,
+     5,
+     1
+    ],
+    [
+     "2024-02-02",
+     "West",
+     "Bags",
+     80,
+     null,
+     2
+    ],
+    [
+     "2024-02-03",
+     "East",
+     "Bags",
+     60,
+     6,
+     2
+    ],
+    [
+     "2024-02-14",
+     "West",
+     "Shoes",
+     110,
+     11,
+     2
+    ]
+   ]
+  },
+  "step5": {
+   "kind": "table",
+   "columns": [
+    "month",
+    "revenue"
+   ],
+   "rows": [
+    [
+     1,
+     265
+    ],
+    [
+     2,
+     250
+    ]
+   ]
+  }
+ },
+ "steps": [
+  {
+   "id": "inspect",
+   "type": "multiple-choice",
+   "prompt": "Look before you touch. The order_date column prints values like 'Jan 05, 2024'. What is df['order_date'].dtype right now?",
+   "answer": "object",
+   "distractors": [
+    "datetime64[ns]",
+    "date"
+   ],
+   "why": "Text that looks like a date is still just text, object dtype. Until it's parsed, you can't sort by real time or use .dt accessors.",
+   "table": "step0"
+  },
+  {
+   "id": "dedupe",
+   "type": "fill-blank",
+   "prompt": "The export ran twice, so some rows appear twice. Remove exact duplicate rows.",
+   "starterCode": "df = df.___()",
+   "tokens": [
+    "drop_duplicates"
+   ],
+   "distractors": [
+    "dropna",
+    "unique",
+    "drop"
+   ],
+   "why": "drop_duplicates() keeps the first occurrence of each fully-identical row. unique() only works on a single column, and dropna() removes missing values, a different problem.",
+   "table": "step0",
+   "tableAfter": "step1",
+   "codeLine": "df = df.drop_duplicates()"
+  },
+  {
+   "id": "parse_dates",
+   "type": "fill-blank",
+   "prompt": "Turn the text dates into real datetimes so pandas understands time.",
+   "starterCode": "df['order_date'] = pd.___(df['order_date'])",
+   "tokens": [
+    "to_datetime"
+   ],
+   "distractors": [
+    "datetime",
+    "parse_dates",
+    "astype"
+   ],
+   "why": "pd.to_datetime parses the strings into datetime64 values. parse_dates only exists as a read_csv argument, and astype('datetime64') is stricter and less forgiving about formats.",
+   "table": "step1",
+   "tableAfter": "step2",
+   "codeLine": "df['order_date'] = pd.to_datetime(df['order_date'])"
+  },
+  {
+   "id": "missing",
+   "type": "multiple-choice",
+   "prompt": "revenue is missing in 2 rows and units is missing in 1. We need monthly revenue totals. What's the right move?",
+   "answer": "df = df.dropna(subset=['revenue'])",
+   "distractors": [
+    "df = df.dropna()",
+    "df = df.fillna(0)"
+   ],
+   "why": "subset=['revenue'] drops only the rows that are useless for this question. Plain dropna() would also delete the Feb 02 row that's merely missing units, throwing away real revenue. fillna(0) invents numbers and pollutes every other column too.",
+   "table": "step2",
+   "tableAfter": "step3",
+   "codeLine": "df = df.dropna(subset=['revenue'])"
+  },
+  {
+   "id": "month_column",
+   "type": "fill-blank",
+   "prompt": "Add a month column to group by.",
+   "starterCode": "df['month'] = df['order_date'].dt.___",
+   "tokens": [
+    "month"
+   ],
+   "distractors": [
+    "month()",
+    "to_month",
+    "strftime"
+   ],
+   "why": ".dt.month extracts the month number from each datetime. It's a property, not a method, no parentheses.",
+   "table": "step3",
+   "tableAfter": "step4",
+   "codeLine": "df['month'] = df['order_date'].dt.month"
+  },
+  {
+   "id": "aggregate",
+   "type": "fill-blank",
+   "prompt": "Finish it: total revenue per month.",
+   "starterCode": "monthly = df.groupby('month')['revenue'].___()",
+   "tokens": [
+    "sum"
+   ],
+   "distractors": [
+    "total",
+    "count",
+    "add"
+   ],
+   "why": "Select the revenue column before aggregating so the result is a clean one-column answer. count() would tally rows, not money.",
+   "table": "step4",
+   "tableAfter": "step5",
+   "codeLine": "monthly = df.groupby('month')['revenue'].sum()",
+   "resultVar": "monthly"
+  },
+  {
+   "id": "chart",
+   "type": "fill-blank",
+   "prompt": "Last step: turn the monthly totals into a chart someone can read at a glance.",
+   "starterCode": "monthly.plot(kind='___')",
+   "tokens": [
+    "bar"
+   ],
+   "distractors": [
+    "scatter",
+    "hist",
+    "pie"
+   ],
+   "why": "Two months is a comparison between categories, so bars are the honest form. A line would imply the value moved continuously between them, and a histogram would throw the months away and bucket the revenue instead.",
+   "table": "step5",
+   "codeLine": "chart = monthly.plot(kind='bar')",
+   "resultVar": "chart",
+   "chart": {
+    "kind": "bar",
+    "title": "Revenue per month",
+    "xLabel": "month",
+    "yLabel": "revenue",
+    "categories": [
+     "1",
+     "2"
+    ],
+    "series": [
+     {
+      "name": "revenue",
+      "values": [
+       265,
+       250
+      ]
+     }
+    ]
+   }
+  }
+ ]
 }

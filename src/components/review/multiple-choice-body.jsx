@@ -2,11 +2,13 @@ import { useMemo, useState } from 'react';
 import { Pressable, StyleSheet, View } from 'react-native';
 import Animated, { FadeInDown } from 'react-native-reanimated';
 
+import { ChartView } from '@/components/chart-view';
 import { CodeBlock } from '@/components/code-block';
 import { ScalePressable, triggerHaptic } from '@/components/scale-pressable';
 import { ThemedText } from '@/components/themed-text';
 import { Radius, Spacing } from '@/constants/theme';
 import { useTheme } from '@/hooks/use-theme';
+import { chartPosition } from '@/lib/chart';
 import { seededShuffle } from '@/lib/shuffle';
 
 // Multiple-choice grades itself the instant an option is picked (correct=4,
@@ -57,6 +59,7 @@ export function MultipleChoiceBody({ card, onGrade }) {
             {isCorrect ? 'Correct' : 'Not quite'}
           </ThemedText>
           <ThemedText themeColor="textSecondary">{card.why}</ThemedText>
+          {card.chart && chartPosition(card.chart) === 'answer' && <ChartView chart={card.chart} />}
           <ScalePressable onPress={() => onGrade(isCorrect ? 4 : 2)} haptic="light" scaleTo={0.97}>
             <View style={[styles.continueButton, { backgroundColor: theme.action }]}>
               <ThemedText type="smallBold" style={styles.continueButtonText}>

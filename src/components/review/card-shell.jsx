@@ -5,15 +5,17 @@ import { StyleSheet, TextInput, View } from 'react-native';
 
 import { DataTable } from './data-table';
 
+import { ChartView } from '@/components/chart-view';
 import { ScalePressable, triggerHaptic } from '@/components/scale-pressable';
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
 import { Radius, Spacing } from '@/constants/theme';
 import { useTheme } from '@/hooks/use-theme';
+import { chartPosition } from '@/lib/chart';
 
 // Star + note only render when a session wires them up (recordReview-backed
 // Review; not cram/Practice, which never touches persisted card_state).
-export function CardShell({ prompt, dataset, favorite, onToggleFavorite, note, onNoteChange, onNoteFocus, children }) {
+export function CardShell({ prompt, dataset, chart, favorite, onToggleFavorite, note, onNoteChange, onNoteFocus, children }) {
   const theme = useTheme();
   const [noteOpen, setNoteOpen] = useState(!!note);
   const [draftNote, setDraftNote] = useState(note ?? '');
@@ -55,6 +57,9 @@ export function CardShell({ prompt, dataset, favorite, onToggleFavorite, note, o
       </View>
       <ThemedText style={styles.prompt}>{prompt}</ThemedText>
       <DataTable dataset={dataset} />
+      {/* Only "read this chart" cards show their chart up front; a result
+          chart would otherwise hand over the answer before the recall. */}
+      {chart && chartPosition(chart) === 'prompt' && <ChartView chart={chart} />}
 
       {noteOpen && onNoteChange && (
         <TextInput
