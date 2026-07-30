@@ -53,11 +53,26 @@ seems to need one, stop and flag it. Supabase sync is designed-for but built
 later (§9).
 
 **Quirk:** `expo-audio` merges `FOREGROUND_SERVICE`, `FOREGROUND_SERVICE_MEDIA_PLAYBACK`
-and (by default) `RECORD_AUDIO` into the Android manifest even though we only play
-short SFX — Play Console then demands a foreground-service justification we can't
-give. `app.json` strips them via `android.blockedPermissions` + the plugin's
-`recordAudioAndroid: false`; keep it that way, and re-check the AAB's permissions
-in Play Console after any audio-dependency bump.
+and `RECORD_AUDIO` into the Android manifest even though we only play short SFX —
+Play Console then demands a foreground-service justification we can't give, and a
+microphone permission we have no use for. All three are stripped by
+`android.blockedPermissions` in `app.json`. Keep it that way.
+
+**`recordAudioAndroid: false` does not work — do not rely on it.** The option is
+set on the `expo-audio` plugin and looks right, but `RECORD_AUDIO` was still
+requested in the 1.1.0 AAB (versionCode 5). `blockedPermissions` is the mechanism
+that actually holds, verified in the built artifact. The plugin option is left in
+place as a belt-and-braces measure, not as the fix.
+
+**Verify in the artifact, not in the config.** The config resolving correctly
+proves nothing — that is exactly how RECORD_AUDIO slipped through. After any
+audio-dependency bump, or any tool that rewrites the android block (`eas
+update:configure` does), check the built AAB. `bundletool dump manifest` needs
+Java 11+; failing that, the manifest inside `base/manifest/AndroidManifest.xml`
+is aapt2 protobuf whose permission strings are plain UTF-8, so a byte scan for
+`android\.permission\.[A-Z_0-9]+` finds them — but beware that `"permission"` is a
+substring of `"uses-permission"`, which will silently report every request as a
+mere definition if matched naively.
 
 ---
 

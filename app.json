@@ -24,7 +24,8 @@
       "softwareKeyboardLayoutMode": "resize",
       "blockedPermissions": [
         "android.permission.FOREGROUND_SERVICE",
-        "android.permission.FOREGROUND_SERVICE_MEDIA_PLAYBACK"
+        "android.permission.FOREGROUND_SERVICE_MEDIA_PLAYBACK",
+        "android.permission.RECORD_AUDIO"
       ],
       "runtimeVersion": {
         "policy": "appVersion"
