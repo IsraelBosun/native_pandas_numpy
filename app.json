@@ -25,7 +25,10 @@
       "blockedPermissions": [
         "android.permission.FOREGROUND_SERVICE",
         "android.permission.FOREGROUND_SERVICE_MEDIA_PLAYBACK"
-      ]
+      ],
+      "runtimeVersion": {
+        "policy": "appVersion"
+      }
     },
     "web": {
       "output": "single",
@@ -65,6 +68,9 @@
         "projectId": "dd7dfb01-91d9-4046-88c1-d079855f1614"
       }
     },
-    "owner": "israelbosun"
+    "owner": "israelbosun",
+    "updates": {
+      "url": "https://u.expo.dev/dd7dfb01-91d9-4046-88c1-d079855f1614"
+    }
   }
 }

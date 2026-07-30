@@ -8,7 +8,8 @@
       "env": {
         "EXPO_PUBLIC_SUPABASE_URL": "https://fgvkhhrrmvqqjottgnlo.supabase.co",
         "EXPO_PUBLIC_SUPABASE_ANON_KEY": "sb_publishable_upv0hs9oCDLVrEZXkCkxxw_bpsW9CI-"
-      }
+      },
+      "channel": "base"
     },
     "development": {
       "extends": "base",
@@ -16,18 +17,21 @@
       "distribution": "internal",
       "android": {
         "buildType": "apk"
-      }
+      },
+      "channel": "development"
     },
     "preview": {
       "extends": "base",
       "distribution": "internal",
       "android": {
         "buildType": "apk"
-      }
+      },
+      "channel": "preview"
     },
     "production": {
       "extends": "base",
-      "autoIncrement": true
+      "autoIncrement": true,
+      "channel": "production"
     }
   },
   "submit": {
