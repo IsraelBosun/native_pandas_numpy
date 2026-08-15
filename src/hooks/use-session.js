@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useState } from 'react';
 
 import { checkAchievements, getDueCards, recordReview, setFavorite, setNote } from '@/lib/cards';
+import { rescheduleReminders } from '@/lib/notifications';
 import { syncNow } from '@/lib/sync';
 import { xpForGrade } from '@/lib/xp';
 
@@ -40,11 +41,14 @@ export function useSession({ topic } = {}) {
   // Push this session's progress to Supabase once the queue is done —
   // fire-and-forget, so an offline session ends exactly like before. Same
   // moment, check for newly-unlocked achievements (perfect-session needs the
-  // final missed/reviewed tally, which only exists once the queue is done).
+  // final missed/reviewed tally, which only exists once the queue is done)
+  // and rebuild the reminder plan, since this session just moved every due
+  // date it touched — reminders are only ever as good as their last rebuild.
   useEffect(() => {
     if (complete && !loading) {
       syncNow();
       checkAchievements({ perfectSession: stats.reviewed > 0 && stats.missed === 0 }).then(setNewAchievements);
+      rescheduleReminders().catch(() => {}); // reminders are decoration — never break a session
     }
   }, [complete, loading, stats]);
 

@@ -1,14 +1,17 @@
 import { Platform } from 'react-native';
 
 import {
+  getAllDueDates,
   getNotificationsEnabled,
-  getScheduledReminderId,
+  getRecentReviewHours,
+  getScheduledReminderIds,
+  getStreakState,
   setNotificationsEnabled as persistEnabled,
-  setScheduledReminderId,
+  setScheduledReminderIds,
 } from './cards';
+import { todayISO } from './date';
+import { planReminders } from './reminders';
 
-const REMINDER_HOUR = 18;
-const REMINDER_MINUTE = 0;
 const CHANNEL_ID = 'daily-reminder';
 
 export { getNotificationsEnabled };
@@ -31,19 +34,85 @@ async function ensureChannel() {
   });
 }
 
-async function cancelExistingReminder() {
-  const id = await getScheduledReminderId();
-  if (id) {
-    const Notifications = loadNotifications();
+async function cancelExistingReminders() {
+  const ids = await getScheduledReminderIds();
+  if (ids.length === 0) return;
+
+  const Notifications = loadNotifications();
+  for (const id of ids) {
     await Notifications.cancelScheduledNotificationAsync(id).catch(() => {});
-    await setScheduledReminderId(null);
   }
+  await setScheduledReminderIds([]);
 }
 
-// Requests permission, schedules a repeating daily reminder, and persists
-// both the on/off flag and the OS-assigned schedule id (so it can be
-// cancelled later). Returns false if unsupported (web) or the user denied
-// the permission prompt — callers should revert their toggle UI in that case.
+// Books one plan entry. DATE triggers need a real Date; the plan speaks in
+// local calendar dates, so it is constructed with local-time components.
+async function bookEntry(Notifications, entry) {
+  const [year, month, day] = entry.date.split('-').map(Number);
+  const when = new Date(year, month - 1, day, entry.hour, entry.minute, 0, 0);
+
+  // A plan entry for earlier today is already past by the time we book it —
+  // scheduling it would fire immediately, which reads as a bug to the user.
+  if (when.getTime() <= Date.now()) return null;
+
+  return Notifications.scheduleNotificationAsync({
+    content: { title: entry.title, body: entry.body },
+    trigger: {
+      type: Notifications.SchedulableTriggerInputTypes.DATE,
+      date: when,
+      channelId: Platform.OS === 'android' ? CHANNEL_ID : undefined,
+    },
+  });
+}
+
+// Cancel everything pending, then book the fresh plan. Always both, always in
+// that order — a reschedule that only adds is how you end up double-notifying.
+// Safe to call whenever; it is a no-op when reminders are off.
+export async function rescheduleReminders({ today = todayISO() } = {}) {
+  if (Platform.OS === 'web') return [];
+  if (!(await getNotificationsEnabled())) return [];
+
+  const Notifications = loadNotifications();
+  const granted = await Notifications.getPermissionsAsync()
+    .then((result) => result.status === 'granted')
+    .catch(() => false);
+
+  // Permission revoked in system settings since the toggle was flipped: stop
+  // claiming reminders are on rather than silently booking into the void.
+  if (!granted) {
+    await cancelExistingReminders();
+    await persistEnabled(false);
+    return [];
+  }
+
+  await ensureChannel();
+  await cancelExistingReminders();
+
+  const [dueDates, reviewHours, streak] = await Promise.all([
+    getAllDueDates(),
+    getRecentReviewHours(),
+    getStreakState(),
+  ]);
+
+  const plan = planReminders({
+    dueDates,
+    reviewHours,
+    streak: streak.count,
+    lastStudyDate: streak.lastStudyDate,
+    today,
+  });
+
+  const ids = [];
+  for (const entry of plan) {
+    const id = await bookEntry(Notifications, entry).catch(() => null);
+    if (id) ids.push(id);
+  }
+  await setScheduledReminderIds(ids);
+  return plan;
+}
+
+// Requests permission and books the first plan. Returns false if unsupported
+// (web) or the user denied the prompt — callers should revert their toggle.
 export async function enableDailyReminder() {
   if (Platform.OS === 'web') return false;
 
@@ -54,27 +123,12 @@ export async function enableDailyReminder() {
     return false;
   }
 
-  await ensureChannel();
-  await cancelExistingReminder();
-
-  const id = await Notifications.scheduleNotificationAsync({
-    content: {
-      title: 'Time to review',
-      body: "You've got pandas cards waiting. A few minutes keeps your streak alive.",
-    },
-    trigger: {
-      type: Notifications.SchedulableTriggerInputTypes.DAILY,
-      hour: REMINDER_HOUR,
-      minute: REMINDER_MINUTE,
-    },
-  });
-
-  await setScheduledReminderId(id);
   await persistEnabled(true);
+  await rescheduleReminders();
   return true;
 }
 
 export async function disableDailyReminder() {
-  await cancelExistingReminder();
+  await cancelExistingReminders();
   await persistEnabled(false);
 }

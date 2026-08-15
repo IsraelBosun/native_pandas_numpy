@@ -1,4 +1,5 @@
 import { initDb } from './db';
+import { rescheduleReminders } from './notifications';
 import { seedIfNeeded } from './seed';
 import { syncNow } from './sync';
 
@@ -16,6 +17,10 @@ export function bootstrap() {
       // screens re-query on focus, so it appears on the next visit to Home.
       .then(() => {
         syncNow();
+        // The plan only spans a week, and a user who opens the app without
+        // finishing a session would otherwise drift past the end of it.
+        // Cheap, local, and a no-op when reminders are off.
+        rescheduleReminders().catch(() => {});
       });
   }
   return bootstrapPromise;

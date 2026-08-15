@@ -237,8 +237,8 @@ function NotificationsToggle() {
     <View>
       <SettingsRow
         icon="bell"
-        label="Daily reminder"
-        description="A nudge at 6pm if you haven't studied yet"
+        label="Study reminders"
+        description="Only on days you have cards due, around the time you usually study"
         control={
           <Switch
             value={enabled}
