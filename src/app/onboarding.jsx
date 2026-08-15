@@ -13,6 +13,7 @@ import Animated, {
 } from 'react-native-reanimated';
 
 import { OnboardingSlide } from '@/components/onboarding/onboarding-slide';
+import { ReminderPrompt } from '@/components/reminder-prompt';
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
 import { Radius, Spacing } from '@/constants/theme';
@@ -92,6 +93,7 @@ export default function OnboardingScreen() {
   const scrollRef = useAnimatedRef();
   const scrollX = useSharedValue(0);
   const [index, setIndex] = useState(0);
+  const [asking, setAsking] = useState(false);
   const isLast = index === SLIDES.length - 1;
 
   const scrollHandler = useAnimatedScrollHandler((event) => {
@@ -107,8 +109,16 @@ export default function OnboardingScreen() {
     backgroundColor: interpolateColor(scrollX.value, HERO_INPUT_RANGE, heroColors),
   }));
 
-  function finish() {
+  // Finishing the last slide offers reminders before handing over to Home —
+  // the user has just been told the app runs on streaks and daily practice, so
+  // it is the one moment the ask explains itself. Skipping jumps straight out;
+  // someone bailing on the intro has not earned a permission request.
+  function finish({ askFirst = false } = {}) {
     markOnboardingSeen();
+    if (askFirst) {
+      setAsking(true);
+      return;
+    }
     router.replace('/');
   }
 
@@ -119,10 +129,32 @@ export default function OnboardingScreen() {
 
   function handleNext() {
     if (isLast) {
-      finish();
+      finish({ askFirst: true });
     } else {
       goTo(index + 1);
     }
+  }
+
+  if (asking) {
+    return (
+      <ThemedView style={styles.container}>
+        <Animated.View style={[styles.hero, { height: HERO_HEIGHT }, heroStyle]} />
+        <SafeAreaView style={styles.safeArea}>
+          <View style={styles.askScreen}>
+            <ThemedText type="subtitle" style={styles.askHeading}>
+              You're all set
+            </ThemedText>
+            {/* ReminderPrompt renders nothing where reminders can't be offered
+                (web, or already on) — `onUnavailable` keeps that from stranding
+                the user on an empty screen with no way forward. */}
+            <ReminderPrompt
+              onResolved={() => router.replace('/')}
+              onUnavailable={() => router.replace('/')}
+            />
+          </View>
+        </SafeAreaView>
+      </ThemedView>
+    );
   }
 
   return (
@@ -136,7 +168,7 @@ export default function OnboardingScreen() {
               {SLIDES[index].badge}
             </ThemedText>
           </View>
-          <Pressable onPress={finish} hitSlop={12}>
+          <Pressable onPress={() => finish()} hitSlop={12}>
             <ThemedText type="smallBold" themeColor="textSecondary">
               Skip
             </ThemedText>
@@ -220,6 +252,15 @@ const styles = StyleSheet.create({
     paddingHorizontal: Spacing.four,
     paddingTop: Spacing.four,
     marginBottom: Spacing.three,
+  },
+  askScreen: {
+    flex: 1,
+    justifyContent: 'center',
+    gap: Spacing.four,
+    paddingHorizontal: Spacing.four,
+  },
+  askHeading: {
+    textAlign: 'center',
   },
   badge: {
     paddingHorizontal: Spacing.two,

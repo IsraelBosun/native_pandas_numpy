@@ -7,6 +7,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { DueHeroCard } from '@/components/home/due-hero-card';
 import { GreetingHeader } from '@/components/home/greeting-header';
 import { SaveProgressCard } from '@/components/home/save-progress-card';
+import { ReminderPrompt } from '@/components/reminder-prompt';
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
 import { TopicTile } from '@/components/topic-tile';
@@ -62,6 +63,10 @@ export default function HomeScreen() {
           <DueHeroCard count={dueCards.length} onStartReview={handleStartReview} />
 
           <SaveProgressCard />
+
+          {/* Re-asks 2-4 for reminders. Self-gating: renders nothing until the
+              user has earned another ask, and nothing at all once settled. */}
+          <ReminderPrompt />
 
           <View style={styles.topicsHeader}>
             <ThemedText type="label" themeColor="textSecondary">

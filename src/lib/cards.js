@@ -308,6 +308,20 @@ export async function getStreak(today = todayISO()) {
   return displayStreak(countRow ? Number(countRow.value) : 0, lastRow?.value ?? null, today);
 }
 
+// Raw streak state for the reminder planner: the stored count plus the last
+// study date. getStreak() deliberately reports 0 once a streak has lapsed,
+// which hides exactly the "alive but not yet renewed today" case the streak
+// reminder exists to catch.
+export async function getStreakState() {
+  const db = await getDb();
+  const countRow = await db.getFirstAsync(`SELECT value FROM app_meta WHERE key = 'streak_count'`);
+  const lastRow = await db.getFirstAsync(`SELECT value FROM app_meta WHERE key = 'last_study_date'`);
+  return {
+    count: countRow ? Number(countRow.value) : 0,
+    lastStudyDate: lastRow?.value ?? null,
+  };
+}
+
 // Full catalog with unlock state — for the Stats screen's achievements grid.
 export async function getAchievements() {
   const db = await getDb();
@@ -386,22 +400,113 @@ export async function setNotificationsEnabled(enabled) {
   );
 }
 
-export async function getScheduledReminderId() {
+// A plan books several notifications at once, so the stored value is a JSON
+// array of OS ids. Values written by the old single-id version are read back
+// as a one-element list rather than migrated — they are cancelled and replaced
+// on the next reschedule anyway.
+export async function getScheduledReminderIds() {
   const db = await getDb();
   const row = await db.getFirstAsync(`SELECT value FROM app_meta WHERE key = 'reminder_notification_id'`);
-  return row?.value ?? null;
+  if (!row?.value) return [];
+  try {
+    const parsed = JSON.parse(row.value);
+    return Array.isArray(parsed) ? parsed : [row.value];
+  } catch {
+    return [row.value];
+  }
 }
 
-export async function setScheduledReminderId(id) {
+export async function setScheduledReminderIds(ids) {
   const db = await getDb();
-  if (id) {
+  if (ids?.length) {
     await db.runAsync(
       `INSERT OR REPLACE INTO app_meta (key, value) VALUES ('reminder_notification_id', ?)`,
-      id
+      JSON.stringify(ids)
     );
   } else {
     await db.runAsync(`DELETE FROM app_meta WHERE key = 'reminder_notification_id'`);
   }
+}
+
+// How many times the in-app reminder nudge has been shown and turned down.
+// Tracked because the OS permission dialog can only ever be shown once on
+// iOS — the soft ask is what we are allowed to repeat, and only a "yes" to it
+// ever spends the real prompt.
+export async function getReminderPromptCount() {
+  const db = await getDb();
+  const row = await db.getFirstAsync(`SELECT value FROM app_meta WHERE key = 'reminder_prompt_count'`);
+  return row ? Number(row.value) || 0 : 0;
+}
+
+// Stamps the lifetime review count at the moment of the ask as well as the
+// tally, so a re-ask can require real activity in between rather than
+// reappearing the next time Home mounts.
+export async function bumpReminderPromptCount() {
+  const db = await getDb();
+  const next = (await getReminderPromptCount()) + 1;
+  const reviews = await getTotalReviewCount();
+  await db.runAsync(
+    `INSERT OR REPLACE INTO app_meta (key, value) VALUES ('reminder_prompt_count', ?)`,
+    String(next)
+  );
+  await db.runAsync(
+    `INSERT OR REPLACE INTO app_meta (key, value) VALUES ('reminder_prompt_reviews', ?)`,
+    String(reviews)
+  );
+  return next;
+}
+
+// Reviews recorded at the time of the last ask, or 0 if never asked.
+export async function getReminderPromptReviews() {
+  const db = await getDb();
+  const row = await db.getFirstAsync(`SELECT value FROM app_meta WHERE key = 'reminder_prompt_reviews'`);
+  return row ? Number(row.value) || 0 : 0;
+}
+
+// Set once the user either enables reminders or declines the last soft ask —
+// either way we stop asking for good.
+export async function isReminderPromptSettled() {
+  const db = await getDb();
+  const row = await db.getFirstAsync(`SELECT value FROM app_meta WHERE key = 'reminder_prompt_settled'`);
+  return row?.value === '1';
+}
+
+export async function settleReminderPrompt() {
+  const db = await getDb();
+  await db.runAsync(
+    `INSERT OR REPLACE INTO app_meta (key, value) VALUES ('reminder_prompt_settled', '1')`
+  );
+}
+
+// Every stored due date, for the reminder planner. Cheap even at full deck
+// size — one column, no content join, and the planner buckets it in memory.
+export async function getAllDueDates() {
+  const db = await getDb();
+  const rows = await db.getAllAsync(`SELECT due_date FROM card_state`);
+  return rows.map((row) => row.due_date).filter(Boolean);
+}
+
+// Local hour of each recent session, most recent first, for send-time
+// learning. Grouped by calendar day so a long session counts once and cannot
+// outvote the days around it.
+export async function getRecentReviewHours({ limit = 20 } = {}) {
+  const db = await getDb();
+  const rows = await db.getAllAsync(
+    `SELECT reviewed_at FROM review_log ORDER BY reviewed_at DESC LIMIT ?`,
+    limit * 40
+  );
+
+  const byDay = new Map();
+  for (const row of rows) {
+    // reviewed_at is a UTC ISO timestamp; the hour has to be read back in
+    // local time or the learned slot lands hours off in most timezones.
+    const local = new Date(row.reviewed_at);
+    if (Number.isNaN(local.getTime())) continue;
+    const day = `${local.getFullYear()}-${local.getMonth()}-${local.getDate()}`;
+    if (!byDay.has(day)) byDay.set(day, local.getHours());
+    if (byDay.size >= limit) break;
+  }
+  return [...byDay.values()];
 }
 
 export async function getTotalReviewCount() {

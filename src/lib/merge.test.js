@@ -165,4 +165,13 @@ describe('isSyncableMetaKey', () => {
     expect(isSyncableMetaKey('streak_count')).toBe(true);
     expect(isSyncableMetaKey('achievement:first_review')).toBe(true);
   });
+
+  // Notification permission is per-install: a second device must get its own
+  // asks rather than inheriting a settled "no" from the first one.
+  it('keeps reminder-prompt bookkeeping on the device', () => {
+    expect(isSyncableMetaKey('reminder_prompt_count')).toBe(false);
+    expect(isSyncableMetaKey('reminder_prompt_reviews')).toBe(false);
+    expect(isSyncableMetaKey('reminder_prompt_settled')).toBe(false);
+    expect(isSyncableMetaKey('notifications_enabled')).toBe(false);
+  });
 });

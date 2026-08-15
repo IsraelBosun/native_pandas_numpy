@@ -17,6 +17,12 @@ export const DEVICE_LOCAL_META_KEYS = new Set([
   'theme_preference',
   'notifications_enabled',
   'reminder_notification_id',
+  // How often this device has offered reminders, and whether the question is
+  // closed here. Permission is per-install: a new phone has its own OS prompt
+  // to spend, so it gets its own asks rather than inheriting a settled "no".
+  'reminder_prompt_count',
+  'reminder_prompt_reviews',
+  'reminder_prompt_settled',
 ]);
 
 // Only meaningful as a pair, so they're merged together rather than key by key.
