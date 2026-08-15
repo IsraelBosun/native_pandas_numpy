@@ -8,7 +8,6 @@ import {
   Pressable,
   ScrollView,
   StyleSheet,
-  TextInput,
   View,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -16,7 +15,8 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { ScalePressable } from '@/components/scale-pressable';
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
-import { Fonts, MaxContentWidth, Radius, Spacing } from '@/constants/theme';
+import { AuthField } from '@/components/ui/auth-field';
+import { MaxContentWidth, Radius, Spacing } from '@/constants/theme';
 import { useAuth } from '@/hooks/use-auth';
 import { useTheme } from '@/hooks/use-theme';
 
@@ -118,7 +118,7 @@ export default function AuthScreen() {
             </View>
 
             <View style={styles.fields}>
-              <Field
+              <AuthField
                 label="Email"
                 value={email}
                 onChangeText={setEmail}
@@ -127,12 +127,12 @@ export default function AuthScreen() {
                 textContentType="emailAddress"
                 autoComplete="email"
               />
-              <Field
+              <AuthField
                 label="Password"
                 value={password}
                 onChangeText={setPassword}
                 placeholder={mode === 'signUp' ? 'At least 6 characters' : 'Your password'}
-                secureTextEntry
+                secure
                 textContentType="password"
                 autoComplete={mode === 'signUp' ? 'new-password' : 'current-password'}
                 onSubmitEditing={handleSubmit}
@@ -209,28 +209,6 @@ export default function AuthScreen() {
   );
 }
 
-function Field({ label, ...inputProps }) {
-  const theme = useTheme();
-
-  return (
-    <View style={styles.field}>
-      <ThemedText type="label" themeColor="textSecondary">
-        {label}
-      </ThemedText>
-      <TextInput
-        placeholderTextColor={theme.textSecondary}
-        autoCapitalize="none"
-        autoCorrect={false}
-        style={[
-          styles.input,
-          { color: theme.text, backgroundColor: theme.backgroundElement, borderColor: theme.border },
-        ]}
-        {...inputProps}
-      />
-    </View>
-  );
-}
-
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -258,18 +236,6 @@ const styles = StyleSheet.create({
   },
   fields: {
     gap: Spacing.three,
-  },
-  field: {
-    gap: Spacing.one,
-  },
-  input: {
-    fontFamily: Fonts.mono,
-    fontSize: 16,
-    minHeight: 48,
-    paddingHorizontal: Spacing.three,
-    paddingVertical: Spacing.two,
-    borderRadius: Radius.md,
-    borderWidth: 1,
   },
   reassurance: {
     flexDirection: 'row',
