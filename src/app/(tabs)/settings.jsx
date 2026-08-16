@@ -1,4 +1,6 @@
 import Feather from '@expo/vector-icons/Feather';
+import Constants from 'expo-constants';
+import * as Linking from 'expo-linking';
 import { useRouter } from 'expo-router';
 import { useEffect, useState } from 'react';
 import { ActivityIndicator, Alert, Platform, ScrollView, StyleSheet, Switch, View } from 'react-native';
@@ -39,6 +41,8 @@ export default function SettingsScreen() {
           </Section>
 
           <Section title="Help">
+            <ContactRow />
+            <RateRow />
             <ReplayOnboardingRow />
           </Section>
 
@@ -255,6 +259,50 @@ function NotificationsToggle() {
         </ThemedText>
       )}
     </View>
+  );
+}
+
+function ContactRow() {
+  const theme = useTheme();
+  const router = useRouter();
+
+  return (
+    <SettingsRow
+      icon="mail"
+      label="Contact me"
+      description="Feedback, bugs, or a card that looks wrong"
+      onPress={() => router.push('/contact')}
+      control={<Feather name="chevron-right" size={18} color={theme.textSecondary} />}
+    />
+  );
+}
+
+// Deliberately opens the Play listing rather than the in-app review sheet:
+// that API is quota-limited and silently does nothing once spent, which would
+// make an explicit tap here look broken. The in-app sheet is only used where
+// we choose the moment (after a perfect session), never on a direct request.
+function RateRow() {
+  const theme = useTheme();
+
+  if (Platform.OS === 'web') return null;
+
+  async function handlePress() {
+    const androidPackage = Constants.expoConfig?.android?.package;
+    const url =
+      Platform.OS === 'android' && androidPackage
+        ? `market://details?id=${androidPackage}`
+        : 'https://play.google.com/store/apps/details?id=com.israelbosun.learnpandas';
+    await Linking.openURL(url).catch(() => {});
+  }
+
+  return (
+    <SettingsRow
+      icon="star"
+      label="Rate the app"
+      description="A rating helps other learners find it"
+      onPress={handlePress}
+      control={<Feather name="chevron-right" size={18} color={theme.textSecondary} />}
+    />
   );
 }
 

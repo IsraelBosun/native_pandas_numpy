@@ -75,6 +75,7 @@ function NavigationTree({ needsOnboarding }) {
         <Stack.Screen name="practice/challenge/[id]" />
         <Stack.Screen name="practice/race/[topic]" />
         <Stack.Screen name="leaderboard" />
+        <Stack.Screen name="contact" options={{ presentation: 'modal' }} />
         <Stack.Screen name="auth/sign-in" options={{ presentation: 'modal' }} />
         <Stack.Screen name="auth/reset-password" options={{ presentation: 'modal' }} />
       </Stack>

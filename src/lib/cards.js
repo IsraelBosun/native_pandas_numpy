@@ -478,6 +478,35 @@ export async function settleReminderPrompt() {
   );
 }
 
+// Store-review bookkeeping. Google gives us no callback saying whether the
+// user rated, so this only ever records that we ASKED — never an outcome.
+export async function getStoreReviewState() {
+  const db = await getDb();
+  const attemptsRow = await db.getFirstAsync(
+    `SELECT value FROM app_meta WHERE key = 'store_review_attempts'`
+  );
+  const dateRow = await db.getFirstAsync(
+    `SELECT value FROM app_meta WHERE key = 'store_review_last_ask'`
+  );
+  return {
+    attempts: attemptsRow ? Number(attemptsRow.value) || 0 : 0,
+    lastAskDate: dateRow?.value ?? null,
+  };
+}
+
+export async function recordStoreReviewAsk(today = todayISO()) {
+  const db = await getDb();
+  const { attempts } = await getStoreReviewState();
+  await db.runAsync(
+    `INSERT OR REPLACE INTO app_meta (key, value) VALUES ('store_review_attempts', ?)`,
+    String(attempts + 1)
+  );
+  await db.runAsync(
+    `INSERT OR REPLACE INTO app_meta (key, value) VALUES ('store_review_last_ask', ?)`,
+    today
+  );
+}
+
 // Every stored due date, for the reminder planner. Cheap even at full deck
 // size — one column, no content join, and the planner buckets it in memory.
 export async function getAllDueDates() {

@@ -2,6 +2,7 @@ import { useCallback, useEffect, useState } from 'react';
 
 import { checkAchievements, getDueCards, recordReview, setFavorite, setNote } from '@/lib/cards';
 import { rescheduleReminders } from '@/lib/notifications';
+import { maybeRequestStoreReview } from '@/lib/store-review';
 import { syncNow } from '@/lib/sync';
 import { xpForGrade } from '@/lib/xp';
 
@@ -46,9 +47,13 @@ export function useSession({ topic } = {}) {
   // date it touched — reminders are only ever as good as their last rebuild.
   useEffect(() => {
     if (complete && !loading) {
+      const perfectSession = stats.reviewed > 0 && stats.missed === 0;
       syncNow();
-      checkAchievements({ perfectSession: stats.reviewed > 0 && stats.missed === 0 }).then(setNewAchievements);
+      checkAchievements({ perfectSession }).then(setNewAchievements);
       rescheduleReminders().catch(() => {}); // reminders are decoration — never break a session
+      // Only ever on a perfect session — the peak moment. maybeRequestStoreReview
+      // owns the rest of the policy (history, cap, gap) and is a no-op otherwise.
+      maybeRequestStoreReview({ perfectSession }).catch(() => {});
     }
   }, [complete, loading, stats]);
 
