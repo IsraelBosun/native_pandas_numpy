@@ -20,7 +20,7 @@ import { ThemedView } from '@/components/themed-view';
 import { Fonts, MaxContentWidth, Radius, Spacing } from '@/constants/theme';
 import { useTheme } from '@/hooks/use-theme';
 
-const SUPPORT_EMAIL = 'israelbosun1@gmail.com';
+const SUPPORT_EMAIL = 'bluehydra001@gmail.com';
 
 const TOPICS = [
   { id: 'feedback', label: 'Feedback', icon: 'message-circle' },
