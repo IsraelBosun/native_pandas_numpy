@@ -12,7 +12,11 @@ import {
 import { todayISO } from './date';
 import { planReminders } from './reminders';
 
-const CHANNEL_ID = 'daily-reminder';
+// Bumped to v2 to re-create the channel at HIGH importance — see ensureChannel.
+// Android ignores importance changes to an existing channel, so a new id is the
+// only way to raise it for users who already have the old one.
+const LEGACY_CHANNEL_ID = 'daily-reminder';
+const CHANNEL_ID = 'daily-reminder-v2';
 
 export { getNotificationsEnabled };
 
@@ -25,12 +29,44 @@ function loadNotifications() {
   return require('expo-notifications');
 }
 
+// Without a handler, a notification arriving while the app is RUNNING is
+// discarded rather than shown — the library's documented default is not to
+// present it. Reminders fire around the hour the user usually studies, which
+// is exactly when the app is most likely to be open, so its absence was
+// silently eating them. Installed lazily, to preserve the deferred-require
+// rule above; setting it is idempotent but cheap to guard.
+let handlerInstalled = false;
+function ensureHandler(Notifications) {
+  if (handlerInstalled) return;
+  handlerInstalled = true;
+  Notifications.setNotificationHandler({
+    handleNotification: async () => ({
+      shouldShowBanner: true,
+      shouldShowList: true,
+      // Consistent with the channel's HIGH importance: a reminder the user
+      // opted into is worth hearing. Muting it here would reintroduce the
+      // "did I even get one?" problem the channel raise exists to fix.
+      shouldPlaySound: true,
+      shouldSetBadge: false,
+    }),
+  });
+}
+
 async function ensureChannel() {
   if (Platform.OS !== 'android') return;
   const Notifications = loadNotifications();
+  // HIGH, not DEFAULT: DEFAULT posts to the tray without a heads-up banner, so
+  // a reminder arriving with the phone pocketed is easily never seen. A single
+  // daily nudge the user opted into earns the peek.
+  //
+  // NOTE: Android freezes a channel's importance at CREATION — this raise only
+  // affects installs that have not already created `daily-reminder`. Hence the
+  // version suffix below; the old channel is deleted so it stops showing up as
+  // a stale, empty entry in system settings.
+  await Notifications.deleteNotificationChannelAsync(LEGACY_CHANNEL_ID).catch(() => {});
   await Notifications.setNotificationChannelAsync(CHANNEL_ID, {
     name: 'Daily reminder',
-    importance: Notifications.AndroidImportance.DEFAULT,
+    importance: Notifications.AndroidImportance.HIGH,
   });
 }
 
@@ -73,9 +109,18 @@ export async function rescheduleReminders({ today = todayISO() } = {}) {
   if (!(await getNotificationsEnabled())) return [];
 
   const Notifications = loadNotifications();
-  const granted = await Notifications.getPermissionsAsync()
-    .then((result) => result.status === 'granted')
-    .catch(() => false);
+  ensureHandler(Notifications);
+  // A THROW here is not a denial — it is us failing to ask. Treating the two
+  // alike would persist notifications_enabled = false off a transient error,
+  // silently turning reminders off for good with nothing shown to the user.
+  // Only an answered-and-not-granted result may disable them.
+  let granted;
+  try {
+    const result = await Notifications.getPermissionsAsync();
+    granted = result.status === 'granted';
+  } catch {
+    return [];
+  }
 
   // Permission revoked in system settings since the toggle was flipped: stop
   // claiming reminders are on rather than silently booking into the void.
@@ -117,6 +162,7 @@ export async function enableDailyReminder() {
   if (Platform.OS === 'web') return false;
 
   const Notifications = loadNotifications();
+  ensureHandler(Notifications);
   const { status } = await Notifications.requestPermissionsAsync();
   if (status !== 'granted') {
     await persistEnabled(false);
