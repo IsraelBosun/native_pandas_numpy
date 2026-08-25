@@ -427,6 +427,124 @@ with streak is a real, shippable loop. Ship that before expanding.
 
 ---
 
+## 10b. OTA updates (`expo-updates`) — verified end to end 2026-08-25
+
+**Play Store ships the container; Expo ships the JS.** These are two separate
+channels that never meet, and the confusion is worth stating plainly because it
+came up twice: EAS and Google have no connection. The link is the *binary*. When
+EAS builds the AAB it compiles `expo-updates` and the `updates.url` from
+`app.json` into it. You download that AAB, upload it to Play, Play installs it —
+and the URL is inside the file the whole time. On launch the app asks
+`u.expo.dev` directly whether a newer bundle exists for its runtime version.
+Google is a delivery truck, not a participant.
+
+```
+EAS builds AAB → download → upload to Play → Play installs
+                                             (updates.url baked in)
+app launches → asks u.expo.dev itself → new JS bundle
+               (Play Store not involved)
+```
+
+**`runtimeVersion` is the whole matching mechanism.** Policy is `appVersion`, so
+an update publishes at runtime `1.2.0` and only reaches builds whose
+`version` is `1.2.0`. Change the native layer (a new dependency, a permission,
+a plugin) and you must ship a new build through Play — OTA cannot deliver native
+code. Pure JS/JSX, content JSON and styles are all fair game.
+
+**Fetch on launch, apply on the launch after.** The first open downloads in the
+background and still shows the old bundle; the *second* open shows the new one.
+Judging an update by one relaunch reports a false failure — fully close it
+(swipe from recents) and open again before concluding anything.
+
+**Publishing:**
+```
+npx --yes eas-cli@latest update --branch production --message "…"
+npx --yes eas-cli@latest channel:view production   # confirm it went live
+```
+`eas-cli` is not a dependency and is not installed — always `npx --yes`, never
+add it to the machine (see the user's global constraints on installs). Check
+`eas whoami` first: the project is owned by **israelbosun**, and being logged in
+as another account fails with `Entity not authorized: AppEntity[dd7dfb01…]`
+*after* the bundle uploads.
+
+**A publish sends the whole bundle at that commit, not a diff.** Anything
+committed since the last publish rides along whether or not it is what the
+message describes. Check `git log` against the last update before publishing.
+
+**No staged rollout on OTA.** Production goes to every matching device at once.
+`expo-updates` auto-rolls-back to the embedded bundle only on a *startup crash*
+— a logic bug that runs fine and behaves wrong ships and stays. Route anything
+touching `scheduler.js`, `db.js` migrations or sync through `--branch preview`
+on a dev build first. A one-file UI or content change is fine going straight out.
+
+**Free tier:** unlimited publishes; the meter is monthly active devices
+(~1,000 free). Publishing often costs nothing.
+
+**Verify with something you can see.** The first two updates for this project
+were a notification fix — invisible, and unconfirmable without waiting for a
+reminder to fire. The pipeline was only actually proven by shipping a temporary
+visible marker (a ✨ on the Home greeting), confirming it on device, then
+reverting it in a third publish. Do that for any first delivery to a new build:
+an invisible fix cannot tell you whether it arrived or whether the pipeline is
+broken.
+
+**`app.json` gets rewritten behind your back.** Before any publish, run
+`git status`. Expo CLI steps (`eas update:configure` especially) have silently
+duplicated `blockedPermissions` entries, added a duplicated
+`MODIFY_AUDIO_SETTINGS` permission, and inserted a *second*, top-level
+`runtimeVersion` alongside the `android`-nested one. That last one changes the
+exact field update matching depends on. Revert unexplained `app.json` churn
+before publishing rather than shipping it as a passenger — and re-read §3 on
+verifying permissions in the built artifact, since this is precisely how
+`RECORD_AUDIO` slipped into 1.1.0.
+
+**Known gap:** `runtimeVersion` currently lives only inside the `android` block
+of `app.json`. iOS updates publish but likely never match a build. Harmless
+while Android-only; fix before any iOS release.
+
+---
+
+## 10c. Notifications (`lib/notifications.js`)
+
+Untested by design — it is all device I/O — which makes the reasoning below the
+only record of why it looks like this. Two real bugs, found 2026-08-25 after the
+user reported never receiving a single reminder.
+
+**`setNotificationHandler` is foreground-only.** Without it, a notification
+arriving *while the app is running* is discarded — the library's documented
+default is not to present it. It has no bearing on notifications that arrive
+while the app is closed. Easy to misdiagnose as the whole cause (I did); it is
+half. Reminders fire around the hour the user usually studies, which is exactly
+when the app is most likely open, so its absence was silently eating them.
+
+**Android freezes a channel's importance at creation.** `setNotificationChannelAsync`
+on an existing id will not raise it — the only way to change importance for
+users who already have the channel is a **new channel id**. Hence
+`daily-reminder` → `daily-reminder-v2`, with the old one deleted so it stops
+appearing as a stale empty entry in system settings. Any future importance
+change needs another bump; there is no in-place edit.
+
+Use `AndroidImportance.HIGH`, not `DEFAULT`: DEFAULT posts to the tray with no
+heads-up banner, so a reminder with the phone pocketed is easily never seen.
+
+**A throw is not a denial.** `getPermissionsAsync()` throwing means we failed to
+ask, not that the user said no. Treating them alike persisted
+`notifications_enabled = false` off a transient error, turning reminders off for
+good with nothing shown to the user. Only an answered-and-not-granted result may
+disable them.
+
+**Ruled out, do not re-investigate:** `POST_NOTIFICATIONS` is declared by
+`expo-notifications`' own manifest and merges automatically. Server push would
+not have fixed any of this and violates §1 (offline-first) and §9.
+
+**Still unconfirmed:** whether the above was the user's actual symptom. The
+remaining suspect is Android battery optimisation / Doze killing scheduled
+alarms — a per-device setting no JS change can reach. If reminders still do not
+arrive, check Settings → Apps → Learn Pandas → Battery → Unrestricted before
+touching this file again.
+
+---
+
 ## 11. Where we left off (2026-07-23)
 
 Multi-user accounts are **written and tested but not yet cut over.** The code is

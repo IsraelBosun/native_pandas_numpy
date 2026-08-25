@@ -19,7 +19,7 @@ export function GreetingHeader({ streak }) {
           {greeting()}
         </ThemedText>
         <ThemedText type="title" style={styles.headline}>
-          Ready to drill? ✨
+          Ready to drill?
         </ThemedText>
       </View>
       <StreakPill days={streak} />
